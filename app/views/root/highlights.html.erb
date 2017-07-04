@@ -1,0 +1,71 @@
+<%
+  page_title t('.title')
+  label_key = "mongoid.attributes.highlight."
+%>
+
+<% if @highlights.present? %>
+
+  <div class="highlight-grid">
+    <% @highlights.each do |highlight| %>
+      <div class="highlight-item" data-id="<%= highlight.base_id %>">
+        <div class='description'>
+          <%= highlight.description %>
+          <% if can? :create, Highlight %>
+            <div class="highlight highlighted" data-dialog='highlights' data-id="<%= highlight.base_id %>" title="<%= t('shared.common.update_or_unhighlight_chart') %>"></div>
+          <% end %>
+        </div>
+        <div class='chart-container'><div class='chart'></div></div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= paginate @highlights %>
+
+  <% if can? :create, Highlight %>
+    <dialog>
+      <div class="bg"></div>
+        <section id="highlights" class="dialog-highlights" data-type="highlights">
+          <div class="caption"><%= t('shared.dialog.highlight.caption') %></div>
+          <div class="content">
+            <div role="tabpanel" class="tabbed-translation-fields">
+              <ul class="nav nav-tabs" role="tablist">
+                <% locales = I18n.available_locales %>
+                <% locales.each_with_index do |locale, index| %>
+                  <li role="presentation" <%= 'class=active' if index == 0 %> data-locale="<%= locale %>">
+                    <a href="#<%= locale %>" aria-controls="home" role="tab" data-toggle="tab">
+                      <%= Language.name_by_locale(locale.to_s) %>
+                    </a>
+                  </li>
+                <% end %>
+              </ul>
+              <div class="tab-content">
+                <% locales.each_with_index do |locale, index| %>
+                  <div role="tabpanel" class="tab-pane fade <%= 'in active' if index == 0 %>" id="<%= locale %>" data-locale="<%= locale %>">
+                    <textarea rows="6" cols="38" name="description_translations[<%= locale %>]" placeholder='<%= t('shared.dialog.highlight.description') %> (<%= t("shared.locale.long.#{locale}") %>)'></textarea>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+          <div class="button">
+            <button type="button" class="dialog-button" data-type='save'><%= t('shared.dialog.save') %></button>
+            <button type="button" class="dialog-button" style="display:none;" data-type='unhighlight'><%= t('shared.dialog.highlight.unhighlight') %></button>
+          </div>
+        </section>
+    </dialog>
+  <% end %>
+
+<% else %>
+  <p class="empty-page">
+    <%= t('.no_highlights') %>
+  </p>
+<% end %>
+
+<% content_for :custom_js, "highlights" %>
+<% content_for :custom_css, "highlights" %>
+<%
+  if can? :create, Highlight
+    @custom_js = [ "highlight_form.js" ]
+    @custom_css = [ "components/highlight_form.css" ]
+  end
+%>

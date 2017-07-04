@@ -9,6 +9,9 @@
 
 $(document).ready(function (){
   // console.log("explore ready");
+  if (typeof global_filter_callback === 'undefined') {
+    global_filter_callback = function () {}
+  }
   var
     w = 0,
     h = 0,
@@ -948,11 +951,16 @@ $(document).ready(function (){
     // });
 
     $(document).on("click", "[data-dialog]", function () {
-      var t = $(this), pars = t.attr("data-dialog").split(";"),
-        options = { chart: (pars.length === 2 ? pars[1] : "") };
-      if(pars[0] === "share") {
+
+      var t = $(this),
+        pars = t.attr("data-dialog").split(";"), // ex: embed;a
+        dialog_type = pars[0],
+        options = { chart_type: pars[1] };
+
+      if(dialog_type === "share") {
         options["title"] = js.share["#" + t.attr("data-share-title")];
       }
+
       js_dialog.open(pars[0], options);
     });
   }
@@ -969,6 +977,7 @@ $(document).ready(function (){
         _id = obj.id();
         js.cache[_id] = gon[obj.name + "_data"];
         // console.log("gonnned",js.cache[_id].sid);
+        js.cache[js.cache[_id].sid] = _id
         obj.set_sid(js.cache[_id].sid);
         if(obj.name === (gon.is_donation ? "donation" : "finance")) { obj.url(js.cache[_id].sid); }
         filter_callback(js.cache[_id], obj.name);
@@ -993,6 +1002,7 @@ $(document).ready(function (){
           success: function(data) {
             // console.log("explore_filter", data);
             js.cache[_id] = data[obj.name];
+            js.cache[js.cache[_id].sid] = _id
             obj.url(js.cache[_id].sid);
             if(data.hasOwnProperty("donation")) { filter_callback(data.donation, "donation"); }
             if(data.hasOwnProperty("finance")) { filter_callback(data.finance, "finance"); }
@@ -1018,6 +1028,8 @@ $(document).ready(function (){
         //grouped_column_chart("#finance_chart", data.ca, "#fff");
         grouped_advanced_column_chart(chart_ids.fa, data.ca, "#fff");
       }
+      global_filter_callback(data.sid, partial)
+
       render_table(partial, data.table);
     }
     else {

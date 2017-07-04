@@ -12,7 +12,8 @@ class RootController < ApplicationController
     categories = Category.non_virtual.only_sym
     @main_categories = {}
     categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s }
-
+    @highlights = Highlight.sort.limit(3)
+    set_gon_highlights(@highlights)
   end
 
   def explore
@@ -98,19 +99,33 @@ class RootController < ApplicationController
       tmp = Donor.explore(donation_pars, "a", inner_pars, { parties: @party_list })
       gon.donation_params = tmp.delete(:pars)
       gon.donation_data = tmp
+      dsid = gon.donation_data[:sid]
 
       tmp = Dataset.explore(finance_pars, "a", inner_pars, { parties: @party_list, periods: @period_list })
       gon.finance_params = tmp.delete(:pars)
       gon.finance_data = tmp
 
-      dt = is_finance ? gon.finance_data : gon.donation_data
+      # dt = is_finance ? gon.finance_data : gon.donation_data
 
       pars.delete(:locale)
 
-      @finance_download_link = gon.path + "/" + gon.finance_data[:sid] + "?format=csv"
+      fsid = gon.finance_data[:sid]
+      @finance_download_link = gon.path + "/" + fsid + "?format=csv"
 
       gon.donation_table_download_title = t('root.explore.download_table')
       gon.params = pars
+
+      if can? :create, Highlight
+        gon.highlight_url = admin_highlights_path
+        gon.labels = {
+          highlight: t('shared.common.highlight_chart'),
+          update_or_unhighlight: t('shared.common.update_or_unhighlight_chart')
+        }
+        gon.locales = I18n.available_locales
+        gon.donation_data[:ca][:highlight] = Highlight.sid_highlighted?("#{dsid}a")
+        gon.donation_data[:cb][:highlight] = Highlight.sid_highlighted?("#{dsid}b")
+        gon.finance_data[:ca][:highlight] = Highlight.sid_highlighted?("#{fsid}a")
+      end
 
     else
       if is_finance
@@ -141,11 +156,16 @@ class RootController < ApplicationController
     p = pars[:donation]
     if p.present?
       tmp = Donor.explore(p)
+      if can? :create, Highlight
+        tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a")
+        tmp[:cb][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}b")
+      end
       tmp.delete(:pars)
       res[:donation] = tmp
     elsif pars[:finance].present?
       tmp = Dataset.explore(pars[:finance])
       tmp.delete(:pars)
+      tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a") if can? :create, Highlight
       res[:finance] = tmp
     end
     render :json => res
@@ -211,9 +231,26 @@ class RootController < ApplicationController
 
   def media
     @show_page_title = false
-    @media = Medium.is_public.sorted_public.page(params[:page]).per(2)
+    @media = Medium.is_public.sorted_public.page(params[:page]).per(10)
     gon.show_more = t('shared.common.show_more')
     gon.show_less = t('shared.common.show_less')
+  end
+
+  def highlights
+    @show_page_title = false
+    @highlights = Highlight.sort.page(params[:page]).per(10)
+    set_gon_highlights(@highlights)
+
+    if can? :create, Highlight
+      gon.highlight_url = admin_highlights_path
+      gon.locales = I18n.available_locales
+      gon.labels = {
+        highlight: t('shared.common.highlight_chart'),
+        update_or_unhighlight: t('shared.common.update_or_unhighlight_chart')
+      }
+    end
+
+
   end
 
   def embed_static
@@ -331,47 +368,47 @@ class RootController < ApplicationController
 
   def chart
 
-      @missing = true
-      image_stream = nil
-      image_filename = ""
-      pars = chart_params
-      sid = pars[:id]
-      chart = pars[:chart]
-      chart = "a" if ["a", "b"].index(chart).nil?
-      file_type = pars[:file_type]
-      file_type = "png" if ["png", "jpeg", "svg", "pdf"].index(file_type).nil?
-      data = nil
-      is_donation = nil
+    @missing = true
+    image_stream = nil
+    image_filename = ""
+    pars = chart_params
+    sid = pars[:id]
+    chart = pars[:chart]
+    chart = "a" if ["a", "b"].index(chart).nil?
+    file_type = pars[:file_type]
+    file_type = "png" if ["png", "jpeg", "svg", "pdf"].index(file_type).nil?
+    data = nil
+    is_donation = nil
 
-      if sid.present?
-        shr = ShortUri.by_sid(sid, :explore)
-        if shr.present? && shr.other.present? && (shr.other == 0 || shr.other == 1)
-          is_donation = shr.other == 0
-          if (is_donation ? ["a", "b"] : ["a"]).index(chart).present?
-            data = (is_donation ? Donor : Dataset).explore(Hash.transform_keys_to_symbols(shr.pars), "co" + chart, true)
-            image = export_highchart(sid, chart, data, is_donation, file_type, false)
-            if image[:ok]
-              @missing = false
-              image_stream = image[:data]
-              image_filename = I18n.t(".shared.chart.filename.#{is_donation ? 'donation' : 'finance'}")+"_#{sid}#{chart}_#{Date.today}"
-            end
+    if sid.present?
+      shr = ShortUri.by_sid(sid, :explore)
+      if shr.present? && shr.other.present? && (shr.other == 0 || shr.other == 1)
+        is_donation = shr.other == 0
+        if (is_donation ? ["a", "b"] : ["a"]).index(chart).present?
+          data = (is_donation ? Donor : Dataset).explore(Hash.transform_keys_to_symbols(shr.pars), "co" + chart, true)
+          image = export_highchart(sid, chart, data, is_donation, file_type, false)
+          if image[:ok]
+            @missing = false
+            image_stream = image[:data]
+            image_filename = I18n.t(".shared.chart.filename.#{is_donation ? 'donation' : 'finance'}")+"_#{sid}#{chart}_#{Date.today}"
           end
         end
       end
-    ensure
-      mimes = {
-        "png": "image/png",
-        "jpeg": "image/jpeg",
-        "svg": "image/svg+xml",
-        "pdf": "application/pdf"
-      }
-      if @missing || image_stream.nil?
-        image_stream = IO.read("#{Rails.root}/public/" + view_context.image_path("missing_share.png"))
-        image_filename = I18n.t(".shared.chart.filename.missing")+"_#{sid}#{chart}_#{Date.today}"
-        file_type = "png"
-      end
-      image_filename += ".#{file_type}"
-      send_data image_stream, filename: image_filename, :type => mimes[file_type.to_sym], :disposition => 'attachment'
+    end
+  ensure
+    mimes = {
+      "png": "image/png",
+      "jpeg": "image/jpeg",
+      "svg": "image/svg+xml",
+      "pdf": "application/pdf"
+    }
+    if @missing || image_stream.nil?
+      image_stream = IO.read("#{Rails.root}/public/" + view_context.image_path("missing_share.png"))
+      image_filename = I18n.t(".shared.chart.filename.missing")+"_#{sid}#{chart}_#{Date.today}"
+      file_type = "png"
+    end
+    image_filename += ".#{file_type}"
+    send_data image_stream, filename: image_filename, :type => mimes[file_type.to_sym], :disposition => 'attachment'
   end
 
   private
@@ -502,6 +539,28 @@ class RootController < ApplicationController
         image_stream = nil
       ensure
         return { ok: ok, data: image_stream }
+    end
+
+    def set_gon_highlights(highlights)
+      gon.highlights_data = []
+      highlights.each {|highlight|
+        sid = highlight.base_id[0..-2]
+        chart_type = highlight.base_id[-1]
+        if sid.present?
+          shr = ShortUri.by_sid(sid, :explore)
+          if shr.present? && shr.other.present? && (shr.other == 0 || shr.other == 1)
+            is_donation = shr.other == 0
+            if (is_donation ? ["a", "b"] : ["a"]).index(chart_type).present?
+              gon.highlights_data.push({
+                sid: sid,
+                is_donation: is_donation,
+                chart: (is_donation ? Donor : Dataset).explore(shr.pars, "co" + chart_type, true),
+                tp: chart_type,
+                description: highlight.description_translations })
+            end
+          end
+        end
+      }
     end
     # Saves all generated files on disk, was switched to stream for png, jpeg and svg and temp file for pdf
     # def export_highchart(id, chart, data, is_donation, file_type = "png", return_url = true)

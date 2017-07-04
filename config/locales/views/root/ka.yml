@@ -5,6 +5,11 @@ ka:
       summary: გაინტერესებს, საიდან იღებენ და რაში ხარჯავენ პოლიტიკური პარტიები ფულს? “პოლიტიკა რიცხვებში” აერთიანებს ყველა ოფიციალურ მონაცემს პოლიტიკური პარტიების დაფინანსების შესახებ. შეგიძლია, ნახო და შეადარო პარტიების შემოსავლები და ხარჯები, კამპანიის ფონდები, შემოწირულებები, ქონება, ვალები და სხვა საინტერესო დეტალები.
       filter_summary: გამოიკვლიე პარტიების ფინანსები <br />კატეგორიების მიხედვით <br />და შეადარე ერთმანეთს
       go_explore: გაეცანი!
+      highlights: Highlights
+      view_all_highlights: View All Highlights
+    highlights:
+      title: Highlights
+      no_highlights: No highlights have been recorded yet.
     about:
       title: ჩვენზე
       methodology: მეთოდოლოგია

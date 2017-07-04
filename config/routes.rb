@@ -32,10 +32,15 @@ Rails.application.routes.draw do
       end
       resources :media
       resources :page_contents
+      # get '/highlights/:id', :to => "highlights#show", :as => :highlights
+      delete '/highlights/:id', :to => "highlights#destroy"
+       # :highlight, :to => "highlights#destroy", :as => :destroy_highlight
+      post '/highlights', :to => "highlights#create_or_update"
     end
 
     root 'root#index'
     get '/explore(/:id)' => 'root#explore', as: :explore
+    get '/highlights' => 'root#highlights'
     get '/about' => 'root#about'
     get '/media' => 'root#media'
     get '/api' => 'root#api'

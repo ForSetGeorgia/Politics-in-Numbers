@@ -3,6 +3,7 @@ ka:
   application:
     navbar_header:
       explore: მონაცემები
+      highlights: Highlights
       about: ჩვენზე
       media: მედიაში
       download: ჩამოტვირთვა

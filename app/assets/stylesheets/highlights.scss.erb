@@ -1,0 +1,50 @@
+/*
+  *= require components/js_dialog
+  *= require components/highlight_grid
+  *= require components/highlight_form
+
+*/
+main {
+  padding: 100px 42px;
+  background-color: #367652;
+  .highlight-item {
+    .description {
+      position: relative;
+      .highlight {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 24px;
+        height: 21px;
+        background:transparent url("<%= asset_path('highlight.svg') %>") no-repeat top left;
+        background-size: 24px 21px;
+        &:hover, &.highlighted {
+          background:transparent url("<%= asset_path('highlight_a.svg') %>") no-repeat top left;
+          background-size: 24px 21px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+nav.pagination {
+  text-align: right;
+  .page, .next, .last, .first, .prev {
+    padding: 0 3px;
+    a {
+      font:16px firasans_r;
+      color:#fff;
+      opacity:.8;
+      &:hover {
+        background-image:none;
+        background-color:transparent;
+        border-width:0;
+        opacity:1;
+      }
+    }
+  }
+  .current {
+    font:16px firasans_b;
+    color:#88d877;
+  }
+}

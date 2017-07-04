@@ -128,6 +128,9 @@ en:
         other: Deffered activities
       admin:
         one: Admin Section
+      highlight:
+        one: Highlight
+        other: Highlights
     options:
       party:
         type:

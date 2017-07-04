@@ -35,6 +35,11 @@
   %>
   <%# stylesheet_link_tag *css, :media => "all" %>
   <%= stylesheet_link_tag defined?(is_admin) ? "admin" : "application", :media => "all" %>
+  <% if @custom_css.present? %>
+    <% @custom_css.each{|t| %>
+      <%= stylesheet_link_tag "#{t}" %>
+    <% } %>
+  <% end %>
   <% if content_for? :custom_css %>
     <%= stylesheet_link_tag "#{yield(:custom_css)}"  %>
   <% end %>

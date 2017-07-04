@@ -53,7 +53,7 @@ class Admin::PageContentsController < AdminController
 
     respond_to do |format|
       if @item.save
-        format.html { redirect_to admin_page_content_path(@item), flash: {success:  t('app.msgs.success_created', :obj => t('mongoid.models.page_content.one'))} }
+        format.html { redirect_to admin_page_content_path(@item), flash: {success:  t('shared.msgs.success_created', :obj => t('mongoid.models.page_content.one'))} }
       else
         set_tabbed_translation_form_settings
         format.html { render action: "new" }
@@ -68,7 +68,7 @@ class Admin::PageContentsController < AdminController
 
     respond_to do |format|
       if @item.update_attributes(_params)
-        format.html { redirect_to admin_page_content_path(@item), flash: {success:  t('app.msgs.success_updated', :obj => t('mongoid.models.page_content.one'))} }
+        format.html { redirect_to admin_page_content_path(@item), flash: {success:  t('shared.msgs.success_updated', :obj => t('mongoid.models.page_content.one'))} }
       else
         set_tabbed_translation_form_settings
         format.html { render action: "edit" }
@@ -82,7 +82,7 @@ class Admin::PageContentsController < AdminController
     @item.destroy
 
     respond_to do |format|
-      format.html { redirect_to admin_page_contents_url, flash: {success:  t('app.msgs.success_deleted', :obj => t('mongoid.models.page_content.one'))} }
+      format.html { redirect_to admin_page_contents_url, flash: {success:  t('shared.msgs.success_deleted', :obj => t('mongoid.models.page_content.one'))} }
     end
   end
   private

@@ -3,6 +3,7 @@ ru:
   application:
     navbar_header:
       explore: Explore
+      highlights: Highlights
       about: "О нас"
       media: In Media
       download: Download

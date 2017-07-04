@@ -236,3 +236,14 @@ Date.prototype.format = function (mask, utc) {
 };
 
 // /* ----------------------------------------------------------------- */
+
+var flash = function (msg, type) {
+  if(typeof type === 'undefined') {
+    type = 'alert'
+  }
+
+  $('.notification').remove()
+  $('main').prepend('<div class="alert fade in alert-' + type + ' notification"><button type="button" class="close" data-dismiss="alert">×</button>' + msg + '</div>')
+
+  //
+}

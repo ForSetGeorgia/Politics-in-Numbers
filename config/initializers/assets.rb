@@ -13,5 +13,5 @@ Rails.application.config.assets.precompile += %w( highcharts.js highcharts-group
                                                 datatables.buttons.html5.min.js datatables.buttons.min.js
                                                 admin.js admin.css explore.js explore.css crypto.min.js
                                                 in-media.css in-media.js readmore.min.js
-                                                about.css home.css home.js download.js download.css embed.js embed.css
+                                                about.css home.css home.js download.js download.css embed.js embed.css highlight_form.js components/highlight_form.css highlights.js highlights.scss components/highlight_grid.css
                                               )

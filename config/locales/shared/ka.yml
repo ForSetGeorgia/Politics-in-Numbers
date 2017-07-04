@@ -58,6 +58,8 @@ ka:
       no_result_found_for: "No Results Found for"
       lari: ლარი
       na: "n/a"
+      highlight_chart: Highlight chart
+      update_or_unhighlight_chart: Update or unhighlight chart
     locale:
       short:
         en: En
@@ -160,6 +162,9 @@ ka:
       share:
         caption: Share
         share_chart: "Share chart:"
+      highlight:
+        caption: Highlight
+        description: 'Enter description:'
   notifier:
     job:
       donorset_file_process:

@@ -3,6 +3,7 @@ en:
   application:
     navbar_header:
       explore: Explore
+      highlights: Highlights
       about: About
       media: In Media
       download: Download

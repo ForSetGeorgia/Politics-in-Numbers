@@ -726,6 +726,18 @@
                 i { background-position: -49px 0px; }
                 &:hover i { background-position: -49px -22px; }
               }
+              .highlight {
+                i {
+                  background:transparent url("<%= asset_path('highlight.svg') %>") no-repeat top left;
+                  background-size: 24px 21px;
+                }
+                &:hover, &.highlighted {
+                  i {
+                    background:transparent url("<%= asset_path('highlight_a.svg') %>") no-repeat top left;
+                    background-size: 24px 21px;
+                  }
+                }
+              }
             }
           }
           .chart-container-1 {
@@ -1338,7 +1350,7 @@
           width:100%;
           text-align:right;
         }
-        .share, .embed, .download {
+        .share, .embed, .download, .highlight {
           display:inline-block;
           width: 40px;
           height: 36px;
@@ -1354,6 +1366,16 @@
           &:hover, &:focus, &:active {
             cursor:pointer;
             border:1px dashed #AEB3AD;
+          }
+        }
+        .highlight {
+          i {
+            background:transparent url("<%= asset_path('highlight.svg') %>") no-repeat;
+            background-size: 24px 21px;
+          }
+          &.highlighted i {
+            background:transparent url("<%= asset_path('highlight_a.svg') %>") no-repeat;
+            background-size: 24px 21px;
           }
         }
 

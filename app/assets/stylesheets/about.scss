@@ -1,6 +1,6 @@
 body.root.about{
   .about-summary{
-    background:image-url('about.png') no-repeat bottom center;
+    background: url("<%= asset_path('about.png') %>") no-repeat bottom center;
     background-size: cover;
     height: 400px;
     // margin: -100px -42px 25px -42px;
