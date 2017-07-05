@@ -11,7 +11,7 @@ dialog {
   padding:0;
   border:0;
   margin:0;
-  z-index:99;
+  z-index:300;
   font: 14px firasans_l;
   color: #5D675B;
 }
@@ -24,7 +24,7 @@ dialog .bg {
   /*background-color:rgba(0,0,0,.35);*/
   background-color: #343477;
   opacity:.35;
-  z-index:100;
+  z-index:301;
 }
 dialog section {
   display:none;
@@ -43,7 +43,7 @@ dialog section {
   // -webkit-transform: perspective(1px) translate3d(-50%,-50%,0) !important;
   // transform: perspective(1px) translate3d(-50%,-50%,0) !important;
   // transform:translate(-50%, -50%);
-  z-index:101;
+  z-index:302;
   max-height: 100%;
   overflow-y: auto;
 }
@@ -55,6 +55,12 @@ dialog section .caption {
   font: 20px firasans_book;
   padding:10px 20px 9px 16px;
   border-bottom: 1px dashed #a9afa8;
+}
+
+dialog section .content label {
+  display: block;
+  font: 16px firasans_r;
+  padding:0 0 10px;
 }
 /*dialog section .sp {
   padding: 0 20px 0 10px;

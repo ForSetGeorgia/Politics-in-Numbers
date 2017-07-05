@@ -34,10 +34,10 @@ module StarterTemplate
     ]
     config.i18n.default_locale = :ka
     # config.i18n.available_locales = [:ka, :en]
-    config.i18n.available_locales = [:ka, :en, :ru]
+    config.i18n.available_locales = [:ka, :en] #, :ru]
     # config.i18n.fallbacks = {'en' => ['ka'], 'ka' => ['en']}
     # config.i18n.fallbacks = {'en' => ['ka', 'ru'], 'ka' => ['en', 'ru'], 'ru' => ['ka', 'en']}
-    config.i18n.fallbacks = {'en' => 'ka', 'ka' => 'en', 'ru' => 'ka'}
+    config.i18n.fallbacks = {'en' => 'ka', 'ka' => 'en' } # , 'ru' => 'ka'}
 
 
     # Do not swallow errors in after_commit/after_rollback callbacks.

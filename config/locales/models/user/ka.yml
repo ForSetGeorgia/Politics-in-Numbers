@@ -1,6 +1,7 @@
 ka:
   admin:
     index:
+      title: Admin Section
       parties: Parties
       datasets: Datasets
       donorsets: Donors Lists
@@ -31,6 +32,7 @@ ka:
         permalink: Permalink
         color: Color for charts
         name: Original name
+        member: Member of main Party list
       period:
         title: Title
         title_translations: Title

@@ -1,0 +1,31 @@
+<section id="<%= type %>" class="dialog-<%= type %>" data-type="<%= type %>">
+  <div class="caption"><%= t('shared.dialog.highlight.caption') %></div>
+  <div class="content">
+    <label><%= t('shared.dialog.highlight.intro') %></label>
+    <div role="tabpanel" class="tabbed-translation-fields">
+      <ul class="nav nav-tabs" role="tablist">
+        <% locales = I18n.available_locales %>
+        <% locales.each_with_index do |locale, index| %>
+          <li role="presentation" <%= 'class=active' if index == 0 %> data-locale="<%= locale %>">
+            <a href="#<%= locale %>" aria-controls="home" role="tab" data-toggle="tab">
+              <%= Language.name_by_locale(locale.to_s) %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+      <div class="tab-content">
+        <% locales.each_with_index do |locale, index| %>
+          <div role="tabpanel" class="tab-pane fade <%= 'in active' if index == 0 %>" id="<%= locale %>" data-locale="<%= locale %>">
+            <textarea rows="6" cols="38" name="description_translations[<%= locale %>]" placeholder='<%= t('shared.dialog.highlight.description') %> (<%= t("shared.locale.long.#{locale}") %>)'></textarea>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <input type="checkbox" name="home" id="highlight_home">
+    <label for="highlight_home"><span></span><%= t('shared.dialog.highlight.show_on_home') %></label>
+  </div>
+  <div class="button">
+    <button type="button" class="dialog-button" data-type='save'><%= t('shared.dialog.save') %></button>
+    <button type="button" class="dialog-button" style="display:none;" data-type='unhighlight'><%= t('shared.dialog.highlight.unhighlight') %></button>
+  </div>
+</section>

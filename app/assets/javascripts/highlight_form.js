@@ -1,25 +1,30 @@
 //= require twitter/bootstrap/tab
 var global_filter_callback = function (sid, partial) {
-  // console.log(sid, partial)
+  console.log(sid, partial)
+  var h, ca, cb
   if (partial === 'finance') {
-    var ca = js.cache[js.cache[sid]].ca.highlight !== null
-
+    h = js.cache[js.cache[sid]].ca.highlight
+    ca = h !== null
+    console.log(ca, h)
     $('.pane[data-type="finance"] [data-dialog="highlight;a"]')
-      .attr('title', ca ? gon.labels.update_or_unhighlight : gon.labels.highlight)
-      .attr('data-id', sid+'a').toggleClass('highlighted', ca)
+      .attr('title', ca ? gon.labels.update_or_remove_highlight : gon.labels.highlight)
+      .attr('data-id', sid+'a').toggleClass('highlighted', ca).toggleClass('onhome', ca && h.home)
 
   } else if (partial === 'donation') {
 
-    var ca = js.cache[js.cache[sid]].ca.highlight !== null
-    var cb = js.cache[js.cache[sid]].cb.highlight !== null
-
+    h = js.cache[js.cache[sid]].ca.highlight
+    ca = h !== null
+    console.log(ca, h)
     $('.pane[data-type="donation"] [data-dialog="highlight;a"]')
-      .attr('title', ca ? gon.labels.update_or_unhighlight : gon.labels.highlight)
-      .attr('data-id', sid+'a').toggleClass('highlighted', ca)
+      .attr('title', ca ? gon.labels.update_or_remove_highlight : gon.labels.highlight)
+      .attr('data-id', sid+'a').toggleClass('highlighted', ca).toggleClass('onhome', ca && h.home)
 
+    h = js.cache[js.cache[sid]].cb.highlight
+    cb = h !== null
+    console.log(cb, h)
     $('.pane[data-type="donation"] [data-dialog="highlight;b"]')
-      .attr('title', cb ? gon.labels.update_or_unhighlight : gon.labels.highlight)
-      .attr('data-id', sid+'b').toggleClass('highlighted', cb)
+      .attr('title', cb ? gon.labels.update_or_remove_highlight : gon.labels.highlight)
+      .attr('data-id', sid+'b').toggleClass('highlighted', cb).toggleClass('onhome', cb && h.home)
 
   }
 }
@@ -28,13 +33,14 @@ js_dialog.callbacks.highlight = {
   open: function (option) {
     var cont = $('dialog [data-type="highlight"]')
     var hlts = js.cache[js.cache[js.sid]]['c' + option.chart_type].highlight
-    var unhighlight = cont.find('button[data-type="unhighlight"]')
+    // console.log(hlts)
     cont.find('button[data-type]').attr('data-chart', option.chart_type)
     var present = hlts !== null
     gon.locales.forEach(function (d) {
-      cont.find('textarea[name="description_translations[' + d + ']"]').val(present ? hlts[d] : null)
+      cont.find('textarea[name="description_translations[' + d + ']"]').val(present ? hlts.description[d] : null)
     })
-    unhighlight.toggle(present)
+    cont.find('input[type="checkbox"][name="home"]').prop('checked', present ? hlts.home : false)
+    cont.find('button[data-type="unhighlight"]').toggle(present)
   },
   bind: function () {
     var dialog = $('dialog [data-type="highlight"]')
@@ -46,6 +52,7 @@ js_dialog.callbacks.highlight = {
       gon.locales.forEach(function (d) {
         descriptions[d] = dialog.find('textarea[name="description_translations[' + d + ']"]').val()
       })
+      var home = dialog.find('input[type="checkbox"][name="home"]').prop('checked')
       $.ajax({
         url: gon.highlight_url,
         type: 'POST',
@@ -53,19 +60,23 @@ js_dialog.callbacks.highlight = {
         data: {
           highlight: {
             base_id: js.sid + chart_type,
-            description_translations: descriptions
+            description_translations: descriptions,
+            home: home
           }
         },
         success: function (data) {
-          // console.log(data)
+          console.log(data)
           var success = data.success
           flash(data.message, success ? 'success' : 'danger')
           if(success) {
-            js.cache[js.cache[js.sid]]["c" + chart_type].highlight = descriptions
+            js.cache[js.cache[js.sid]]["c" + chart_type].highlight = {
+              description: descriptions,
+              home: home
+            }
           }
           $('.highlight[data-id="' + js.sid + chart_type + '"]')
-            .attr('title', success ? gon.labels.update_or_unhighlight : gon.labels.highlight)
-            .toggleClass('highlighted', success)
+            .attr('title', success ? gon.labels.update_or_remove_highlight : gon.labels.highlight)
+            .toggleClass('highlighted', success).toggleClass('onhome', success && home)
         },
         complete: function () {
           js_dialog.close();
@@ -86,7 +97,9 @@ js_dialog.callbacks.highlight = {
           // console.log('destroy', data)
           // console.log(js.sid, chart_type, js.cache[js.cache[js.sid]]["c" + chart_type])
           js.cache[js.cache[js.sid]]["c" + chart_type].highlight = null
-          $('.highlight[data-id="' + js.sid + chart_type + '"]').attr('title', success ? gon.labels.highlight : gon.labels.update_or_unhighlight).toggleClass('highlighted', !success)
+          $('.highlight[data-id="' + js.sid + chart_type + '"]')
+            .attr('title', success ? gon.labels.highlight : gon.labels.update_or_remove_highlight)
+            .toggleClass('highlighted', !success).removeClass('onhome')
         },
         complete: function () {
           js_dialog.close();
@@ -103,14 +116,19 @@ js_dialog.callbacks.highlights = {
     var tp = hid.slice(hid.length-1, hid.length);
     var hlts = gon.highlights_data.filter(function(f) {
       return f.sid === sid && f.tp === tp
-    })[0].description
-    var unhighlight = cont.find('button[data-type="unhighlight"]')
+    })[0]
+    console.log(hlts)
     var present = hlts !== null
     cont.find('button[data-type]').attr('data-hid', hid)
     gon.locales.forEach(function (d) {
-      cont.find('textarea[name="description_translations[' + d + ']"]').val(present ? hlts[d] : null)
+      cont.find('textarea[name="description_translations[' + d + ']"]').val(present ? hlts.description[d] : null)
     })
-    unhighlight.toggle(present)
+    cont.find('button[data-type="unhighlight"]').toggle(present)
+
+
+    cont.find('input[type="checkbox"][name="home"]').prop('checked', present ? hlts.home : false)
+
+    cont.find('button[data-type="unhighlight"]').toggle(present)
   },
   bind: function () {
     var dialog = $('dialog [data-type="highlights"]')
@@ -124,6 +142,9 @@ js_dialog.callbacks.highlights = {
       gon.locales.forEach(function (d) {
         descriptions[d] = dialog.find('textarea[name="description_translations[' + d + ']"]').val()
       })
+      var home = dialog.find('input[type="checkbox"][name="home"]').prop('checked')
+
+
       $.ajax({
         url: gon.highlight_url,
         type: 'POST',
@@ -131,7 +152,8 @@ js_dialog.callbacks.highlights = {
         data: {
           highlight: {
             base_id: hid,
-            description_translations: descriptions
+            description_translations: descriptions,
+            home: home
           }
         },
         success: function (data) {
@@ -142,14 +164,17 @@ js_dialog.callbacks.highlights = {
             // console.log( gon.highlights_data.filter(function(f) {
             //       return f.sid === sid && f.tp === chart_type
             //     })[0])
-            gon.highlights_data.filter(function(f) {
+            var tmp = gon.highlights_data.filter(function(f) {
                   return f.sid === sid && f.tp === chart_type
-                })[0].description = descriptions
+                })[0]
 
+            tmp.home = home
+            tmp.description = descriptions
+            $('.highlight-item[data-id="' + hid + '"] .description span').text(descriptions[gon.locale])
           }
           $('.highlight[data-id="' + hid + '"]')
-            .attr('title', success ? gon.labels.update_or_unhighlight : gon.labels.highlight)
-            .toggleClass('highlighted', success)
+            .attr('title', success ? gon.labels.update_or_remove_highlight : gon.labels.highlight)
+            .toggleClass('highlighted', success).toggleClass('onhome', success && home)
         },
         complete: function () {
           js_dialog.close();
@@ -170,14 +195,15 @@ js_dialog.callbacks.highlights = {
           var success = data.success
           flash(data.message, success ? 'success' : 'danger')
           // console.log(data, gon.highlights_data)
-          gon.highlights_data.filter(function(f) {
-                return f.sid === sid && f.tp === chart_type
-              })[0].description = null
-
+          var tmp = gon.highlights_data.filter(function(f) {
+            return f.sid === sid && f.tp === chart_type
+          })[0]
+          tmp.home = false
+          tmp.description = null
 
           $('.highlight[data-id="' + hid + '"]')
-            .attr('title', success ? gon.labels.highlight : gon.labels.update_or_unhighlight)
-            .toggleClass('highlighted', !success)
+            .attr('title', success ? gon.labels.highlight : gon.labels.update_or_remove_highlight)
+            .toggleClass('highlighted', !success).removeClass('onhome')
         },
         complete: function () {
           js_dialog.close();
@@ -186,3 +212,9 @@ js_dialog.callbacks.highlights = {
     });
   }
 }
+
+
+
+
+
+

@@ -38,6 +38,6 @@ class Admin::HighlightsController < AdminController
 
   private
     def strong_params
-      params.require(:highlight).permit(:base_id, :locale, description_translations: [:ka, :en, :ru])
+      params.require(:highlight).permit(:base_id, :locale, :home, description_translations: [:ka, :en, :ru])
     end
 end

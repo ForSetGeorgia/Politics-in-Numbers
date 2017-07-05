@@ -1,6 +1,7 @@
 en:
   admin:
     index:
+      title: Admin Section
       parties: Parties
       datasets: Datasets
       donorsets: Donors Lists

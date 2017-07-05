@@ -4,7 +4,8 @@
 
 
 $(document).ready(function (){
-  function bar_chart (chart, resource, bg) {
+  function bar_chart (chart, resource, bg, sid) {
+    // console.log(resource, chart)
     chart.highcharts({
       chart: {
         type: "bar",
@@ -28,13 +29,14 @@ $(document).ready(function (){
         }
       },
       title: {
-        text: resource.title,
+        text: '<a href="' + gon.explore_url + '/' + sid + '">' + resource.title + '</a>',
         style: {
           color: "#5d675b",
           fontSize:"18px",
           fontFamily: "firasans_r",
           textShadow: "none"
-        }
+        },
+        useHTML: true
       },
       subtitle: {
         text: resource.subtitle,
@@ -105,7 +107,15 @@ $(document).ready(function (){
     });
   }
 
-  function grouped_advanced_column_chart (chart, resource, bg) {
+  function grouped_advanced_column_chart (chart, resource, bg, sid) {
+    var cat_ln = resource.categories.length
+
+    var title = resource.title
+    if(title.length > 100) {
+      title = title.slice(0,100) + ' ...'
+    }
+
+    var title =
     chart.highcharts({
       chart: {
         type: "column",
@@ -119,7 +129,7 @@ $(document).ready(function (){
         }
       },
       title: {
-        text: resource.title,
+        text: '<a href="' + gon.explore_url + '/' + sid + '" title="' + resource.title + '">' + title + '</a>',
         margin: 40,
         style: {
           fontFamily:"firasans_r",
@@ -138,7 +148,7 @@ $(document).ready(function (){
         lineColor: "#5D675B",
         tickWidth: 1,
         tickColor: "#5D675B",
-
+        tickInterval: cat_ln > 8 ? 2 : 1,
         labels: {
           style: {
             color: "#5d675b",
@@ -147,7 +157,8 @@ $(document).ready(function (){
             textShadow: "none"
           },
           //useHTML: true,
-          step:1
+          step:1,
+          rotation: cat_ln > 8 ? 45 : 0
         }
       },
       yAxis: [
@@ -236,12 +247,12 @@ $(document).ready(function (){
         chart = $('.highlight-item[data-id="' + d.sid + d.tp + '"] .chart')
         if(d.is_donation) {
           if(d.tp === "a" || d.tp === "b") {
-            bar_chart(chart, d.chart["c" + d.tp], (d.tp === "a" ? "#EBE187" : "#B8E8AD"));
+            bar_chart(chart, d.chart["c" + d.tp], (d.tp === "a" ? "#EBE187" : "#B8E8AD"), d.sid);
           }
         }
         else {
           if(d.tp === "a") {
-            grouped_advanced_column_chart(chart, d.chart.ca, "#fff");
+            grouped_advanced_column_chart(chart, d.chart.ca, "#fff", d.sid);
           }
         }
       })

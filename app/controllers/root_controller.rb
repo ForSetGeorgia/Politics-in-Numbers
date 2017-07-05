@@ -12,8 +12,9 @@ class RootController < ApplicationController
     categories = Category.non_virtual.only_sym
     @main_categories = {}
     categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s }
-    @highlights = Highlight.sort.limit(3)
+    @highlights = Highlight.sort.home.limit(3)
     set_gon_highlights(@highlights)
+    gon.explore_url = explore_path
   end
 
   def explore
@@ -119,8 +120,9 @@ class RootController < ApplicationController
         gon.highlight_url = admin_highlights_path
         gon.labels = {
           highlight: t('shared.common.highlight_chart'),
-          update_or_unhighlight: t('shared.common.update_or_unhighlight_chart')
+          update_or_remove_highlight: t('shared.common.update_or_remove_highlight')
         }
+        gon.locale = I18n.locale
         gon.locales = I18n.available_locales
         gon.donation_data[:ca][:highlight] = Highlight.sid_highlighted?("#{dsid}a")
         gon.donation_data[:cb][:highlight] = Highlight.sid_highlighted?("#{dsid}b")
@@ -238,15 +240,17 @@ class RootController < ApplicationController
 
   def highlights
     @show_page_title = false
-    @highlights = Highlight.sort.page(params[:page]).per(10)
+    @highlights = Highlight.sort.page(params[:page]).per(9)
     set_gon_highlights(@highlights)
 
     if can? :create, Highlight
       gon.highlight_url = admin_highlights_path
+      gon.explore_url = explore_path
+      gon.locale = I18n.locale
       gon.locales = I18n.available_locales
       gon.labels = {
         highlight: t('shared.common.highlight_chart'),
-        update_or_unhighlight: t('shared.common.update_or_unhighlight_chart')
+        update_or_remove_highlight: t('shared.common.update_or_remove_highlight')
       }
     end
 
@@ -556,7 +560,8 @@ class RootController < ApplicationController
                 is_donation: is_donation,
                 chart: (is_donation ? Donor : Dataset).explore(shr.pars, "co" + chart_type, true),
                 tp: chart_type,
-                description: highlight.description_translations })
+                description: highlight.description_translations,
+                home: highlight.home })
             end
           end
         end

@@ -61,15 +61,15 @@ Rails.application.configure do
     address: 'localhost',
     port: 1025
   }
-  config.middleware.use ExceptionNotification::Rack,
+  config.middleware.use ExceptionNotification::Rack#,
   #   :email => {
   #     :email_prefix => "[PREFIX] ",
   #     :sender_address => %{"notifier" <notifier@example.com>},
   #     :exception_recipients => %w{exceptions@example.com}
   # },
-  :editor => {
-    :editor => "subl",
-    :on => true,
-    :timeout => 6000
-  }
+  # :editor => {
+  #   :editor => "subl",
+  #   :on => true,
+  #   :timeout => 6000
+  # }
 end

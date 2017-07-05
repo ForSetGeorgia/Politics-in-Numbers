@@ -18,7 +18,12 @@
       background-color: #ffffff;
       max-width: 420px;
       // padding: 30px 30px 26px;
-
+      .highcharts-title {
+        a {
+          font: 18px firasans_r;
+          color: #5d675b;
+        }
+      }
     }
   }
 }

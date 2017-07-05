@@ -737,6 +737,12 @@
                     background-size: 24px 21px;
                   }
                 }
+                &.onhome {
+                  i {
+                    background:transparent url("<%= asset_path('highlight_home.svg') %>") no-repeat top left;
+                    background-size: 24px 21px;
+                  }
+                }
               }
             }
           }
@@ -1377,6 +1383,11 @@
             background:transparent url("<%= asset_path('highlight_a.svg') %>") no-repeat;
             background-size: 24px 21px;
           }
+          &.onhome i {
+            background:transparent url("<%= asset_path('highlight_home.svg') %>") no-repeat top left;
+            background-size: 24px 21px;
+          }
+
         }
 
         .share {

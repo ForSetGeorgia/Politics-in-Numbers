@@ -59,7 +59,7 @@ en:
       lari: Lari
       na: "n/a"
       highlight_chart: Highlight chart
-      update_or_unhighlight_chart: Update or unhighlight chart
+      update_or_remove_highlight: Update or remove highlight
     locale:
       short:
         en: En
@@ -165,8 +165,10 @@ en:
         share_chart: "Share chart:"
       highlight:
         caption: Highlight
-        description: 'Enter description:'
+        intro: Use the textbox below to give context to the chart (optional)
+        description: 'Enter description'
         unhighlight: Unhighlight
+        show_on_home: Show on home page
   notifier:
     job:
       donorset_file_process:
