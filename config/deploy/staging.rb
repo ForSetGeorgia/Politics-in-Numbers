@@ -7,4 +7,3 @@ set :branch, 'highlight'
 set :web_url, 'dev-pin.jumpstart.ge'
 set :visible_to_robots, false
 set :use_ssl, true
-ForSetGeorgia
