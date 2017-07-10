@@ -18,6 +18,7 @@ class RootController < ApplicationController
 
 
     @default_parties = Party.where(:tmp_id.in => [1,2,10]).map{|m| m.permalink }
+    @default_periods: Period.annual.limit(3).map{|m| m.permalink }
   end
 
   def explore
