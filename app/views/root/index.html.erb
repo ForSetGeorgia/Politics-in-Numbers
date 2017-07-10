@@ -24,32 +24,32 @@
               <button type="button" id="finance_toggle" class="finance-toggle" tabindex="4"  data-link="<%= explore_path(filter: 'finance', :'income[]' => @main_categories[:income]) %>"><%= t('shared.filters.party_finances').html_safe %></button><ul id="finance_category" >
                 <li>
                   <div class="finance-category-toggle" data-state="" data-cat="income">
-                    <%= link_to t('shared.filters.income').upcase, explore_path(filter: 'finance', :'income[]' => @main_categories[:income]), class: 'label', tabindex: '4' %>
+                    <%= link_to t('shared.filters.income').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', income: [@main_categories[:income]], party: @default_parties})), class: 'label', tabindex: '4' %>
                   </div>
                 </li>
                 <li>
                   <div class="finance-category-toggle" data-state="" data-cat="expenses">
-                    <%= link_to t('shared.filters.expenses').upcase, explore_path(filter: 'finance', :'expenses[]' => @main_categories[:expenses]), class: 'label', tabindex: '4' %>
+                    <%= link_to t('shared.filters.expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', expenses: [@main_categories[:expenses]], party: @default_parties})), class: 'label', tabindex: '4' %>
                   </div>
                 </li>
                 <li>
                   <div class="finance-category-toggle" data-state="simple" data-cat="reform_expenses">
-                    <%= link_to t('shared.filters.reform_expenses').html_safe, explore_path(filter: 'finance', :'reform_expenses[]' => @main_categories[:reform_expenses]), class: 'label long', tabindex: '4' %>
+                    <%= link_to t('shared.filters.reform_expenses').html_safe, explore_path(id: ShortUri.explore_uri({filter: 'finance', reform_expenses: [@main_categories[:reform_expenses]], party: @default_parties})), class: 'label long', tabindex: '4' %>
                   </div>
                 </li>
                 <li>
                   <div class="finance-category-toggle" data-state="simple" data-cat="property_assets">
-                    <%= link_to t('shared.filters.property_assets').html_safe, explore_path(filter: 'finance', :'property_assets[]' => @main_categories[:property_assets]), class: 'label long', tabindex: '4' %>
+                    <%= link_to t('shared.filters.property_assets').html_safe, explore_path(id: ShortUri.explore_uri({filter: 'finance', property_assets: [@main_categories[:property_assets]], party: @default_parties})), class: 'label long', tabindex: '4' %>
                   </div>
                 </li>
                 <li>
                   <div class="finance-category-toggle" data-state="simple" data-cat="financial_assets">
-                    <%= link_to t('shared.filters.financial_assets').html_safe, explore_path(filter: 'finance', :'financial_assets[]' => @main_categories[:financial_assets]), class: 'label long', tabindex: '4' %>
+                    <%= link_to t('shared.filters.financial_assets').html_safe, explore_path(id: ShortUri.explore_uri({filter: 'finance', financial_assets: [@main_categories[:financial_assets]], party: @default_parties})), class: 'label long', tabindex: '4' %>
                   </div>
                 </li>
                 <li>
                   <div class="finance-category-toggle" data-state="simple" data-cat="debts">
-                    <%= link_to t('shared.filters.debts').html_safe, explore_path(filter: 'finance', :'debts[]' => @main_categories[:debts]), class: 'label', tabindex: '4' %>
+                    <%= link_to t('shared.filters.debts').html_safe, explore_path(id: ShortUri.explore_uri({filter: 'finance', debts: [@main_categories[:debts]], party: @default_parties})), class: 'label', tabindex: '4' %>
                   </div>
                 </li>
               </ul>

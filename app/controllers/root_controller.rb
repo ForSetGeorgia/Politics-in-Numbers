@@ -15,6 +15,9 @@ class RootController < ApplicationController
     @highlights = Highlight.sort.home.limit(3)
     set_gon_highlights(@highlights)
     gon.explore_url = explore_path
+
+
+    @default_parties = Party.where(:tmp_id.in => [1,2,10]).map{|m| m.permalink }
   end
 
   def explore
