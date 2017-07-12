@@ -15,7 +15,7 @@ class Party
   field :tmp_id, type: Integer
   field :type, type: Integer, default: 0 # 0 - party, 1 - initiative
   field :member, type: Boolean, default: false
-
+  field :leader, type: String, localize: true
 #slug
   slug :title, history: true, localize: true
 
@@ -119,6 +119,13 @@ class Party
     Party.or({ name: party_name }, { title: party_name }).first
   end
 
+  def get_range
+    "2017 - 2019"
+  end
+
+  def get_total(type)
+    350000
+  end
 #field helpers
   def self.is_initiative(party_name)
     patterns = [

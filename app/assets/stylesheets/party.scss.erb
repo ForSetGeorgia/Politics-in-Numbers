@@ -1,0 +1,117 @@
+/* pinterest column layout taken from here: https://codepen.io/dudleystorey/pen/yqrhw */;
+$col-width: 700px;
+
+.media-items {
+  -webkit-column-width: $col-width;
+  -moz-column-width: $col-width;
+  column-width: $col-width;
+  -webkit-column-gap: 15px;
+  -moz-column-gap: 15px;
+  column-gap: 15px;
+  max-width: 2500px;
+
+  .media-item{
+    border-bottom: dashed 1px #2F332F;
+    width: $col-width;
+    margin: 0 0 25px;
+    padding-bottom: 10px;
+    display: inline-block;
+    column-break-inside: avoid;
+
+    h2{
+      padding:0px 60px 10px 0;
+      font:28px firasans_b;
+      color:#2F332F;
+    }
+    .media-item-text{
+      font-family: firasans_l;
+      line-height: 1.4;
+      .media-item-label{
+        color:#F78E69;
+        font-family: firasans_sb;
+      }
+    }
+
+    .media-item-image{
+      margin: 15px 0;
+      img{
+        width: 100%;
+      }
+    }
+    .media-item-embed{
+      margin: 15px 0;
+    }
+    .media-item-description{
+      margin: 15px 0;
+      font-family: firasans_l;
+/*      .media-item-description-container{
+        overflow: hidden;
+        transition: all 0.3s;
+        margin-bottom: 10px;
+        &.read-less{
+          height: 60px !important;
+        }
+      }
+*/      p{
+        line-height: 1.4;
+        margin-bottom: 10px;
+      }
+    }
+    .media-item-link{
+      margin: 25px 0;
+    }
+  }
+}
+
+@media screen and (max-width: 1500px) {
+  .media-items{
+    -webkit-column-width: 600px;
+    -moz-column-width: 600px;
+    column-width: 600px;
+
+    .media-item{
+      width: 600px;
+    }
+  }
+}
+
+@media screen and (max-width: 1350px) {
+  .media-items{
+    -webkit-column-width: 500px;
+    -moz-column-width: 500px;
+    column-width: 500px;
+
+    .media-item{
+      width: 500px;
+    }
+  }
+}
+
+@media screen and (max-width: 1125px) {
+  .media-items{
+    -webkit-column-width: 400px;
+    -moz-column-width: 400px;
+    column-width: 400px;
+
+    .media-item{
+      width: 400px;
+    }
+  }
+}
+
+@media screen and (max-width: 925px) {
+  .media-items{
+    -webkit-column-width: 100%;
+    -moz-column-width: 100%;
+    column-width: 100%;
+
+    .media-item{
+      width: 100%;
+    }
+  }
+}
+
+
+nav.pagination{
+  text-align: right;
+}

@@ -1,0 +1,52 @@
+Profile detail page
+- party name
+- leader
+- summary
+- time range
+
+- block for each of the party finances with chart and total value as big number
+- for donations, show both charts and total donations
+- each chart should include the embed/donation options
+- each block should include link to go to the explore page for that data
+- page will have filter similar to explore page with party and time fields
+- by default all year time fields are selected
+
+<%
+  page_title t('.title')
+  label_key = "mongoid.attributes.party."
+%>
+<% if @item.present? %>
+  <div id="party">
+    <div class="info">
+      <div class='caption'><%= @item.title %></div>
+      <div>
+        <label><%= t(label_key + 'leader') %>:</label>
+        <div><%= "@item.leader" %></div>
+      </div>
+      <div><%= "2017-2018"  %></div>
+      <div><%= @item.description %></div>
+    </div>
+    <div class="content">
+      <div class="filter"></div>
+      <div class="result">
+        <div class='donations'>Donations</div>
+        <div class='finances'>Finances
+        <% @main_categories.each{|category| %>
+          <%= category %>
+        <% } %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <p class="empty-page">
+    <%= t('.no_party') %>
+  </p>
+<% end %>
+
+
+<% @custom_js = ["party"] %>
+<% content_for :custom_css, "party" %>
+
+
+

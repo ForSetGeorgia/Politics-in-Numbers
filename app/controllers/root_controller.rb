@@ -257,8 +257,21 @@ class RootController < ApplicationController
         update_or_remove_highlight: t('shared.common.update_or_remove_highlight')
       }
     end
+  end
 
+  def parties
+    @show_page_title = false
+    @items = Party.sorted.page(params[:page]).per(10)
+    @items.each {|item| item.leader = 'George Ivanishvili'; item.save }
+  end
 
+  def party
+    @show_page_title = false
+    @item = Party.find(params[:id])
+
+   categories = Category.non_virtual.only_sym
+    @main_categories = {}
+    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s }
   end
 
   def embed_static
