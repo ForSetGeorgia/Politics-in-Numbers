@@ -127,3 +127,19 @@ ka:
         property_assets: კატეგორიის არჩევა
         financial_assets: კატეგორიის არჩევა
         debts: კატეგორიის არჩევა
+    party:
+      title: Explore
+      filters: Filters
+      filter_toggle: Toggle to add new filtering option
+      filter_close: Close Filter Window
+      time: Time
+      annual: Annual
+      campaign: Campaign
+      reset: RESET
+      explore: EXPLORE
+      loader_missing_category: Please select a Party Finance type at the top.
+    parties:
+      income: Income
+      expenses: Expenses
+      donations: Donations
+      no_parties: No parties have been recorded yet.

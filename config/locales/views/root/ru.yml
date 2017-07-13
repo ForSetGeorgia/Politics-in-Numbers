@@ -127,3 +127,19 @@ ru:
         property_assets: Select category
         financial_assets: Select category
         debts: Select category
+    party:
+      title: Explore
+      filters: Filters
+      filter_toggle: Toggle to add new filtering option
+      filter_close: Close Filter Window
+      time: Time
+      annual: Annual
+      campaign: Campaign
+      reset: RESET
+      explore: EXPLORE
+      loader_missing_category: Please select a Party Finance type at the top.
+    parties:
+      income: Income
+      expenses: Expenses
+      donations: Donations
+      no_parties: No parties have been recorded yet.

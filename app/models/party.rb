@@ -120,11 +120,18 @@ class Party
   end
 
   def get_range
-    "2017 - 2019"
+    Dataset.period_for_party(self.id)
   end
 
   def get_total(type)
-    350000
+     # Rails.logger.debug("--------------------------------------------#{type} #{self.id}")
+    total = 0
+    if type == :donations
+      total = Donor.total_donations_for_party(self.id)
+    elsif [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ].index(type).present?
+      total = Dataset.total_for_party_by_category(self.id, type)
+    end
+    total
   end
 #field helpers
   def self.is_initiative(party_name)
@@ -163,6 +170,10 @@ class Party
 
   def self.type_is(tp)
     TYPES.index(tp.to_sym)
+  end
+
+  def donations
+
   end
 
 end

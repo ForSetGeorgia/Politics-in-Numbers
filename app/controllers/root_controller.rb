@@ -261,17 +261,22 @@ class RootController < ApplicationController
 
   def parties
     @show_page_title = false
-    @items = Party.sorted.page(params[:page]).per(10)
-    @items.each {|item| item.leader = 'George Ivanishvili'; item.save }
+    @items = Party.only_parties.members.sorted.page(params[:page]).per(10)
+     # Rails.logger.debug("--------------------------------------------#{@items.to_a.inspect}")
+    # @items.each {|item| item.leader = 'George Ivanishvili'; item.save }
   end
 
   def party
     @show_page_title = false
     @item = Party.find(params[:id])
 
-   categories = Category.non_virtual.only_sym
+    categories = Category.non_virtual.only_sym
     @main_categories = {}
-    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s }
+    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
+     Rails.logger.debug("--------------------------------------------#{@main_categories}")
+
+    @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true, m.type] }
+    gon.party_list = Party.list_from(@party_list)
   end
 
   def embed_static

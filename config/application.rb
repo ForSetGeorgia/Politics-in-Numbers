@@ -56,6 +56,7 @@ module StarterTemplate
     # end
     # config.log_level = :fatal
     #config.mongoid.logger = nil #Logger.new($stdout, :info)
+    Mongo::Logger.logger.level = ::Logger::FATAL
     config.middleware.use Rack::Deflater
   end
 end

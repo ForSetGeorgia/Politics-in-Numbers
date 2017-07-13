@@ -577,6 +577,46 @@ class Dataset
     end
   end
 
+  def self.total_for_party_by_category(party_id, category)
+    c = Category.where(sym: category).first
+    r = collection.aggregate([
+      { "$match": { 'party_id': party_id } },
+      { "$unwind": '$category_datas' },
+      { "$match": { 'category_datas.category_id': c.id } },
+      { "$group": {
+          "_id": nil,
+          "total": { "$sum": "$category_datas.value" }
+        }
+      }
+    ])
+    r.to_a.size > 0 ? ActionController::Base.helpers.number_with_precision(r.first[:total].round) : 0
+  end
+
+  def self.period_for_party(party_id)
+    p = Period.annual.pluck(:id)
+    r = collection.aggregate([
+      { "$match":
+        { "$and":
+          [
+            { 'party_id': party_id },
+            { "period_id": { "$in": p } }
+          ]
+        }
+      },
+      { "$group": {
+          "_id": "$period_id"
+        }
+      }
+    ])
+    period = I18n.t('shared.common.na')
+    if r.to_a.size > 0
+      r = r.map{|m| Period.find(m[:_id]).start_date.year }.sort
+      period = "#{r[0]} - #{r.length > 1 ? r[1] : I18n.t('shared.common.na')}"
+    end
+
+    period
+  end
+
   private
 
     def prune_share_images

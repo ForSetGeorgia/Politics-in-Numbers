@@ -33,6 +33,7 @@ en:
         color: Color for charts
         name: Original name
         member: Member of main Party list
+        leader: Current Leader
       period:
         title: Title
         title_translations: Title

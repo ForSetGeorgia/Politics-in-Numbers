@@ -1,39 +1,160 @@
-Profile detail page
-- party name
-- leader
-- summary
-- time range
-
-- block for each of the party finances with chart and total value as big number
-- for donations, show both charts and total donations
-- each chart should include the embed/donation options
-- each block should include link to go to the explore page for that data
-- page will have filter similar to explore page with party and time fields
-- by default all year time fields are selected
-
 <%
   page_title t('.title')
   label_key = "mongoid.attributes.party."
 %>
 <% if @item.present? %>
   <div id="party">
-    <div class="info">
-      <div class='caption'><%= @item.title %></div>
-      <div>
-        <label><%= t(label_key + 'leader') %>:</label>
-        <div><%= "@item.leader" %></div>
-      </div>
-      <div><%= "2017-2018"  %></div>
-      <div><%= @item.description %></div>
-    </div>
     <div class="content">
-      <div class="filter"></div>
+      <div class="filter">
+        <div class="filter-toggle"><i class="filter-icon" title="<%= t('.filters') %>"></i><%= t('.filters') %></div>
+        <div class="pane">
+          <div class="filter-header">
+            <label><i class="filter" title="<%= t('.filters') %>"></i><%= t('.filters') %></label>
+            <i class="close" title="<%= t('.filter_close') %>"></i>
+          </div>
+          <div class="finance filter-inputs">
+            <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "party", on: true,
+              list: generate_li_list(@party_list.select{|s| s[3] == true }) , category_label: 0 } %>
+            <div class="row filter-input" data-field="period" data-type="period_mix">
+              <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time') %><i title="<%= t('.filter_toggle') %>"></i></a>
+              <ul id="finance_period" class="list" data-type="period_mix"></ul>
+              <div class="input-group">
+                <div class="input-radio-group">
+                  <input type="radio" id="finance_period_annual" name="finance_period" value="annual" data-type="period_mix" checked>
+                  <label for="finance_period_annual" data-type="annual"><%= t('.annual') %></label>
+                  <span class="or"><%= t('shared.common.or') %></span>
+                  <input type="radio" id="finance_period_campaign" name="finance_period" value="campaign" data-type="period_mix">
+                  <label for="finance_period_campaign" data-type="campaign"><%= t('.campaign') %></label>
+                </div>
+                <div class="input-checkbox-group">
+                  <ul data-type="annual">
+                    <% Period.annual.each{|e| %>
+                      <li><input type="checkbox" id='finance_period_annual_<%= "#{e.permalink}" %>' name='finance_period_annual' value="<%= "#{e.permalink}" %>">
+                      <label for='finance_period_annual_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
+                    <% } %>
+                  </ul>
+                  <ul class="hidden" data-type="campaign">
+                    <% period_campaigns = Period.campaigns.to_a %>
+                    <% period_campaigns.each{|e| %>
+                      <li><input type="checkbox" id='finance_period_campaign_<%= "#{e.permalink}" %>' name='finance_period_campaign' value="<%= "#{e.permalink}" %>">
+                      <label for='finance_period_campaign_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
+                    <% } %>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+          </div>
+          <div class="filter-footer">
+            <button id="reset" class="reset"><%= t('.reset') %></button>
+            <button id="explore_button" class="explore-button"><i class='explore'></i><%= t('.explore') %></button>
+          </div>
+        </div>
+      </div>
       <div class="result">
-        <div class='donations'>Donations</div>
-        <div class='finances'>Finances
-        <% @main_categories.each{|category| %>
-          <%= category %>
-        <% } %>
+        <div class="view-loader hidden" data-type="circle">
+          <div class="circle"></div>
+          <div class="message"><%= t('.loader_missing_category') %></div>
+        </div>
+        <div class="result-container">
+          <div class="info">
+            <div class="row">
+              <div class="column">
+                <div class="caption">
+                  <div><%= @item.title %></div>
+                </div>
+                <% if @item.leader.present? %>
+                  <div class="leader">
+                    <label><%= t(label_key + 'leader') %>:</label>
+                    <span><%= @item.leader %></span>
+                  </div>
+                <% end %>
+              </div>
+              <div class="column">
+                <div class="range"><%= @item.get_range %></div>
+              </div>
+            </div>
+            <div class="description"><%= @item.description %> <%= lorem[0..(rand(150..400))] %></div>
+          </div>
+          <div class="panes" >
+            <div class="pane" data-type="donation">
+              <h2>Donations</h2>
+              <div class="total-donation">
+                <label><%= t('.donations') %>:</label>
+                <span><%= @item.get_total(:donations) %></span>
+              </div>
+              <div class="charts">
+                <div class="chart-container">
+                  <div class="actions">
+                    <div class="share" data-dialog="share;a" data-share-title="donation_chart_1" title="<%= t('.share_chart') %>"><i></i></div>
+                    <div class="embed" data-dialog="embed;a" title="<%= t('.embed_chart') %>"><i></i></div>
+                    <div class="download download_menu" title="<%= t('.download_chart') %>">
+                      <i></i>
+                      <ul class="chart_download" data-chart="da">
+                        <li><a href="javascript:void(0);" data-type="print"><%= t('.export_type.print') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="pdf"><%= t('.export_type.pdf') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="svg"><%= t('.export_type.svg') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="jpeg"><%= t('.export_type.jpeg') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="png"><%= t('.export_type.png') %></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div id="donation_chart_1"></div>
+                </div>
+                <div class="chart-container">
+                  <div class="actions">
+                    <div class="share" data-dialog="share;b" data-share-title="donation_chart_2" title="<%= t('.share_chart') %>"><i></i></div>
+                    <div class="embed" data-dialog="embed;b" title="<%= t('.embed_chart') %>"><i></i></div>
+                    <div class="download download_menu" title="<%= t('.download_chart') %>">
+                      <i></i>
+                      <ul class="chart_download" data-chart="db">
+                        <li><a href="javascript:void(0);" data-type="print"><%= t('.export_type.print') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="pdf"><%= t('.export_type.pdf') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="svg"><%= t('.export_type.svg') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="jpeg"><%= t('.export_type.jpeg') %></a></li>
+                        <li><a href="javascript:void(0);" data-type="png"><%= t('.export_type.png') %></a></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <div id="donation_chart_2"></div>
+                </div>
+              </div>
+            </div>
+            <div class="pane" data-type="finance">
+              <h2>Finances</h2>
+              <% @main_categories.each{|category| %>
+                <div class="category-container" data-type="<%= category[0] %>">
+                  <div class="total">
+                    <label><%= t(".#{category[0]}") %>:</label>
+                    <span><%= @item.get_total(category[0]) %></span>
+                  </div>
+                  <div class="chart-container">
+                    <div class="actions">
+                      <div class="share" data-dialog="share;a" data-share-title="finance_chart" title="<%= t('.share_chart') %>" data-only="chart"><i></i>
+                          <div class="addthis_sharing_toolbox"></div>
+                      </div>
+                      <div class="embed" data-dialog="embed;a" data-only="chart" title="<%= t('.embed_chart') %>"><i></i></div>
+                      <div class="download">
+                        <a href='<%= "#{@finance_download_link}" %>' id="finance_csv_download" data-only="table" title="<%= t('.export_type.csv') %>"><i></i></a>
+                        <div class="download_menu" data-only="chart" title="<%= t('.download_chart') %>">
+                          <i></i>
+                          <ul class="chart_download" data-chart="fa">
+                            <li><a href="javascript:void(0);" data-type="print"><%= t('.export_type.print') %></a></li>
+                            <li><a href="javascript:void(0);" data-type="pdf"><%= t('.export_type.pdf') %></a></li>
+                            <li><a href="javascript:void(0);" data-type="svg"><%= t('.export_type.svg') %></a></li>
+                            <li><a href="javascript:void(0);" data-type="jpeg"><%= t('.export_type.jpeg') %></a></li>
+                            <li><a href="javascript:void(0);" data-type="png"><%= t('.export_type.png') %></a></li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="finance_chart_<%= category[0] %>"></div>
+                  </div>
+                </div>
+              <% } %>
+            </div>
+          </div>
+          <div class="not-found hidden"><%= t('shared.msgs.data_not_found') %></div>
         </div>
       </div>
     </div>
@@ -48,5 +169,17 @@ Profile detail page
 <% @custom_js = ["party"] %>
 <% content_for :custom_css, "party" %>
 
+<!--
+Profile detail page
+- party name
+- leader
+- summary
+- time range
 
-
+- block for each of the party finances with chart and total value as big number
+- for donations, show both charts and total donations
+- each chart should include the embed/donation options
+- each block should include link to go to the explore page for that data
+- page will have filter similar to explore page with party and time fields
+- by default all year time fields are selected
+ -->
