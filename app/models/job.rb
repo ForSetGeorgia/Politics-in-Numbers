@@ -243,50 +243,53 @@ class Job
         headers_map = [
           ["N", "თარიღი", "ფიზიკური პირის სახელი", "ფიზიკური პირის გვარი", "ფიზიკური პირის პირადი N", "შემოწირ. თანხის ოდენობა", "პარტიის დასახელება", "შენიშვნა" ],
           ["N", "თარიღი", "სახელი/ სამართლებრივი ფორმა", "გვარი / იურიდიული პირის დასახელება", "პირადი ნომერი / საიდ. კოდი", "შემოწირ. თანხის ოდენობა", "პარტიის დასახელება", "შენიშვნა" ],
-          ["N", "თარიღი", "სახელი / სამ. ფორმა", "გვარი / დასახელება", "საიდ. კოდი / პირადი N", "თანხის ოდენობა", "პარტიის დასახელება", "შენიშვნა" ]
+          ["N", "თარიღი", "სახელი / სამ. ფორმა", "გვარი / დასახელება", "საიდ. კოდი / პირადი N", "თანხის ოდენობა", "პარტიის დასახელება", "შენიშვნა" ],
+          ["შემოწირულების მიმღები", "თარიღი", "სახელი, გვარი / დასახელება", "ნომერი / კოდი", "თანხა", "სამართლებრივი ფორმა", "შემოწირულების ტიპი"]
         ]
+
+        header_versions = [1,1,1,2]
+
+
         ln = headers_map[0].length
 
         workbook = RubyXL::Parser.parse(@donorset.source.path)
         worksheet = workbook[0]
         is_header = true
+        header_version = 1
         missing_parties = []
         st = Time.now
-        # raise Exception.new("some")
+
         worksheet.each_with_index { |row, row_i|
           if row && row.cells
-            cells = Array.new(ln, nil)
-            row.cells.each_with_index do |c, c_i|
+            cells = []
+            row.cells.each do |c|
               if c && c.value.present?
-                cells[c_i] = c.value.class != String ? c.value : c.value.to_s.strip
+                cells << (c.value.class != String ? c.value : c.value.to_s.strip)
               end
             end
+
             if is_header
-              is_header = false if headers_map.any?{|hm| hm == cells }
+              if headers_map.any?{|hm| hm == cells }
+                is_header = false
+                header_version = header_versions[headers_map.index(cells)]
+              end
             else
-              break if cells[1].nil?
-              party_name = Party.clean_name(cells[6])
-              p = Party.by_name(party_name, false)
+              obj = prepare_cells(cells, header_version)
+              break if obj.nil?
+
+              p = Party.by_name(obj[:party], false)
               if p.class != Party
-                p = Party.create!(name: [party_name], title_translations: { ka: party_name, en: party_name.latinize.soft_titleize, ru: party_name.latinize.soft_titleize }, description: "საინიციატივო ჯგუფი #{party_name}", tmp_id: -99, type: Party.type_is(:initiative))
+                p = Party.create!(name: [obj[:party]], title_translations: { ka: obj[:party], en: obj[:party].latinize.soft_titleize, ru: obj[:party].latinize.soft_titleize }, description: "საინიციატივო ჯგუფი #{obj[:party]}", tmp_id: -99, type: Party.type_is(:initiative))
                 missing_parties << p._id
               end
 
-              fname = cells[2]
-              lname = cells[3]
-              nature_value = cells[3].present? ? 0 : 1
-              comment = cells[7].present? ? cells[7] : ""
-              if comment.include?("იურიდიული პირის შემოწირულება")
-                nature_value = 1
-                fname = "#{fname} #{lname}"
-                lname = nil
-              end
 
-              donor = Donor.find_by( first_name: fname, last_name: lname, tin: cells[4])
+
+              donor = Donor.find_by( first_name: obj[:fname], last_name: obj[:lname], tin: obj[:tin])
               if !donor.present?
-                donor = Donor.create!( first_name_translations: { ka: fname, en: fname.latinize.soft_titleize }, last_name_translations: { ka: lname }.merge(lname.present? ? { en: lname.latinize.soft_titleize } : {}), tin: cells[4], nature: nature_value ) # individual or organization
+                donor = Donor.create!( first_name_translations: { ka: obj[:fname], en: obj[:fname].latinize.soft_titleize }, last_name_translations: { ka: obj[:lname] }.merge(obj[:lname].present? ? { en: obj[:lname].latinize.soft_titleize } : {}), tin: obj[:tin], nature: obj[:nature] ) # individual or organization
               end
-              donor.donations.create!(give_date: cells[1], amount: cells[5].round(2), party_id: p._id, comment: comment, monetary: !comment.include?("არაფულადი"), donorset_id: @donorset.id )
+              donor.donations.create!(give_date: obj[:date], amount: obj[:amount], party_id: p._id, comment: obj[:comment], monetary: !obj[:comment].include?("არაფულადი"), donorset_id: @donorset.id )
               # donor.save
             end
           end
@@ -314,8 +317,7 @@ class Job
       rescue Exception => e
         @donorset.destroy if @donorset.present?
         lg.info e.inspect
-        # puts "-------------------------------#{e.backtrace}"
-        Notifier.about_donorset_file_process(e.message, @user);
+        Notifier.about_donorset_file_process(e.inspect, @user);
       end
     end
     handle_asynchronously :_donorset_file_process, :priority => 1
@@ -333,6 +335,43 @@ class Job
         break if p.nil?
       }
       p
+    end
+    def prepare_cells(cells, version)
+      obj = {}
+      return nil if cells[1].nil?
+      if version == 1
+        obj[:date] = cells[1]
+        obj[:party] = Party.clean_name(cells[6])
+        obj[:fname] = cells[2]
+        obj[:lname] = cells[3]
+        obj[:nature] = cells[3].present? ? 0 : 1
+        obj[:tin] = cells[4]
+        obj[:amount] = cells[5].to_f.round(2)
+        obj[:comment] = cells[7].present? ? cells[7] : ""
+        if obj[:comment].include?("იურიდიული პირის შემოწირულება")
+          obj[:nature] = 1
+          obj[:fname] = "#{obj[:fname]} #{obj[:lname]}"
+          obj[:lname] = nil
+        end
+      else version == 2
+        obj[:date] = cells[1]
+        obj[:party] = Party.clean_name(cells[0])
+        obj[:nature] = cells[5] == 'ფიზიკური პირი' ? 0 : 1
+
+        if obj[:nature] == 0
+          tmp = cells[2].split(' ')
+          obj[:fname] = tmp[0]
+          obj[:lname] = tmp[1]
+        else
+          obj[:fname] = cells[2]
+          obj[:lname] = nil
+        end
+        obj[:tin] = cells[3]
+        obj[:amount] = cells[4].gsub(',', '').to_f.round(2)
+
+        obj[:comment] = cells[6].present? ? cells[6] : ""
+      end
+      return obj
     end
   end
 
