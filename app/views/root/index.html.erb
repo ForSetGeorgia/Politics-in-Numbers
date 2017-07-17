@@ -62,26 +62,28 @@
         <%= link_to t('.go_explore'), explore_path(filter: 'finance', :'income[]' => @main_categories[:income]) %>
       </div>
     </div>
-    <div class="home-highlights">
-      <div class="home-highlight-before-mask"></div>
-      <div class="home-highlight-mask">
-        <span><%= t('.highlights') %></span>
-        <i></i>
-      </div>
-      <div class="home-highlight-after-mask"></div>
-    </div>
-  </div>
-  <% if @highlights.present? %>
-
-    <div class="highlight-grid">
-      <% @highlights.each do |highlight| %>
-        <div class="highlight-item" data-id="<%= highlight.base_id %>">
-          <div class='description'><%= highlight.description %></div>
-          <div class='chart-container'><div class='chart'></div></div>
+    <% if false %>
+      <div class="home-highlights">
+        <div class="home-highlight-before-mask"></div>
+        <div class="home-highlight-mask">
+          <span><%= t('.highlights') %></span>
+          <i></i>
         </div>
-      <% end %>
+        <div class="home-highlight-after-mask"></div>
+      </div>
     </div>
-    <%= link_to t('.view_all_highlights'), highlights_path, class: 'highlights-all' %>
+    <% if @highlights.present? %>
+
+      <div class="highlight-grid">
+        <% @highlights.each do |highlight| %>
+          <div class="highlight-item" data-id="<%= highlight.base_id %>">
+            <div class='description'><%= highlight.description %></div>
+            <div class='chart-container'><div class='chart'></div></div>
+          </div>
+        <% end %>
+      </div>
+      <%= link_to t('.view_all_highlights'), highlights_path, class: 'highlights-all' %>
+    <% end %>
   <% end %>
 
 <% content_for :custom_js,  "home"  %>
