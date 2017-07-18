@@ -404,6 +404,7 @@
     }
   }
   .result {
+    width: 100%;
     .info {
       // border-bottom: dashed 1px #56675b;
       // margin: 0 0 42px;
@@ -474,6 +475,81 @@
         flex-direction: column;
         &:first-of-type {
           flex: 1;
+        }
+      }
+    }
+    .chart-container {
+      display:block;
+      width:100%;
+      min-width:300px;
+      padding:12px 6px 22px;
+      .actions {
+        text-align:center;
+        padding:0 0 18px;
+        > div
+        {
+          display:inline-block;
+          position:relative;
+          width:36px;
+          height:28px;
+          > i {
+            display:block;
+            width:24px;
+            height:21px;
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%, -50%);
+            background:transparent url("<%= asset_path('explore/actions.svg') %>") no-repeat top left;
+            &:hover, &:focus, &:active {
+              cursor:pointer;
+            }
+            margin:0px auto;
+          }
+        }
+        .share
+        {
+          i { background-position: 0px 0px; }
+          &:hover { background-position: 0px -22px; }
+        }
+        .embed
+        {
+          i { background-position: -25px 0px; }
+          &:hover i { background-position: -25px -22px; }
+        }
+        .download{
+          i { background-position: -49px 0px; }
+          &:hover i { background-position: -49px -22px; }
+        }
+      }
+      .actions .download_menu {
+        position:relative;
+        z-index:14;
+        ul {
+          display:none;
+        }
+        &:hover {
+          background-color:#fff;
+          border:1px dashed #aeb3ad;
+          ul {
+            display:block;
+            position:absolute;
+            top:100%;
+            right:0;
+            background-color:#fff;
+            border:1px dashed #aeb3ad;
+            li a {
+              white-space:nowrap;
+              display:block;
+              font: 14px firasans_l;
+              color: #5D675B;
+              padding:6px 10px;
+              text-align:left;
+              &:hover {
+                background-color: #F5F5F5;
+              }
+            }
+          }
         }
       }
     }

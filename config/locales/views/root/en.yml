@@ -130,6 +130,14 @@ en:
     party:
       title: Explore
       filters: Filters
+      donations: Party Donations
+      finances: Party Finances
+      income: Income
+      expenses: Expenses
+      reform_expenses: Reforms Fund Expenses
+      property_assets: Property Assets
+      financial_assets: Financial Assets
+      debts: Debts
       filter_toggle: Toggle to add new filtering option
       filter_close: Close Filter Window
       time: Time
@@ -138,6 +146,16 @@ en:
       reset: RESET
       explore: EXPLORE
       loader_missing_category: Please select a Party Finance type at the top.
+      share_chart: Share chart
+      embed_chart: Embed chart
+      download_chart: Download chart
+      export_type:
+        print: Print
+        pdf: Pdf document
+        svg: Svg image
+        jpeg: Jpeg image
+        png: Png image
+        csv: Csv document
     parties:
       income: Income
       expenses: Expenses

@@ -22,7 +22,7 @@ $(document).ready(function (){
     // filter_type = $("#filter_type"),
     // filter_extended = $("#filter_extended"),
     // finance_category = $("#finance_category"),
-    // view_content = $(".view-content"),
+    view_content = $(".result"),
     view_not_found = $(".not-found"),
     loader = {
       el: $(".view-loader"),
@@ -52,11 +52,11 @@ $(document).ready(function (){
     // donation_total_donations = $("#donation_total_donations span"),
     // donation_table = $("#donation_table table"),
     // finance_table = $("#finance_table table"),
-    // chart_ids = {
-    //   "da": "#donation_chart_1",
-    //   "db": "#donation_chart_2",
-    //   "fa": "#finance_chart"
-    // },
+    chart_ids = {
+      "da": "#donation_chart_1",
+      "db": "#donation_chart_2"//,
+      // "fa": "#finance_chart"
+    },
     // finance_datatable,
     autocomplete = {
       push: function (autocomplete_id, key, value) {
@@ -247,35 +247,16 @@ $(document).ready(function (){
     donation = {
       name: "donation",
       types: {
-        donor: "autocomplete",
         period: "period",
-        amount: "range",
-        party: "autocomplete",
-        monetary: "radio",
-        multiple: "checkbox",
-        nature: "radio"
+        party: "autocomplete"
       },
       // download: $("#donation_csv_download"),
       elem: {
-        donor: $("#donation_donor"),
         period: {
           from: $("#donation_period_from"),
           to: $("#donation_period_to")
         },
-        amount: {
-          from: $("#donation_amount_from"),
-          to: $("#donation_amount_to")
-        },
-        party: $("#donation_party"),
-        monetary: {
-          yes: $("#donation_monetary_yes"),
-          no: $("#donation_monetary_no")
-        },
-        multiple: $("#donation_multiple_yes"),
-        nature: {
-          individual: $("#donor_nature_individual"),
-          organization: $("#donor_nature_organization")
-        }
+        party: $("#donation_party")
       },
       data: {},
       sid: undefined,
@@ -313,32 +294,6 @@ $(document).ready(function (){
                 t.data[el] = tmp_d;
               }
             }
-            else if(tp === "range") {
-              tmp_v = tmp.val();
-              tmp_d = t.data.hasOwnProperty(el) ? t.data[el] : [-1, -1];
-              if(isNumber(tmp_v)) {
-                tmp_d[elem_i] = tmp_v;
-              }
-              if(tmp_d.toString() === [-1, -1].toString()) {
-                delete t.data[el];
-              }
-              else {
-                t.data[el] = tmp_d;
-              }
-            }
-            else if(tp === "radio") {
-              if(tmp.is(":checked")) {
-                t.data[el] = tmp.val();
-              }
-            }
-            else if(tp === "checkbox") {
-              if(tmp.is(":checked")) {
-                t.data[el] = tmp.val();
-              }
-            }
-            else {
-              //console.log("Type is not specified", t.elem[el]);
-            }
           });
         });
         return t.data;
@@ -370,26 +325,6 @@ $(document).ready(function (){
               tmp = formatRange(v);
               create_list_item(el.from.parent().parent().find(".list"), tmp, tmp);
             }
-            else if(tp === "range") {
-              v.forEach(function (d, i) {
-                v[i] = +d;
-                if(v[i] < 1) { v[i] = null; }
-              });
-              el.from.val(v[0]);
-              el.to.val(v[1]);
-              tmp = formatRange(v);
-              create_list_item(el.from.parent().parent().find(".list"), tmp, tmp);
-            }
-            else if(tp === "radio") {
-              el = el[Object.keys(el)[0]];
-              p = el.closest(".filter-input");
-              tmp = p.find(".input-group input[type='radio'][value='" + v + "']").prop("checked", true);
-              create_list_item(p.find(".list"), tmp.next().text(), tmp.length);
-            }
-            else if(tp === "checkbox") {
-              tmp = el.prop("checked", v);
-              create_list_item(el.closest(".filter-input").find(".list"), tmp.next().text(), tmp.length);
-            }
           });
         }
       },
@@ -408,15 +343,6 @@ $(document).ready(function (){
             }
             else if(type === "period") {
               t.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
-            }
-            else if(type === "range") {
-              t.find(".input-group input[type='number']").val(null);
-            }
-            else if(type === "radio") {
-              t.find(".input-group input[type='radio']:checked").prop("checked", false);
-            }
-            else if(type === "checkbox") {
-              t.find(".input-group input[type='checkbox']:checked").prop("checked", false);
             }
             list.empty();
         });
@@ -667,250 +593,252 @@ $(document).ready(function (){
     h = $(window).height();
   }
   function bind() {
-    // window.onpopstate = function (event) {
-    //    //console.log("onpopstate location: " + window.location + ", state: " + JSON.stringify(event.state));
-    // };
-    filter_extended.find(".filter-toggle").click(function (){  // 'Filter' label button used in small screens
-      filter_extended.toggleClass("active");
-      loader.type("empty").show();
 
-      event.stopPropagation();
-    });
-    filter_extended.find(".filter-header .close").click(function (){
-      loader.hide();
-      filter_extended.toggleClass("active");
-    });
-    filter_extended.find(".filter-input .toggle, .filter-input input").on("click change", function(){
-      var t = $(this).closest(".filter-input"),
-        field = t.attr("data-field"),
-        type = t.attr("data-type"),
-        html = "",
-        list = t.find(".list"),
-        tmp, tmp2,
-        state = t.hasClass("expanded");
+  //   filter_extended.find(".filter-toggle").click(function (){  // 'Filter' label button used in small screens
+  //     filter_extended.toggleClass("active");
+  //     loader.type("empty").show();
 
-      if(state) {
-        if(type === "period") {
-          tmp = [];
-          t.find(".input-group input[type='text'].datepicker").each(function(i, d){
-            tmp2 = $(d).datepicker("getDate");
-            tmp.push(tmp2 ? tmp2.format(gon.date_format) : null);
-          });
-          tmp = formatRange(tmp);
-          create_list_item(list, tmp, tmp);
-        }
-        else if(type === "range") {
-          tmp = [];
-          t.find(".input-group input[type='number']").each(function(i, d){
-            tmp2 = +$(d).val();
-            tmp.push(tmp2 >= 1 ? tmp2 : null);
+  //     event.stopPropagation();
+  //   });
+  //   filter_extended.find(".filter-header .close").click(function (){
+  //     loader.hide();
+  //     filter_extended.toggleClass("active");
+  //   });
+  //   filter_extended.find(".filter-input .toggle, .filter-input input").on("click change", function(){
+  //     var t = $(this).closest(".filter-input"),
+  //       field = t.attr("data-field"),
+  //       type = t.attr("data-type"),
+  //       html = "",
+  //       list = t.find(".list"),
+  //       tmp, tmp2,
+  //       state = t.hasClass("expanded");
 
-          });
-          tmp = formatRange(tmp);
-          create_list_item(list, tmp, tmp);
-        }
-        else if(type === "radio") {
-          tmp = t.find(".input-group input[type='radio']:checked");
-          create_list_item(list, tmp.next().text(), tmp.length);
-        }
-        else if(type === "checkbox") {
-          tmp = t.find(".input-group input[type='checkbox']:checked");
-          create_list_item(list, tmp.next().text(), tmp.length);
-        }
-        // else if(type === "period_mix") {
-          // list.empty();
-          // tmp = t.find(".input-radio-group input:checked").val();
-          // t.find(".input-checkbox-group ul[data-type='" + tmp + "'] input:checked").each(function(i, d){
-          //   list.append("<li data-id='" + d.value + "'>" + $(d).parent().find("label").text() + "<i class='close' title='" + gon.filter_item_close + "'></i></li>");
-          // });
-          // list.removeClass("hidden");
-        // }
-      }
-      else {
-        // if(type === "period_mix" || type === "radio") {
-        //   list.addClass("hidden");
-        // }
-      }
-      if($(this).hasClass("toggle")) {
-        t.toggleClass("expanded", !state);
-      }
-    });
-    filter_extended.find(".filter-input button.clear").click(function () {
-      var tmp = $(this).parent();
-      autocomplete.clear(tmp.attr("data-autocomplete-id"));
-      tmp.find("input").val(null).trigger("change");
-    });
+  //     if(state) {
+  //       if(type === "period") {
+  //         tmp = [];
+  //         t.find(".input-group input[type='text'].datepicker").each(function(i, d){
+  //           tmp2 = $(d).datepicker("getDate");
+  //           tmp.push(tmp2 ? tmp2.format(gon.date_format) : null);
+  //         });
+  //         tmp = formatRange(tmp);
+  //         create_list_item(list, tmp, tmp);
+  //       }
+  //       else if(type === "range") {
+  //         tmp = [];
+  //         t.find(".input-group input[type='number']").each(function(i, d){
+  //           tmp2 = +$(d).val();
+  //           tmp.push(tmp2 >= 1 ? tmp2 : null);
+
+  //         });
+  //         tmp = formatRange(tmp);
+  //         create_list_item(list, tmp, tmp);
+  //       }
+  //       else if(type === "radio") {
+  //         tmp = t.find(".input-group input[type='radio']:checked");
+  //         create_list_item(list, tmp.next().text(), tmp.length);
+  //       }
+  //       else if(type === "checkbox") {
+  //         tmp = t.find(".input-group input[type='checkbox']:checked");
+  //         create_list_item(list, tmp.next().text(), tmp.length);
+  //       }
+  //       // else if(type === "period_mix") {
+  //         // list.empty();
+  //         // tmp = t.find(".input-radio-group input:checked").val();
+  //         // t.find(".input-checkbox-group ul[data-type='" + tmp + "'] input:checked").each(function(i, d){
+  //         //   list.append("<li data-id='" + d.value + "'>" + $(d).parent().find("label").text() + "<i class='close' title='" + gon.filter_item_close + "'></i></li>");
+  //         // });
+  //         // list.removeClass("hidden");
+  //       // }
+  //     }
+  //     else {
+  //       // if(type === "period_mix" || type === "radio") {
+  //       //   list.addClass("hidden");
+  //       // }
+  //     }
+  //     if($(this).hasClass("toggle")) {
+  //       t.toggleClass("expanded", !state);
+  //     }
+  //   });
+  //   filter_extended.find(".filter-input button.clear").click(function () {
+  //     var tmp = $(this).parent();
+  //     autocomplete.clear(tmp.attr("data-autocomplete-id"));
+  //     tmp.find("input").val(null).trigger("change");
+  //   });
     $(window).on("resize", function(){
       resize();
       filter_extended.find(".filter-inputs").css("max-height", $(window).height() - filter_extended.find(".filter-toggle").offset().top);
     });
     resize();
 
-    donation.elem.period.from.datepicker({
-      firstDay: 1,
-      changeMonth: true,
-      changeYear: true,
-      dateFormat: gon.date_format,
-      onClose: function( selectedDate ) {
-        donation.elem.period.to.datepicker( "option", "minDate", selectedDate );
-      }
-    });
-    donation.elem.period.to.datepicker({
-      firstDay: 1,
-      changeMonth: true,
-      changeYear: true,
-      dateFormat: gon.date_format,
-      onClose: function( selectedDate ) {
-        donation.elem.period.from.datepicker( "option", "maxDate", selectedDate );
-      }
-    });
+  //   donation.elem.period.from.datepicker({
+  //     firstDay: 1,
+  //     changeMonth: true,
+  //     changeYear: true,
+  //     dateFormat: gon.date_format,
+  //     onClose: function( selectedDate ) {
+  //       donation.elem.period.to.datepicker( "option", "minDate", selectedDate );
+  //     }
+  //   });
+  //   donation.elem.period.to.datepicker({
+  //     firstDay: 1,
+  //     changeMonth: true,
+  //     changeYear: true,
+  //     dateFormat: gon.date_format,
+  //     onClose: function( selectedDate ) {
+  //       donation.elem.period.from.datepicker( "option", "maxDate", selectedDate );
+  //     }
+  //   });
 
-    $("#donation_period_campaigns a").click(function(){
-      var t = $(this), v = t.attr("data-value").split(";");
-      donation.elem.period.from.datepicker('setDate', new Date(v[0]));
-      donation.elem.period.to.datepicker('setDate', new Date(v[1]));
-    });
-    $(document).on("click", ".list > span .close, .list > li .close", function(event) {
-      var t = $(this);
-        p = t.closest(".filter-input"),
-        field = p.attr("data-field"),
-        type = p.attr("data-type"),
-        li_span = t.parent();
+  //   $("#donation_period_campaigns a").click(function(){
+  //     var t = $(this), v = t.attr("data-value").split(";");
+  //     donation.elem.period.from.datepicker('setDate', new Date(v[0]));
+  //     donation.elem.period.to.datepicker('setDate', new Date(v[1]));
+  //   });
+  //   $(document).on("click", ".list > span .close, .list > li .close", function(event) {
+  //     var t = $(this);
+  //       p = t.closest(".filter-input"),
+  //       field = p.attr("data-field"),
+  //       type = p.attr("data-type"),
+  //       li_span = t.parent();
 
 
-      if(type === "period") {
-        p.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
-      }
-      else if(type === "range") {
+  //     if(type === "period") {
+  //       p.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
+  //     }
+  //     else if(type === "range") {
 
-        p.find(".input-group input[type='number']").val(null);
-      }
-      else if(type === "radio") {
-        p.find(".input-group input[type='radio']:checked").prop("checked", false);
-      }
-      else if(type === "checkbox") {
-        p.find(".input-group input[type='checkbox']:checked").prop("checked", false);
-      }
-      else if(type === "period_mix") {
-        p.find(".input-group .input-checkbox-group input[type='checkbox'][value='" + li_span.attr("data-id") + "']:checked").prop("checked", false);
-      }
+  //       p.find(".input-group input[type='number']").val(null);
+  //     }
+  //     else if(type === "radio") {
+  //       p.find(".input-group input[type='radio']:checked").prop("checked", false);
+  //     }
+  //     else if(type === "checkbox") {
+  //       p.find(".input-group input[type='checkbox']:checked").prop("checked", false);
+  //     }
+  //     else if(type === "period_mix") {
+  //       p.find(".input-group .input-checkbox-group input[type='checkbox'][value='" + li_span.attr("data-id") + "']:checked").prop("checked", false);
+  //     }
 
-      if(type !== "autocomplete") {
-        li_span.remove();
-      }
-      event.stopPropagation();
-    });
-    $("#reset").click(function(){
-      clear_embed();
-      if(js.is_donation) {
-        donation.reset();
-      }
-      else {
-        finance.reset();
-      }
-    });
-    explore_button.click(function(){ clear_embed(); filter(); });
-    function clear_embed() {
-      js.esid[js.is_donation ? "d" : "f"] = undefined;
-    }
-    $(".chart_download a").click(function(){
-      var t = $(this),
-        f_type = t.attr("data-type"),
-        p = t.parent().parent(),
-        c_type = p.attr("data-chart"),
-        target = chart_ids[c_type],
-        chart = $(target).highcharts(),
-        mimes = {
-          "png": "image/png",
-          "jpeg": "image/jpeg",
-          "svg": "image/svg+xml",
-          "pdf": "application/pdf",
-        };
+  //     if(type !== "autocomplete") {
+  //       li_span.remove();
+  //     }
+  //     event.stopPropagation();
+  //   });
+  //   $("#reset").click(function(){
+  //     clear_embed();
+  //     if(js.is_donation) {
+  //       donation.reset();
+  //     }
+  //     else {
+  //       finance.reset();
+  //     }
+  //   });
+  //   explore_button.click(function(){ clear_embed(); filter(); });
+  //   function clear_embed() {
+  //     js.esid[js.is_donation ? "d" : "f"] = undefined;
+  //   }
+  //   $(".chart_download a").click(function(){
+  //     var t = $(this),
+  //       f_type = t.attr("data-type"),
+  //       p = t.parent().parent(),
+  //       c_type = p.attr("data-chart"),
+  //       target = chart_ids[c_type],
+  //       chart = $(target).highcharts(),
+  //       mimes = {
+  //         "png": "image/png",
+  //         "jpeg": "image/jpeg",
+  //         "svg": "image/svg+xml",
+  //         "pdf": "application/pdf",
+  //       };
 
-      if(f_type === "print") {
-        chart.print();
-      }
-      else {
-        var tmp_sid = (c_type[0] == "d" ? donation : finance).sid;
-        window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
-        // chart.exportChart({ type: mimes[type] });
-      }
-    });
-    autocomplete.bind();
+  //     if(f_type === "print") {
+  //       chart.print();
+  //     }
+  //     else {
+  //       var tmp_sid = (c_type[0] == "d" ? donation : finance).sid;
+  //       window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
+  //       // chart.exportChart({ type: mimes[type] });
+  //     }
+  //   });
+  //   autocomplete.bind();
 
-    $(document).on("click", ".filter-input[data-type='period_mix'] .input-radio-group input + label", function(event) {
-      var t = $(this), tp = t.attr("data-type"), filter_input = t.closest(".filter-input"),
-        group = filter_input.find(".input-checkbox-group"), list = filter_input.find("> ul.list");
-      list.empty();
+  //   $(document).on("click", ".filter-input[data-type='period_mix'] .input-radio-group input + label", function(event) {
+  //     var t = $(this), tp = t.attr("data-type"), filter_input = t.closest(".filter-input"),
+  //       group = filter_input.find(".input-checkbox-group"), list = filter_input.find("> ul.list");
+  //     list.empty();
 
-      group.find("ul[data-type]").addClass("hidden");
-      group.find("ul[data-type='" + tp + "']").removeClass("hidden");
-      group.find("ul[data-type='" + tp + "'] input:checked").each(function(i, d){
-        var d = $(d), p = d.parent(), text = p.find("label").text(), id = d.val();
-        list.append(li(id,text));
-      });
-    });
-    $(document).on("click", ".filter-input[data-type='period_mix'] .input-checkbox-group input + label", function(event) {
-      var t = $(this), p = t.parent(), input = p.find("input"), text = t.text(), id = input.val(),
-        list = p.closest(".filter-input").find("> ul.list");
-      if(input.is(":checked")) {
-        list.find("li[data-id='" + id + "']").remove();
-      }
-      else {
-        list.append(li(id,text));
-      }
+  //     group.find("ul[data-type]").addClass("hidden");
+  //     group.find("ul[data-type='" + tp + "']").removeClass("hidden");
+  //     group.find("ul[data-type='" + tp + "'] input:checked").each(function(i, d){
+  //       var d = $(d), p = d.parent(), text = p.find("label").text(), id = d.val();
+  //       list.append(li(id,text));
+  //     });
+  //   });
+  //   $(document).on("click", ".filter-input[data-type='period_mix'] .input-checkbox-group input + label", function(event) {
+  //     var t = $(this), p = t.parent(), input = p.find("input"), text = t.text(), id = input.val(),
+  //       list = p.closest(".filter-input").find("> ul.list");
+  //     if(input.is(":checked")) {
+  //       list.find("li[data-id='" + id + "']").remove();
+  //     }
+  //     else {
+  //       list.append(li(id,text));
+  //     }
 
-    });
+  //   });
 
-    // bind finance view_as buttons click event
-    $(".pane[data-type='finance'] .actions .left > div[data-view-toggle]").on("click", function() {
-      var t = $(this), tp = t.attr("data-view-toggle"), p = t.closest(".actions"), r = p.find(".right .share, .right .embed");
-      p.attr("data-type", tp);
-      $(".pane[data-type='finance']").attr("data-view-type", tp);
-      //$(".pane[data-type='finance'] .actions .download_list").attr("data-type", tp);
-      // p.find(".embed").attr("data-embed", tp === "chart" ? "f-ca" : "f-t");
+  //   // bind finance view_as buttons click event
+  //   $(".pane[data-type='finance'] .actions .left > div[data-view-toggle]").on("click", function() {
+  //     var t = $(this), tp = t.attr("data-view-toggle"), p = t.closest(".actions"), r = p.find(".right .share, .right .embed");
+  //     p.attr("data-type", tp);
+  //     $(".pane[data-type='finance']").attr("data-view-type", tp);
+  //     //$(".pane[data-type='finance'] .actions .download_list").attr("data-type", tp);
+  //     // p.find(".embed").attr("data-embed", tp === "chart" ? "f-ca" : "f-t");
 
-    });
+  //   });
 
-    // $(document).tooltip({
-    //   content: function() { return $(this).attr("data-retitle"); },
-    //   items: "text[data-retitle]",
-    //   track: true
-    // });
+  //   // $(document).tooltip({
+  //   //   content: function() { return $(this).attr("data-retitle"); },
+  //   //   items: "text[data-retitle]",
+  //   //   track: true
+  //   // });
 
-    $(document).on("click", "[data-dialog]", function () {
+  //   $(document).on("click", "[data-dialog]", function () {
 
-      var t = $(this),
-        pars = t.attr("data-dialog").split(";"), // ex: embed;a
-        dialog_type = pars[0],
-        options = { chart_type: pars[1] };
+  //     var t = $(this),
+  //       pars = t.attr("data-dialog").split(";"), // ex: embed;a
+  //       dialog_type = pars[0],
+  //       options = { chart_type: pars[1] };
 
-      if(dialog_type === "share") {
-        options["title"] = js.share["#" + t.attr("data-share-title")];
-      }
+  //     if(dialog_type === "share") {
+  //       options["title"] = js.share["#" + t.attr("data-share-title")];
+  //     }
 
-      js_dialog.open(pars[0], options);
-    });
+  //     js_dialog.open(pars[0], options);
+  //   });
   }
 
   function filter() {
     loader.start();
-    return;
     //console.log("start filter", js.is_donation);
-    var tmp, cacher_id, _id, _id, finance_id, obj;
-
+    var tmp, cacher_id, _id, _id, finance_id;//, obj;
+    console.log('test filter 1')
     if(gon.gonned) {
-      [donation, finance].forEach( function (obj) {
-        obj.set_by_url();
-        tmp = obj.get();
-        _id = obj.id();
-        js.cache[_id] = gon[obj.name + "_data"];
-        // console.log("gonnned",js.cache[_id].sid);
-        js.cache[js.cache[_id].sid] = _id
-        obj.set_sid(js.cache[_id].sid);
-        if(obj.name === (gon.is_donation ? "donation" : "finance")) { obj.url(js.cache[_id].sid); }
-        filter_callback(js.cache[_id], obj.name);
-      });
+
+      [donation].forEach( function (obj) { // , finance
+
+        // obj.set_by_url();
+        // tmp = obj.get();
+        // _id = obj.id();
+        // console.log('test 3')
+        var obj_data = gon[obj.name + "_data"]
+        js.cache[obj_data.sid] = gon[obj.name + "_data"];
+        // // console.log("gonnned",js.cache[_id].sid);
+        // // js.cache[js.cache[_id].sid] = _id
+        // // obj.set_sid(js.cache[_id].sid);
+        // // if(obj.name === (gon.is_donation ? "donation" : "finance")) { obj.url(js.cache[_id].sid); }
+        // console.log('test filter')
+        filter_callback(js.cache[obj_data.sid], obj.name);
+      })
       gon.gonned = false;
     } else {
       // obj = js.is_donation ? donation : finance;
@@ -945,7 +873,7 @@ $(document).ready(function (){
     }
   }
   function filter_callback(data, partial) {
-    //console.log("filter_callback", data, partial);
+    console.log("filter_callback", data, partial);
     view_not_found.addClass("hidden");
     var is_data_ok = typeof data !== "undefined";
     if(is_data_ok) {
@@ -966,10 +894,11 @@ $(document).ready(function (){
   }
 
   function bar_chart(elem, resource, bg) {
-    // console.log("chart", elem, resource);
+    console.log("chart", elem, resource);
     var ln = 0;
     resource.series.forEach(function (d) { ln += Math.round(d[0].length/15)+1; });
     js.share[elem] = encodeURI(resource.title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
+    console.log(view_content, w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12)
     $(elem).highcharts({
       chart: {
           type: 'bar',
@@ -1265,7 +1194,7 @@ $(document).ready(function (){
   // filter_extended.find(".filter-input:nth-of-type(3) .toggle").trigger("click");
   (function init() {
     init_highchart();
-    // bind();
+    bind();
     // js.is_donation = gon.is_donation;
     filter();
   })();

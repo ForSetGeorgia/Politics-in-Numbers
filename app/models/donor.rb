@@ -501,7 +501,7 @@ class Donor
           Time.utc(n.year, n.month, n.day, 0, 0, 0)
         }
     end
-    f[:party] = Party.get_ids_by_slugs(params[:party])
+    f[:party] = Party.get_ids_by_slugs([params[:party]])
 
 
     chart_subtitle = ""
@@ -531,7 +531,7 @@ class Donor
 
     parties_list = {}
     parties = {}
-    (global_data.key?(:parties) ? global_data[:parties] : Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true] }).each{ |e| parties[e[0]] = { value: 0, name: e[1] } }
+    Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true] }.each{ |e| parties[e[0]] = { value: 0, name: e[1] } }
 
     if ps > 0 # filling parties_list with initial data
       f[:party].each{ |e|
@@ -562,7 +562,7 @@ class Donor
 
     data.each{|e|
 
-      donors_list << e[:name]# if [3,4].index(chart_type).present?
+      donors_list << e[:name]
 
       e[:partial_donated_amount] = 0
       e[:donations].each { |ee|
@@ -601,39 +601,15 @@ class Donor
       parties: I18n.t("shared.chart.label.parties"),
       donations: I18n.t("shared.chart.label.donations")
     }
-    if chart_type == 0 # If select anything other than party and donor -> charts show the top 5
-      ca_tmp = pull_n(data, limiter, :donated_amount, labels[:donors])
-      cb_tmp = pull_n(parties.sort_by { |k, v| -1*v[:value] }.map{|k,v| v }, limiter, :value, labels[:parties])
-    elsif chart_type == 1 # If select 1 party -> top 5 donors for party, last 5 donations for party
-      tmp = parties[BSON::ObjectId(f[:party][0])][:name]
-      ca_title[:obj] = cb_title[:obj] = tmp
+    # if chart_type == 1 # If select 1 party -> top 5 donors for party, last 5 donations for party
 
-      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donors])
-      cb_tmp = pull_n(recent_donations.sort{ |x,y| y[:date] <=> x[:date] }.map{|m| m[:out] }, limiter, :value, labels[:donations])
+    tmp = parties[BSON::ObjectId(f[:party][0])][:name]
+    ca_title[:obj] = cb_title[:obj] = tmp
 
-    elsif chart_type == 2 || chart_type == 4
-      # If select > 1 party -> top 5 donors for parties, total donations for selected parties
-      # If select > 1 donor-> total donations for each donor, top 5 parties donated to
+    ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donors])
+    cb_tmp = pull_n(recent_donations.sort{ |x,y| y[:date] <=> x[:date] }.map{|m| m[:out] }, limiter, :value, labels[:donations])
 
-      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[chart_type == 2 ? :parties : :donors])
-      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:value] <=> x[:value] }, limiter, :value, labels[chart_type == 2 ? :donations : :parties])
-
-      ca_title[:obj] = chart_type == 4 ? ca_tmp[:title] : cb_tmp[:title]
-      cb_title[:obj] = chart_type == 4 ? donors_list.join(", ") : cb_tmp[:title]
-
-    elsif chart_type == 3 # If select 1 donor-> last 5 donations for donor, top 5 parties donated to
-      ca_tmp = pull_n(recent_donations.sort{ |x,y| y[:date] <=> x[:date] }.map{|m| m[:out] }, limiter, :value, labels[:donations])
-      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:name] <=> x[:name] }, limiter, :value, labels[:parties])
-
-      ca_title[:obj] = cb_title[:obj] = donors_list.join(", ")
-
-    elsif chart_type == 5 # show selected donors sorted by who donated most and show selected parties sorted by who received most
-      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donations])
-      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:value] <=> x[:value] }, limiter, :value, labels[:donations])
-
-      ca_title[:obj] = cb_title[:obj] = ca_tmp[:title]
-      ca_title[:objb] = cb_title[:objb] = cb_tmp[:title]
-    end
+    # end
 
     ca = ca_tmp[:data]
     cb = cb_tmp[:data]
@@ -641,62 +617,37 @@ class Donor
     ca_title[:n] = ca.size
     cb_title[:n] = cb.size
 
-    if ["a"].index(type).present?
-      f.keys.each{|e|
-        if f[e] == default_f[e]
-          f.delete(e)
-        else
-          if f[e].class == Array
-            if f[e].empty?
-              f.delete(e)
-            else
-              f[e].each_with_index{|ee,ii|
-                f[e][ii] = ee.to_s if ee.class == BSON::ObjectId
-              }
-            end
+    f.keys.each{|e|
+      if f[e] == default_f[e]
+        f.delete(e)
+      else
+        if f[e].class == Array
+          if f[e].empty?
+            f.delete(e)
+          else
+            f[e].each_with_index{|ee,ii|
+              f[e][ii] = ee.to_s if ee.class == BSON::ObjectId
+            }
           end
         end
-      }
-      sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
-    end
+      end
+    }
+    sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
 
-    res = {}
-    if ["t", "a"].index(type).present?
-      res = {
-        table: {
-          header: ["", human_attribute_name(:name), human_attribute_name(:tin),
-            human_attribute_name(:nature), Donation.human_attribute_name(:give_date),
-            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party),
-            Donation.human_attribute_name(:monetary)],
-          classes: ["no-padding", "", "center", "center", "center", "right", "", "center"]
-        }
-      }
-    end
-
-    if ["ca", "a", "co", "coa"].index(type).present?
-      res.merge!({
-        ca: {
-          series: has_no_data ? [] : ca,
-          title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
-          subtitle: chart_subtitle
-        }
-      })
-    end
-    if ["cb", "a", "co", "cob"].index(type).present?
-      res.merge!({
-        cb: {
-          series: has_no_data ? [] : cb,
-          title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
-          subtitle: chart_subtitle
-        }
-      })
-    end
-    if ["a"].index(type).present?
-      res.merge!({
-        sid: sid,
-        pars: f
-      })
-    end
+    res = {
+      ca: {
+        series: has_no_data ? [] : ca,
+        title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
+        subtitle: chart_subtitle
+      },
+      cb: {
+        series: has_no_data ? [] : cb,
+        title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
+        subtitle: chart_subtitle
+      },
+      sid: sid,
+      pars: f
+    }
     res
   end
 

@@ -971,6 +971,7 @@ $(document).ready(function (){
     var tmp, cacher_id, _id, _id, finance_id, obj;
 
     if(gon.gonned) {
+      debugger;
       [donation, finance].forEach( function (obj) {
         obj.set_by_url();
         tmp = obj.get();
