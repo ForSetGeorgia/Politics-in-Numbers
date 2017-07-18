@@ -38,6 +38,7 @@ class Category
   scope :virtual, ->{ where(virtual: true) }
   scope :non_virtual, ->{ where(virtual: false) }
   scope :only_sym, ->{ where(:sym.ne => nil) }
+  scope :only_short_sym, ->{ where(:sym.nin => [nil, :income_campaign, :expenses_campaign], virtual: false ) }
 
   #############################
   # indexes

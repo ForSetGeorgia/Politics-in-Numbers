@@ -112,11 +112,16 @@ class Donor
       { "$match": { 'donations.party_id': party_id } },
       { "$group": {
           "_id": nil,
-          "total": { "$sum": "$donations.amount" }
+          "sum": { "$sum": "$donations.amount" },
+          "cnt": { "$sum": 1 }
         }
       }
     ])
-    r.to_a.size > 0 ? ActionController::Base.helpers.number_with_precision(r.first[:total].round) : 0
+    r.to_a.size > 0 ?
+      [
+        ActionController::Base.helpers.number_with_precision(r.first[:sum].round),
+        ActionController::Base.helpers.number_with_precision(r.first[:cnt].round)
+      ] : [ 0, 0 ]
   end
 
 

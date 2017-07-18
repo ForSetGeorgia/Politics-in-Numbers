@@ -146,6 +146,14 @@ en:
       reset: RESET
       explore: EXPLORE
       loader_missing_category: Please select a Party Finance type at the top.
+      total_amount: Total Amount
+      total_donations: Total Donations
+    parties:
+      income: Income
+      expenses: Expenses
+      donations: Donations
+      no_parties: No parties have been recorded yet.
+    chart_actions:
       share_chart: Share chart
       embed_chart: Embed chart
       download_chart: Download chart
@@ -156,8 +164,3 @@ en:
         jpeg: Jpeg image
         png: Png image
         csv: Csv document
-    parties:
-      income: Income
-      expenses: Expenses
-      donations: Donations
-      no_parties: No parties have been recorded yet.

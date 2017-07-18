@@ -4,6 +4,7 @@
 .content {
   display: flex;
   flex-direction:row;
+
   .filter {
     position:relative;
     display:inline-block;
@@ -415,7 +416,7 @@
       // width:100%;
       max-width: 1024px;
       padding:28px 0 28px;
-      margin:0px auto;
+      // margin:0px auto;
 
       .caption {
         margin-bottom: 14px;
@@ -478,14 +479,53 @@
         }
       }
     }
+    .stats {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      max-width: 1024px;
+      .stats-caption {
+        color: #F78E69;
+        font: 20px firasans_b;
+        flex: 1;
+      }
+      .stats-box {
+        display: flex;
+        flex-direction: row;
+        border: 1px solid #C1B02F;
+        .stat-box {
+          padding:8px 20px;
+          background-color:#F5F7F5;
+          flex: 1;
+          label {
+            display:block;
+            font:14px firasans_r;
+            margin-bottom:8px;
+            color:#C1B02F;
+            white-space: nowrap;
+          }
+          span {
+            display:block;
+            font:16px firasans_b;
+            color:#5D675B;
+            text-align: center;
+          }
+          &:not(:last-of-type) {
+            border-right: 1px solid #C1B02F;
+          }
+        }
+
+      }
+    }
     .chart-container {
       display:block;
       width:100%;
+
       min-width:300px;
-      padding:12px 6px 22px;
+      padding:12px 0 22px;
       .actions {
         text-align:center;
-        padding:0 0 18px;
+        padding:0 0 2px;
         > div
         {
           display:inline-block;
@@ -553,15 +593,11 @@
         }
       }
     }
-    .totals {
-      > div {
-        font: 16px firasans_l;
-        color: #3a3f39;
-        // line-height: 1.4;
-        label{
-          font: 16px firasans_r;
-          color:#F78E69;
-        }
+    .result-container {
+      max-width: 1024px;
+      > div:not(:last-of-type) {
+        border-bottom: 1px dashed #F78E69;
+        margin-bottom: 28px;
       }
     }
   }
@@ -609,6 +645,7 @@
           display:none;
         }
       }
+
       .filter-inputs {
         display: inline;
         min-width:190px;
@@ -616,7 +653,138 @@
       }
 
     }
+    .result {
+
+      .chart-container {
+        // display: inline-block;
+        // width: auto;
+
+        .actions {
+          display:flex;
+          // width:100%;
+          flex-direction: row;
+          justify-content: flex-end;
+          .left, .right {
+            white-space:nowrap;
+          }
+          .right {
+            width:100%;
+            text-align:right;
+          }
+          .share, .embed, .download, .highlight {
+            display:inline-block;
+            width: 40px;
+            height: 36px;
+            padding:7px 8px;
+            border:1px dashed transparent;
+            vertical-align:top;
+            i {
+              display:block;
+              width:24px;
+              height:21px;
+              background:transparent url("<%= asset_path('explore/actions.svg') %>") no-repeat;
+            }
+            &:hover, &:focus, &:active {
+              cursor:pointer;
+              border:1px dashed #AEB3AD;
+            }
+          }
+          .highlight {
+            i {
+              background:transparent url("<%= asset_path('highlight.svg') %>") no-repeat;
+              background-size: 24px 21px;
+            }
+            &.highlighted i {
+              background:transparent url("<%= asset_path('highlight_a.svg') %>") no-repeat;
+              background-size: 24px 21px;
+            }
+            &.onhome i {
+              background:transparent url("<%= asset_path('highlight_home.svg') %>") no-repeat top left;
+              background-size: 24px 21px;
+            }
+
+          }
+
+          .share {
+            position:relative;
+            i { background-position: 0px -43px; }
+            .addthis_sharing_toolbox {
+              display:none;
+              position: absolute;
+              top: 100%;
+              border:1px dashed #AEB3AD;
+              right:-1px;
+              background-color:#fff;
+              z-index:14;
+              .at-share-btn {
+                display:block;
+                max-width: 38px;
+                max-height: 36px;
+                margin: 0;
+                .at-icon-wrapper {
+                  // padding:7px 8px;
+                  background-color:transparent !important;
+                  line-height: 36px !important;
+                  height: 36px !important;
+                  width: 38px !important;
+                  padding: 8px 10px !important;
+                }
+                &.at-svc-facebook {
+                  svg { fill: #355EA8; }
+                }
+                &.at-svc-twitter {
+                  svg { fill: #0EA3C6; }
+                }
+                &.at-svc-compact {
+                  svg { fill: #88D877; }
+                }
+              }
+            }
+            &:hover {
+              .addthis_sharing_toolbox { display:initial; }
+              i { background-position: 0px -65px; }
+            }
+          }
+          .embed {
+            i { background-position: -25px -43px; }
+            margin:0 20px;
+            &:hover i { background-position: -25px -65px; }
+          }
+          .download {
+            i { background-position: -50px -44px; }
+            &:hover i { background-position: -50px -66px; }
+          }
+        }
+      }
+    }
   }
 }
 
-
+    .view-loader {
+      position:absolute;
+      top:0;
+      right:0;
+      bottom:0;
+      left:0;
+      z-index:99;
+      background-color:rgba(84, 84, 84, 0.58);
+      > div {
+        display:none;
+        position: absolute;
+      }
+      .circle {
+        content:"";
+        background:transparent url("<%= asset_path('loading.svg') %>") no-repeat center/200px;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .message {
+        font:20px firasans_r;
+        color:#fff;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      &[data-type='circle'] .circle, &[data-type='message'] .message { display: inline-block; }
+    }

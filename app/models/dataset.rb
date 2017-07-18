@@ -9,6 +9,7 @@ class Dataset
 
   STATES = [:pending, :processed, :discontinued]  # 0 pending 1 processed 2 discontinued
   SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SHORT_SYMS = [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
 
   embeds_many :category_datas
   embeds_many :detail_datas
@@ -498,6 +499,139 @@ class Dataset
 
     res
   end
+  def self.party_explore(params, global_data = {})
+    limiter = 5
+
+    f = { }
+    f[:party] = Party.get_ids_by_slugs([params[:id]])
+    party = Party.find_by(params[:id])
+    f[:period] = Period.get_ids_by_slugs(params[:period])
+
+    categories = {}
+    Category.only_short_sym.each{|e|
+      f[e.sym] = [e.id]
+      categories[e.id] = { sym: e.sym, title: e.title, data: [], series: [] }
+    }
+
+    # ln = 0
+    # main_categories_count = 0
+    Rails.logger.debug("--------------------------inspect------#{params}------------#{party.inspect} #{f}")
+    data = filter(f).to_a
+
+
+    parties = {}
+    parties[party.id] = { value: 0, name: party.title }
+
+    periods = {}
+    (global_data.key?(:periods) ? global_data[:periods] : Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }).each{ |e| periods[e[0]] = { name: e[1], date: e[3], type: e[4] } }
+
+    parties_list = {}
+    period_list = {}
+
+    # collect data
+    data.each{|e|
+      if !period_list[e[:period_id]].present?
+        per = periods[e[:period_id]]
+        period_list[e[:period_id]] = { id: e[:period_id], name: per[:name], date: per[:date], type: per[:type]  }
+      end
+
+      if !parties_list[e[:party_id]].present?
+        parties_list[e[:party_id]] = { name: parties[e[:party_id]][:name], data: [] }
+      end
+    }
+
+    f[:period].each { |p_id|
+      if !period_list.key?(BSON::ObjectId(p_id))
+        per = periods[BSON::ObjectId(p_id)]
+        period_list[p_id] = { id: p_id, name: per[:name], date: per[:date], type: per[:type]  }
+      end
+    }
+
+    tmp = []
+    period_list.each{|k,v| tmp.push({ id: v[:id], name: v[:name], date: v[:date], type: v[:type] }) }
+    period_list = tmp.sort!{ |x,y| x[:date] <=> y[:date] }
+
+
+    f[:party].each { |p_id|
+      if !parties_list.key?(BSON::ObjectId(p_id))
+        parties_list[p_id] = { name: parties[BSON::ObjectId(p_id)][:name], data: [] }
+      end
+    }
+    parties_list = parties_list.sort{|x,y| x[1][:name] <=> y[1][:name] }.to_h
+
+    categories.each {|k,v|
+      categories[k][:data] = Array.new(period_list.size, 0)
+    }
+
+    data_sum = 0
+    data.each{|e|
+      pp = period_list.index{ |s| s[:id] == e[:period_id] }
+      e[:category_datas].each { |ee|
+        v = ee[:value].round(2)
+        data_sum += v
+        categories[ee[:category_id]][:data][pp] += v
+      }
+    }
+
+    # prepaire data for charts
+      categories.each {|k,v|
+        categories[k][:series] = { name: party.title, data: v[:data].map{|m| m.round } }
+      }
+
+      chart_categories = []
+      period_list.each_with_index{|e, i|
+        chart_categories << e[:name] # chart categories (years)
+      }
+
+    # title generator
+      chart_titles = [[],[],[]]
+      chart_titles[0].push('_category_')
+      chart_titles[1].concat(f[:party].map{|m| parties[BSON::ObjectId(m)][:name] }) # grab selected party names
+      if f[:period].present? # grab selected period names
+        chart_titles[2].concat(f[:period].map{|m| "#{periods[BSON::ObjectId(m)][:name]}" })
+      end
+
+      chart_title = ""
+      last_and = I18n.t("shared.common.and")
+      chart_titles.each{ |r|
+        sz = r.size
+        r.each_with_index { |rr, ii|
+          chart_title += (ii == sz - 1 && sz > 1 ? " " + last_and + " " : ", ") + rr
+        }
+      }
+      chart_title = chart_title[2..chart_title.size-1] if chart_title.size > 1
+      chart_title = I18n.t("shared.common.no_result_found_for") + " " + chart_title if data_sum == 0
+
+    # Category.full_names(categories, f[e])
+
+    f.keys.each{|e|
+      if f[e].class == Array
+        if f[e].empty?
+          f.delete(e)
+        else
+          f[e].each_with_index{|ee,ii|
+            f[e][ii] = ee.to_s if ee.class == BSON::ObjectId
+          }
+        end
+      end
+    }
+    sid = ShortUri.explore_uri(f.merge({filter: "finance"}))
+
+    # extend ActionView::Helpers::NumberHelper
+    cats = {}
+    categories.each {|k,v|
+      ct = categories[k]
+      cats[ct[:sym]] = { title: chart_title.gsub('_category_', ct[:title]), series: ct[:series] }
+    }
+
+    {
+      sid: sid,
+      pars: f,
+      data: cats,
+      categories: chart_categories
+    }
+
+  end
   def self.download_filter(params)
 
     options = []
@@ -585,11 +719,16 @@ class Dataset
       { "$match": { 'category_datas.category_id': c.id } },
       { "$group": {
           "_id": nil,
-          "total": { "$sum": "$category_datas.value" }
+          "sum": { "$sum": "$category_datas.value" },
+          "cnt": { "$sum": 1 }
         }
       }
     ])
-    r.to_a.size > 0 ? ActionController::Base.helpers.number_with_precision(r.first[:total].round) : 0
+    r.to_a.size > 0 ?
+      [
+        ActionController::Base.helpers.number_with_precision(r.first[:sum].round),
+        ActionController::Base.helpers.number_with_precision(r.first[:cnt].round)
+      ] : [ 0, 0 ]
   end
 
   def self.period_for_party(party_id)

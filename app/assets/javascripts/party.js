@@ -5,6 +5,7 @@
 //= require moment
 //= require explore_global
 //= require js_dialog
+//= require highcharts_charts
 
 $(document).ready(function (){
   // console.log("explore ready");
@@ -20,7 +21,7 @@ $(document).ready(function (){
     // finance_toggle = $("#finance_toggle"),
     // donation_toggle = $("#donation_toggle"),
     // filter_type = $("#filter_type"),
-    // filter_extended = $("#filter_extended"),
+    $filter = $(".filter"),
     // finance_category = $("#finance_category"),
     view_content = $(".result"),
     view_not_found = $(".not-found"),
@@ -61,22 +62,23 @@ $(document).ready(function (){
     autocomplete = {
       push: function (autocomplete_id, key, value) {
         // console.log(autocomplete_id, key,value);
+        this.clear(autocomplete_id)
         if(!this.hasOwnProperty(autocomplete_id)) {
           this[autocomplete_id] = {};
         }
         if(!this[autocomplete_id].hasOwnProperty(key)) {
-          $("[data-autocomplete-view='" + autocomplete_id + "']").append(li(key, value));
+          $("[data-autocomplete-view='" + autocomplete_id + "']").append(li_without_close(key, value));
           this[autocomplete_id][key] = value;
         }
       },
-      pop: function (autocomplete_id, key) {
-        if(this.hasOwnProperty(autocomplete_id) && this[autocomplete_id].hasOwnProperty(key)) {
-          $("[data-autocomplete-view='" + autocomplete_id + "'] li[data-id='" + key + "']").remove();
-          $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li .item[data-id='" + key + "']").removeClass("selected");
-          delete this[autocomplete_id][key];
-          if($.isEmptyObject(this[autocomplete_id])) { delete this[autocomplete_id]; }
-        }
-      },
+      // pop: function (autocomplete_id, key) {
+      //   if(this.hasOwnProperty(autocomplete_id) && this[autocomplete_id].hasOwnProperty(key)) {
+      //     $("[data-autocomplete-view='" + autocomplete_id + "'] li[data-id='" + key + "']").remove();
+      //     $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li .item[data-id='" + key + "']").removeClass("selected");
+      //     delete this[autocomplete_id][key];
+      //     if($.isEmptyObject(this[autocomplete_id])) { delete this[autocomplete_id]; }
+      //   }
+      // },
       clear: function (autocomplete_id) {
         if(this.hasOwnProperty(autocomplete_id)) {
           $("[data-autocomplete-view='" + autocomplete_id + "'] li").remove();
@@ -106,32 +108,7 @@ $(document).ready(function (){
           if(t.data("previous") !== v) {
             t.data("previous", v);
 
-            if(p.is("[data-url]")) {
-              if(v.length >= 3) {
-                ul.addClass("loading");
-                $.ajax({
-                  url: p.attr("data-url"),
-                  dataType: "json",
-                  data: { q: v },
-                  success: function (data) {
-                    var html = "";
-                    // console.log("back", data);
-                    data.forEach(function (d) {
-                      html += "<li><div class='item" + (autocomplete.has(autocomplete_id, d[0]) ? " selected" : "") + "' data-id='" + d[0] + "' data-extra='" + d[2] + "'>" + d[1] + "</li>";
-                    });
-                    ul.html(html);//.addClass("active");
-                    ul.find("> li").attr("tabindex", 5);
-                  },
-                  complete: function () {
-                    ul.removeClass("loading");
-                  }
-                });
-              }
-              else {
-                ul.html("");
-              }
-            }
-            else if(p.is("[data-local]")) {
+            if(p.is("[data-local]")) {
               if(v.length >= 3) {
                 ul.find("li .item[data-id]").parent().hide();
                 var regex = new RegExp(".*" + v + ".*", "i"),
@@ -179,15 +156,15 @@ $(document).ready(function (){
       }, 250),
       // search_tree: function () {}
       bind: function() {
-        $(".autocomplete[data-source]").each(function() {
-          var t = $(this), source = t.attr("data-source"), html = "";
-          if(gon.hasOwnProperty(source) && Array.isArray(gon[source])) {
-            gon[source].forEach(function(d) {
-              html += "<li><div class=\"item\" data-id=" + d[0] + ">" + d[1] + "</div></li>";
-            });
-            t.find(".dropdown").html(html);
-          }
-        });
+        // $(".autocomplete[data-source]").each(function() {
+        //   var t = $(this), source = t.attr("data-source"), html = "";
+        //   if(gon.hasOwnProperty(source) && Array.isArray(gon[source])) {
+        //     gon[source].forEach(function(d) {
+        //       html += "<li><div class=\"item\" data-id=" + d[0] + ">" + d[1] + "</div></li>";
+        //     });
+        //     t.find(".dropdown").html(html);
+        //   }
+        // });
         $(".autocomplete input").on("change paste keyup", this.onchange);
         $(".autocomplete input").on("click", function () {
           var p = $(this).parent(), p_id = p.attr("data-autocomplete-id");
@@ -217,7 +194,7 @@ $(document).ready(function (){
           var autocomplete_id = p.attr("data-autocomplete-id");
           if(is_selected) {
              //console.log("is selected");
-            autocomplete.pop(autocomplete_id, t.attr("data-id"));
+            // autocomplete.pop(autocomplete_id, t.attr("data-id"));
           }
           else {
             //console.log("is not selected");
@@ -236,177 +213,27 @@ $(document).ready(function (){
         });
 
 
-        $(document).on("click", "[data-type='autocomplete'] .list li .close", function(event) {
-          var t = $(this).parent(), list = t.parent(), autocomplete_id = list.attr("data-autocomplete-view");
-          $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li[data-id='" + t.attr("data-id") + "'] .item").toggleClass("selected");
-          autocomplete.pop(autocomplete_id, t.attr("data-id"));
-          event.stopPropagation();
-        });
+        // $(document).on("click", "[data-type='autocomplete'] .list li .close", function(event) {
+        //   var t = $(this).parent(), list = t.parent(), autocomplete_id = list.attr("data-autocomplete-view");
+        //   $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li[data-id='" + t.attr("data-id") + "'] .item").toggleClass("selected");
+        //   autocomplete.pop(autocomplete_id, t.attr("data-id"));
+        //   event.stopPropagation();
+        // });
       }
     },
-    donation = {
-      name: "donation",
-      types: {
-        period: "period",
-        party: "autocomplete"
-      },
-      // download: $("#donation_csv_download"),
-      elem: {
-        period: {
-          from: $("#donation_period_from"),
-          to: $("#donation_period_to")
-        },
-        party: $("#donation_party")
-      },
-      data: {},
-      sid: undefined,
-      get: function () {
-        var t = this, tp, tmp, tmp_v, tmp_d, lnk;
-        t.data = { filter: "donation" };
-        Object.keys(this.elem).forEach(function (el){
-          var is_elem = ["period", "amount", "monetary", "nature"].indexOf(el) === -1;
-
-          (is_elem ? [t.elem[el]] : Object.keys(t.elem[el]).map(function (m){ return t.elem[el][m]; })).forEach(function(elem, elem_i){
-            tmp = $(elem);
-            tp = tmp.attr("data-type");
-            if(tp === "autocomplete") {
-              lnk = tmp.attr("data-autocomplete-view");
-              if(autocomplete.hasOwnProperty(lnk)) {
-                tmp_v = Object.keys(autocomplete[lnk]);
-                if(tmp_v.length) {
-                  t.data[el] = tmp_v;
-                }
-                else {
-                  delete t.data[el];
-                }
-              }
-            }
-            else if(tp === "period") {
-              tmp_v = tmp.datepicker('getDate');
-              tmp_d = t.data.hasOwnProperty(el) ? t.data[el] : [-1, -1];
-              if(isDate(tmp_v)) {
-                tmp_d[elem_i] =  Date.UTC(tmp_v.getFullYear(), tmp_v.getMonth(), tmp_v.getDate(), 0, 0, 0);
-              }
-              if(tmp_d.toString() === [-1, -1].toString()) {
-                delete t.data[el];
-              }
-              else {
-                t.data[el] = tmp_d;
-              }
-            }
-          });
-        });
-        return t.data;
-      },
-      set_by_url: function() {
-        var t = this, tmp, tp, v, p, el;
-        // console.log("set_by_url donation", gon.donation_params);
-        if(gon.donation_params) {
-          Object.keys(gon.donation_params).forEach(function(k) {
-            if(k == "filter" || !t.types.hasOwnProperty(k)) return;
-              el = t.elem[k];
-              tp = t.types[k];
-              v = gon.donation_params[k];
-
-            if(tp === "autocomplete") {
-              p = el.parent();
-              Object.keys(v).forEach(function(kk){
-                var local = p.attr("data-field"),
-                  is_category = finance.categories.indexOf(local) !== -1,
-                  list = is_category ? gon.category_lists[local] : gon[local + "_list"];
-
-                autocomplete.push(p.find(".autocomplete[data-autocomplete-id]").attr("data-autocomplete-id"), v[kk], list.filter(function(d) { return d[0] == v[kk]; })[0][1]);
-              });
-            }
-            else if(tp === "period") {
-              v = [moment.utc(v[0]).format(gon.mdate_format), moment.utc(v[1]).format(gon.mdate_format)];
-              el.from.datepicker('setDate', v[0]);
-              el.to.datepicker('setDate', v[1]);
-              tmp = formatRange(v);
-              create_list_item(el.from.parent().parent().find(".list"), tmp, tmp);
-            }
-          });
-        }
-      },
-      reset: function() {
-        $(".filter-inputs[data-type='donation'] .filter-input").each(function(i,d) {
-          var t = $(this);
-            field = t.attr("data-field"),
-            type = t.attr("data-type");
-             list = t.find(".list");
-
-            if(type === "autocomplete") {
-              var tmp = t.find(".autocomplete[data-autocomplete-id]");
-              autocomplete.clear(tmp.attr("data-autocomplete-id"));
-              tmp.find("input").val(null).trigger("change");
-              if(typeof global_click_callback === "function") { global_click_callback(); }
-            }
-            else if(type === "period") {
-              t.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
-            }
-            list.empty();
-        });
-      },
-      id: function() {
-        var t = this, tmp = [], p, except = ["period", "amount"];
-        Object.keys(t.data).sort().forEach(function (k) {
-          p = t.data[k];
-          p = Array.isArray(p) && except.indexOf(k) === -1 ? p.sort() : [p];
-          tmp.push(k + "=" + p.join(","));
-        });
-        return CryptoJS.MD5(tmp.join("&")).toString();
-      },
-      url: function (sid) {
-        if(typeof sid === "undefined") { sid = this.sid; }
-        js.sid = sid;
-        this.sid = sid;
-        window.history.pushState(sid, null, gon.path + "/" + sid);
-        // this.download.attr("data-href", gon.path + "/" + sid + "?format=csv");
-      },
-      set_sid: function(sid) {
-        if(typeof sid !== "undefined") { this.sid = sid; }
-      }
-    },
-    finance = {
-      name: "finance",
+    filter = {
       types: {
         party: "autocomplete",
-        income: "autocomplete",
-        income_campaign: "autocomplete",
-        expenses: "autocomplete",
-        expenses_campaign: "autocomplete",
-        reform_expenses: "autocomplete",
-        property_assets: "autocomplete",
-        financial_assets: "autocomplete",
-        debts: "autocomplete",
         period: "period_mix"
       },
-      download: $("#finance_csv_download"),
-      states: {
-        income: false,
-        income_campaign: false,
-        expenses: false,
-        expenses_campaign: false,
-        reform_expenses: false,
-        property_assets: false,
-        financial_assets: false,
-        debts: false
-      },
-      categories: ["income", "income_campaign", "expenses", "expenses_campaign", "reform_expenses", "property_assets", "financial_assets", "debts" ],
+      categories: ["income", "expenses", "reform_expenses", "property_assets", "financial_assets", "debts" ],
       elem: {
-        party: $("#finance_party"),
-        income: $("#finance_income"),
-        income_campaign:$("#finance_income_campaign"),
-        expenses:$("#finance_expenses"),
-        expenses_campaign:$("#finance_expenses_campaign"),
-        reform_expenses:$("#finance_reform_expenses"),
-        property_assets:$("#finance_property_assets"),
-        financial_assets:$("#finance_financial_assets"),
-        debts:$("#finance_debts"),
-        period: $("#finance_period")
+        party: $("#filter_party"),
+        period: $("#filter_period")
       },
       data: {},
-      sid: undefined,
+      fsid: undefined,
+      dsid: undefined,
       get: function() {
         var t = this, tp, tmp, tmp_v, tmp_d, lnk;
         t.data = { filter: "finance" };
@@ -456,28 +283,20 @@ $(document).ready(function (){
         if(!at_least_one) { loader.retype("message"); t.animate(); return null; }
         return t.data;
       },
-      set_by_url: function() {
+      set_by_params: function() {
         var t = this, tmp, tp, v, p, el;
-        // console.log("set_by_url finance", gon.finance_params);
-        if(gon.finance_params) {
-          Object.keys(gon.finance_params).forEach(function(k) {
-            if(k == "filter" || !t.types.hasOwnProperty(k)) return;
+        // console.log("set_by_url finance", gon.params);
+        if(gon.params) {
+          Object.keys(gon.params).forEach(function(k) {
+            // if(k == "filter" || !t.types.hasOwnProperty(k)) return;
               el = t.elem[k];
               tp = t.types[k];
-              v = gon.finance_params[k];
+              v = gon.params[k];
 
             if(tp === "autocomplete") {
               p = el.parent();
-              Object.keys(v).forEach(function(kk){
-                var fld = p.attr("data-field"), tmp = fld, fl = false;
-                if(t.categories.indexOf(fld) !== -1) { fl = true; tmp = "category"; }
-                 //console.log("set by url",kk,v,fld,fl,tmp);
-                if(gon.main_categories_ids.indexOf(v[kk]) === -1) {
-                  list = fl ? gon.category_lists[fld] : gon[tmp + "_list"];
-                  autocomplete.push(p.find(".autocomplete[data-autocomplete-id]").attr("data-autocomplete-id"), v[kk], list.filter(function(d) { return d[0] == v[kk]; })[0][1]);
-                }
-                if(fl) { emulate_category_click(fld); }
-              });
+              var fld = p.attr("data-field")
+              autocomplete.push(p.find(".autocomplete[data-autocomplete-id]").attr("data-autocomplete-id"), v, gon[fld + "_list"].filter(function(d) { return d[0] == v; })[0][1])
             }
             else if(tp === "period_mix") {
               p = el.parent();
@@ -497,7 +316,7 @@ $(document).ready(function (){
         }
       },
       reset: function() {
-        $(".filter-inputs[data-type='finance'] .filter-input").each(function(i,d) {
+        $(".filter-inputs .filter-input").each(function(i,d) {
           var t = $(this);
             field = t.attr("data-field"),
             type = t.attr("data-type");
@@ -559,34 +378,14 @@ $(document).ready(function (){
 
 // -----------------------------------------------------------------
 
-
-
-
-  function emulate_category_click(cat) {
-    var t, tmp, subcat = "all";
-
-    // finance_toggle.trigger("click");
-    if(["income_campaign", "expenses_campaign"].indexOf(cat) !== -1) {
-      var tmp = cat.split("_");
-      cat = tmp[0];
-      subcat = tmp[1];
-    }
-
-    t = $(".finance-category-toggle[data-cat='" + cat + "']"), tp = t.attr("data-state");
-
-    if(tp === "simple" || tp === "simpled") {
-      t.trigger("click");
-    }
-    else {
-      t.attr("data-state", subcat);
-      finance.toggle(cat, true);
-    }
-  }
   function create_list_item(list, text, vbool) {
     list.html(vbool ? "<span>" + text + "<i class='close' title='" + gon.filter_item_close + "'></i></span>" : "").toggleClass("hidden", !vbool);
   }
   function li(id, text) {
     return "<li data-id='"+id+"'>"+text+"<i class='close' title='" + gon.filter_item_close + "'></i></li>";
+  }
+  function li_without_close(id, text) {
+    return "<li data-id='"+id+"'>"+text+"</li>";
   }
   function resize() {
     w = $(window).width();
@@ -594,251 +393,167 @@ $(document).ready(function (){
   }
   function bind() {
 
-  //   filter_extended.find(".filter-toggle").click(function (){  // 'Filter' label button used in small screens
-  //     filter_extended.toggleClass("active");
-  //     loader.type("empty").show();
+    $filter.find(".filter-toggle").click(function (){  // 'Filter' label button used in small screens
+      $filter.toggleClass("active");
+      loader.type("empty").show();
 
-  //     event.stopPropagation();
-  //   });
-  //   filter_extended.find(".filter-header .close").click(function (){
-  //     loader.hide();
-  //     filter_extended.toggleClass("active");
-  //   });
-  //   filter_extended.find(".filter-input .toggle, .filter-input input").on("click change", function(){
-  //     var t = $(this).closest(".filter-input"),
-  //       field = t.attr("data-field"),
-  //       type = t.attr("data-type"),
-  //       html = "",
-  //       list = t.find(".list"),
-  //       tmp, tmp2,
-  //       state = t.hasClass("expanded");
+      event.stopPropagation();
+    });
+    $filter.find(".filter-header .close").click(function (){
+      loader.hide();
+      $filter.toggleClass("active");
+    });
+    $filter.find(".filter-input .toggle, .filter-input input").on("click change", function(){
+      var t = $(this).closest(".filter-input"),
+        field = t.attr("data-field"),
+        type = t.attr("data-type"),
+        html = "",
+        list = t.find(".list"),
+        tmp, tmp2,
+        state = t.hasClass("expanded");
 
-  //     if(state) {
-  //       if(type === "period") {
-  //         tmp = [];
-  //         t.find(".input-group input[type='text'].datepicker").each(function(i, d){
-  //           tmp2 = $(d).datepicker("getDate");
-  //           tmp.push(tmp2 ? tmp2.format(gon.date_format) : null);
-  //         });
-  //         tmp = formatRange(tmp);
-  //         create_list_item(list, tmp, tmp);
-  //       }
-  //       else if(type === "range") {
-  //         tmp = [];
-  //         t.find(".input-group input[type='number']").each(function(i, d){
-  //           tmp2 = +$(d).val();
-  //           tmp.push(tmp2 >= 1 ? tmp2 : null);
+      if(state) {
+        if(type === "period") {
+          tmp = [];
+          t.find(".input-group input[type='text'].datepicker").each(function(i, d){
+            tmp2 = $(d).datepicker("getDate");
+            tmp.push(tmp2 ? tmp2.format(gon.date_format) : null);
+          });
+          tmp = formatRange(tmp);
+          create_list_item(list, tmp, tmp);
+        }
+      }
 
-  //         });
-  //         tmp = formatRange(tmp);
-  //         create_list_item(list, tmp, tmp);
-  //       }
-  //       else if(type === "radio") {
-  //         tmp = t.find(".input-group input[type='radio']:checked");
-  //         create_list_item(list, tmp.next().text(), tmp.length);
-  //       }
-  //       else if(type === "checkbox") {
-  //         tmp = t.find(".input-group input[type='checkbox']:checked");
-  //         create_list_item(list, tmp.next().text(), tmp.length);
-  //       }
-  //       // else if(type === "period_mix") {
-  //         // list.empty();
-  //         // tmp = t.find(".input-radio-group input:checked").val();
-  //         // t.find(".input-checkbox-group ul[data-type='" + tmp + "'] input:checked").each(function(i, d){
-  //         //   list.append("<li data-id='" + d.value + "'>" + $(d).parent().find("label").text() + "<i class='close' title='" + gon.filter_item_close + "'></i></li>");
-  //         // });
-  //         // list.removeClass("hidden");
-  //       // }
-  //     }
-  //     else {
-  //       // if(type === "period_mix" || type === "radio") {
-  //       //   list.addClass("hidden");
-  //       // }
-  //     }
-  //     if($(this).hasClass("toggle")) {
-  //       t.toggleClass("expanded", !state);
-  //     }
-  //   });
-  //   filter_extended.find(".filter-input button.clear").click(function () {
-  //     var tmp = $(this).parent();
-  //     autocomplete.clear(tmp.attr("data-autocomplete-id"));
-  //     tmp.find("input").val(null).trigger("change");
-  //   });
+      if($(this).hasClass("toggle")) {
+        t.toggleClass("expanded", !state);
+      }
+    });
+    $filter.find(".filter-input button.clear").click(function () {
+      var tmp = $(this).parent();
+      autocomplete.clear(tmp.attr("data-autocomplete-id"));
+      tmp.find("input").val(null).trigger("change");
+    });
     $(window).on("resize", function(){
       resize();
-      filter_extended.find(".filter-inputs").css("max-height", $(window).height() - filter_extended.find(".filter-toggle").offset().top);
+      $filter.find(".filter-inputs").css("max-height", $(window).height() - $filter.find(".filter-toggle").offset().top);
     });
     resize();
 
-  //   donation.elem.period.from.datepicker({
-  //     firstDay: 1,
-  //     changeMonth: true,
-  //     changeYear: true,
-  //     dateFormat: gon.date_format,
-  //     onClose: function( selectedDate ) {
-  //       donation.elem.period.to.datepicker( "option", "minDate", selectedDate );
-  //     }
-  //   });
-  //   donation.elem.period.to.datepicker({
-  //     firstDay: 1,
-  //     changeMonth: true,
-  //     changeYear: true,
-  //     dateFormat: gon.date_format,
-  //     onClose: function( selectedDate ) {
-  //       donation.elem.period.from.datepicker( "option", "maxDate", selectedDate );
-  //     }
-  //   });
-
-  //   $("#donation_period_campaigns a").click(function(){
-  //     var t = $(this), v = t.attr("data-value").split(";");
-  //     donation.elem.period.from.datepicker('setDate', new Date(v[0]));
-  //     donation.elem.period.to.datepicker('setDate', new Date(v[1]));
-  //   });
-  //   $(document).on("click", ".list > span .close, .list > li .close", function(event) {
-  //     var t = $(this);
-  //       p = t.closest(".filter-input"),
-  //       field = p.attr("data-field"),
-  //       type = p.attr("data-type"),
-  //       li_span = t.parent();
 
 
-  //     if(type === "period") {
-  //       p.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
-  //     }
-  //     else if(type === "range") {
+    $(document).on("click", ".list > span .close, .list > li .close", function(event) {
+      var t = $(this);
+        p = t.closest(".filter-input"),
+        field = p.attr("data-field"),
+        type = p.attr("data-type"),
+        li_span = t.parent();
 
-  //       p.find(".input-group input[type='number']").val(null);
-  //     }
-  //     else if(type === "radio") {
-  //       p.find(".input-group input[type='radio']:checked").prop("checked", false);
-  //     }
-  //     else if(type === "checkbox") {
-  //       p.find(".input-group input[type='checkbox']:checked").prop("checked", false);
-  //     }
-  //     else if(type === "period_mix") {
-  //       p.find(".input-group .input-checkbox-group input[type='checkbox'][value='" + li_span.attr("data-id") + "']:checked").prop("checked", false);
-  //     }
+      if(type === "period_mix") {
+        p.find(".input-group .input-checkbox-group input[type='checkbox'][value='" + li_span.attr("data-id") + "']:checked").prop("checked", false);
+      }
 
-  //     if(type !== "autocomplete") {
-  //       li_span.remove();
-  //     }
-  //     event.stopPropagation();
-  //   });
-  //   $("#reset").click(function(){
-  //     clear_embed();
-  //     if(js.is_donation) {
-  //       donation.reset();
-  //     }
-  //     else {
-  //       finance.reset();
-  //     }
-  //   });
-  //   explore_button.click(function(){ clear_embed(); filter(); });
-  //   function clear_embed() {
-  //     js.esid[js.is_donation ? "d" : "f"] = undefined;
-  //   }
-  //   $(".chart_download a").click(function(){
-  //     var t = $(this),
-  //       f_type = t.attr("data-type"),
-  //       p = t.parent().parent(),
-  //       c_type = p.attr("data-chart"),
-  //       target = chart_ids[c_type],
-  //       chart = $(target).highcharts(),
-  //       mimes = {
-  //         "png": "image/png",
-  //         "jpeg": "image/jpeg",
-  //         "svg": "image/svg+xml",
-  //         "pdf": "application/pdf",
-  //       };
+      if(type !== "autocomplete") {
+        li_span.remove();
+      }
+      event.stopPropagation();
+    });
+    $("#reset").click(function(){
+      clear_embed();
+      filter.reset()
+    });
+    explore_button.click(function(){ clear_embed(); process(); });
 
-  //     if(f_type === "print") {
-  //       chart.print();
-  //     }
-  //     else {
-  //       var tmp_sid = (c_type[0] == "d" ? donation : finance).sid;
-  //       window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
-  //       // chart.exportChart({ type: mimes[type] });
-  //     }
-  //   });
-  //   autocomplete.bind();
+    function clear_embed() {
+      js.esid[js.is_donation ? "d" : "f"] = undefined;
+    }
+    $(".chart_download a").click(function(){
+      var t = $(this),
+        f_type = t.attr("data-type"),
+        p = t.parent().parent(),
+        c_type = p.attr("data-chart"),
+        target = chart_ids[c_type],
+        chart = $(target).highcharts(),
+        mimes = {
+          "png": "image/png",
+          "jpeg": "image/jpeg",
+          "svg": "image/svg+xml",
+          "pdf": "application/pdf",
+        };
 
-  //   $(document).on("click", ".filter-input[data-type='period_mix'] .input-radio-group input + label", function(event) {
-  //     var t = $(this), tp = t.attr("data-type"), filter_input = t.closest(".filter-input"),
-  //       group = filter_input.find(".input-checkbox-group"), list = filter_input.find("> ul.list");
-  //     list.empty();
+      if(f_type === "print") {
+        chart.print();
+      }
+      else {
+        var tmp_sid = (c_type[0] == "d" ? donation : finance).sid;
+        window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
+        // chart.exportChart({ type: mimes[type] });
+      }
+    });
+    autocomplete.bind();
 
-  //     group.find("ul[data-type]").addClass("hidden");
-  //     group.find("ul[data-type='" + tp + "']").removeClass("hidden");
-  //     group.find("ul[data-type='" + tp + "'] input:checked").each(function(i, d){
-  //       var d = $(d), p = d.parent(), text = p.find("label").text(), id = d.val();
-  //       list.append(li(id,text));
-  //     });
-  //   });
-  //   $(document).on("click", ".filter-input[data-type='period_mix'] .input-checkbox-group input + label", function(event) {
-  //     var t = $(this), p = t.parent(), input = p.find("input"), text = t.text(), id = input.val(),
-  //       list = p.closest(".filter-input").find("> ul.list");
-  //     if(input.is(":checked")) {
-  //       list.find("li[data-id='" + id + "']").remove();
-  //     }
-  //     else {
-  //       list.append(li(id,text));
-  //     }
+    $(document).on("click", ".filter-input[data-type='period_mix'] .input-radio-group input + label", function(event) {
+      var t = $(this), tp = t.attr("data-type"), filter_input = t.closest(".filter-input"),
+        group = filter_input.find(".input-checkbox-group"), list = filter_input.find("> ul.list");
+      list.empty();
 
-  //   });
+      group.find("ul[data-type]").addClass("hidden");
+      group.find("ul[data-type='" + tp + "']").removeClass("hidden");
+      group.find("ul[data-type='" + tp + "'] input:checked").each(function(i, d){
+        var d = $(d), p = d.parent(), text = p.find("label").text(), id = d.val();
+        list.append(li(id,text));
+      });
+    });
+    $(document).on("click", ".filter-input[data-type='period_mix'] .input-checkbox-group input + label", function(event) {
+      var t = $(this), p = t.parent(), input = p.find("input"), text = t.text(), id = input.val(),
+        list = p.closest(".filter-input").find("> ul.list");
+      if(input.is(":checked")) {
+        list.find("li[data-id='" + id + "']").remove();
+      }
+      else {
+        list.append(li(id,text));
+      }
 
-  //   // bind finance view_as buttons click event
-  //   $(".pane[data-type='finance'] .actions .left > div[data-view-toggle]").on("click", function() {
-  //     var t = $(this), tp = t.attr("data-view-toggle"), p = t.closest(".actions"), r = p.find(".right .share, .right .embed");
-  //     p.attr("data-type", tp);
-  //     $(".pane[data-type='finance']").attr("data-view-type", tp);
-  //     //$(".pane[data-type='finance'] .actions .download_list").attr("data-type", tp);
-  //     // p.find(".embed").attr("data-embed", tp === "chart" ? "f-ca" : "f-t");
+    });
 
-  //   });
 
-  //   // $(document).tooltip({
-  //   //   content: function() { return $(this).attr("data-retitle"); },
-  //   //   items: "text[data-retitle]",
-  //   //   track: true
-  //   // });
 
-  //   $(document).on("click", "[data-dialog]", function () {
+    $(document).tooltip({
+      content: function() { return $(this).attr("data-retitle"); },
+      items: "text[data-retitle]",
+      track: true
+    });
 
-  //     var t = $(this),
-  //       pars = t.attr("data-dialog").split(";"), // ex: embed;a
-  //       dialog_type = pars[0],
-  //       options = { chart_type: pars[1] };
+    $(document).on("click", "[data-dialog]", function () {
 
-  //     if(dialog_type === "share") {
-  //       options["title"] = js.share["#" + t.attr("data-share-title")];
-  //     }
+      var t = $(this),
+        pars = t.attr("data-dialog").split(";"), // ex: embed;a
+        dialog_type = pars[0],
+        options = { chart_type: pars[1] };
 
-  //     js_dialog.open(pars[0], options);
-  //   });
+      if(dialog_type === "share") {
+        options["title"] = js.share["#" + t.attr("data-share-title")];
+      }
+
+      js_dialog.open(pars[0], options);
+    });
   }
 
-  function filter() {
+  function process() {
     loader.start();
     //console.log("start filter", js.is_donation);
     var tmp, cacher_id, _id, _id, finance_id;//, obj;
     console.log('test filter 1')
     if(gon.gonned) {
+      filter.set_by_params()
+      var obj_data = gon.donation_data
+      js.cache[obj_data.sid] = obj_data
+      filter_callback(js.cache[obj_data.sid], 'donation');
 
-      [donation].forEach( function (obj) { // , finance
+      obj_data = gon.finance_data
+      js.cache[obj_data.sid] = obj_data
+      console.log(obj_data)
+      // filter_callback(js.cache[obj_data.sid], 'finance');
 
-        // obj.set_by_url();
-        // tmp = obj.get();
-        // _id = obj.id();
-        // console.log('test 3')
-        var obj_data = gon[obj.name + "_data"]
-        js.cache[obj_data.sid] = gon[obj.name + "_data"];
-        // // console.log("gonnned",js.cache[_id].sid);
-        // // js.cache[js.cache[_id].sid] = _id
-        // // obj.set_sid(js.cache[_id].sid);
-        // // if(obj.name === (gon.is_donation ? "donation" : "finance")) { obj.url(js.cache[_id].sid); }
-        // console.log('test filter')
-        filter_callback(js.cache[obj_data.sid], obj.name);
-      })
       gon.gonned = false;
     } else {
       // obj = js.is_donation ? donation : finance;
@@ -893,301 +608,7 @@ $(document).ready(function (){
     loader.stop();
   }
 
-  function bar_chart(elem, resource, bg) {
-    console.log("chart", elem, resource);
-    var ln = 0;
-    resource.series.forEach(function (d) { ln += Math.round(d[0].length/15)+1; });
-    js.share[elem] = encodeURI(resource.title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
-    console.log(view_content, w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12)
-    $(elem).highcharts({
-      chart: {
-          type: 'bar',
-          backgroundColor: bg,
-          height: 60*(Math.round(resource.title.length/40)+1) + ln*24,
-          width: w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12//,
-          // events: {
-          //   load: function () {
-          //     var tls = $(this.container).find(".highcharts-xaxis-labels text title");
-          //     tls.each(function (tl) {
-          //       tl = $(tl);
-          //       tl.parent().attr("data-retitle", tl.text());
-          //       tl.remove();
-          //     });
-          //   }
-          // }
-      },
-      exporting: {
-        buttons: {
-          contextButton: {
-            enabled: false
-          }
-        },
-        scale: 1//,
-        // url: ""
-      },
-      title: {
-        text: resource.title,
-        style: {
-          color: "#5d675b",
-          fontSize:"18px",
-          fontFamily: "firasans_r",
-          textShadow: 'none'
-        }
-      },
-      subtitle: {
-        text: resource.subtitle,
-        style: {
-          color: "#5d675b",
-          fontSize:"12px",
-          fontFamily: "firasans_book",
-          textShadow: 'none'
-        }
-      },
-      xAxis: {
-        type: "category",
-        lineWidth: 0,
-        tickWidth: 0,
-        labels: {
-          style: {
-            color: "#5d675b",
-            fontSize:"14px",
-            fontFamily: "firasans_book",
-            textShadow: 'none',
-            textOverflow: "none"
-          },
-          // ,
-          // formatter: function(a,b,c) {
-          //   return this.value + "<title>hello</title>";
-          // }
-        }
-      },
-      yAxis: { visible: false },
-      legend: { enabled: false },
-      plotOptions: {
-        bar: {
-          color:"#ffffff",
-          dataLabels: {
-            enabled: true,
-            padding: 6,
-            style: {
-              color: "#5d675b",
-              fontSize:"14px",
-              fontFamily: "firasans_r",
-              textShadow: "none"
-            },
-            formatter: function () {
-              var tmp = Highcharts.numberFormat(this.y);
-              if(tmp.indexOf(decPoint) !== -1) {
-                tmp = tmp.trimr("0").trimr(decPoint);
-              }
-              return tmp == "0" ? gon.na : tmp;
-            }
-          },
-          pointInterval:1,
-          pointWidth:17,
-          pointPadding: 0,
-          groupPadding: 0,
-          borderWidth: 0,
-          shadow: false
-        }
-      },
-      series: [{ data: resource.series }],
-      tooltip: {
-        backgroundColor: "#DCE0DC",
-        followPointer: true,
-        shadow: false,
-        borderWidth:0,
-        style: {
-          color: "#5D675B",
-          fontSize:"14px",
-          fontFamily: "firasans_r",
-          textShadow: "none",
-          fontWeight:"normal"
-        },
-        formatter: function () {
-          var tmp = Highcharts.numberFormat(this.y);
-          if(tmp.indexOf(decPoint) !== -1) {
-            tmp = tmp.trimr("0").trimr(decPoint);
-          }
-          return "<b>" + this.key + "</b>: " + (tmp == "0" ? gon.na : tmp);
-        }
-      }
-    });
-  }
-  function grouped_advanced_column_chart (elem, resource, bg) {
-    // console.log("fca", resource);
-    var cat_max_len = 0,
-      groupedOptions = [],
-      groupedOptionsRotation = 0;
-    if(resource.categories.length && resource.categories[0].hasOwnProperty("categories") && resource.categories[0].categories.length > 1) {
-      resource.categories[0].categories.forEach(function (d, i) {
-        resource.categories[0].categories[i] = " " + d;
-        if(cat_max_len < d.length) {
-          cat_max_len = d.length;
-        }
-      });
-      groupedOptions = [{ rotation: 0 }, { rotation: -90 }];
-      groupedOptionsRotation = -90;
-    }
-    js.share[elem] = encodeURI(resource.title + " | " + gon.app_name_long);
-    $(elem).highcharts({
-      chart: {
-          type: 'column',
-          backgroundColor: bg,
-          height: 400 + cat_max_len*9,
-          width: view_content.width()-28 // w > 992 ? Math.floor((view_content.width()-28)/2) :
-      },
-      exporting: {
-        buttons: {
-          contextButton: {
-            enabled: false
-          }
-        },
-        scale: 1
-      },
-      title: {
-        text: resource.title,
-        margin: 40,
-        style: {
-            fontFamily:"firasans_r",
-            fontSize:"18px",
-            color: "#5d675b"
-        },
-        useHTML: true
-      },
-      xAxis: {
-        type: "category",
-        categories: resource.categories,
-        gridLineColor: "#5D675B",
-        gridLineWidth:1,
-        gridLineDashStyle: "Dash",
-        lineWidth: 1,
-        lineColor: "#5D675B",
-        tickWidth: 1,
-        tickColor: "#5D675B",
 
-        labels: {
-          groupedOptions: groupedOptions,
-          style: {
-            color: "#5d675b",
-            fontSize:"14px",
-            fontFamily: "firasans_book",
-            textShadow: 'none'
-          },
-          format: "⁣ {value}", // there is an invisible character infront of actual space https://unicode-table.com/en/2063/, to have space infront of text for rotated labels
-          //useHTML: true,
-          step:1,
-          rotation:groupedOptionsRotation
-        }
-      },
-      yAxis: [
-      {
-        title: {
-          enabled: true,
-          text: gon.lari,
-          style: {
-            color: "#7F897D",
-            fontSize:"12px",
-            fontFamily: "firasans_r",
-            textShadow: "none"
-          }
-        },
-        gridLineColor: "#eef0ee",
-        gridLineWidth:1,
-        style: {
-          color: "#5d675b",
-          fontSize:"14px",
-          fontFamily: "firasans_book",
-          textShadow: "none"
-        }
-      },
-      {
-        linkedTo:0,
-        title: {
-          enabled: true,
-          text: gon.lari,
-          style: {
-            color: "#7F897D",
-            fontSize:"12px",
-            fontFamily: "firasans_r",
-            textShadow: 'none'
-          }
-        },
-        opposite: true,
-        style: {
-          color: "#7F897D",
-          fontSize:"12px",
-          fontFamily: "firasans_r",
-          textShadow: 'none'
-        }
-      }
-      ],
-      legend: {
-          enabled: true,
-          symbolWidth:10,
-          symbolHeight:10,
-          shadow: false,
-          itemStyle: {
-            color: "#5d675b",
-            fontSize:"14px",
-            fontFamily: "firasans_book",
-            textShadow: 'none',
-            fontWeight:'normal'
-          }
-       },
-
-      plotOptions: {
-        column:{
-          maxPointWidth: 40
-        }
-      },
-      series: resource.series,
-      tooltip: {
-        backgroundColor: "#DCE0DC",
-        followPointer: true,
-        shadow: false,
-        borderWidth:0,
-        style: {
-          color: "#5D675B",
-          fontSize:"14px",
-          fontFamily: "firasans_r",
-          textShadow: 'none',
-          fontWeight:'normal'
-        }
-      }
-    });
-  }
-  function init_highchart () {
-    Highcharts.setOptions({
-      lang: {
-        numericSymbols: gon.numericSymbols,
-        thousandsSep: ","
-      },
-      colors: [ "#D36135", "#DDCD37", "#5B85AA", "#F78E69", "#A69888", "#88D877", "#5D675B", "#A07F9F", "#549941", "#35617C", "#694966", "#B9C4B7"],
-      credits: {
-        enabled: true,
-        href: gon.root_url,
-        // position: undefined
-        // style: undefined
-        text: gon.app_name
-      }
-    });
-    decPoint = Highcharts.getOptions().lang.decimalPoint;
-    (function(H) { // for highchart to recognize maxPointWidth property
-        var each = H.each;
-        H.wrap(H.seriesTypes.column.prototype, 'drawPoints', function(proceed) {
-            var series = this;
-            if(series.data.length > 0 ){
-                var width = series.barW > series.options.maxPointWidth ? series.options.maxPointWidth : series.barW;
-                each(this.data, function(point) {
-                    point.shapeArgs.x += (point.shapeArgs.width - width) / 2;
-                    point.shapeArgs.width = width;
-                });
-            }
-            proceed.call(this);
-        })
-    })(Highcharts);
-  }
 
   // dev block
   // filter_extended.find(".filter-toggle").trigger("click");
@@ -1196,6 +617,6 @@ $(document).ready(function (){
     init_highchart();
     bind();
     // js.is_donation = gon.is_donation;
-    filter();
+    process();
   })();
 });

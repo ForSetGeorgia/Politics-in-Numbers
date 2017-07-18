@@ -278,15 +278,14 @@ class RootController < ApplicationController
     categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
     Rails.logger.debug("--------------------------------------------#{@main_categories}")
 
-    @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true, m.type] }
+    @party_list = Party.sorted.map { |m| [m.id, m.title, m.get_permalink, m.type == 0 && m.member == true, m.type] }
     gon.party_list = Party.list_from(@party_list)
 
-    if periods.nil?
-      _pars = {
-        party: party_id,
-        period: Period.annual.limit(3).map{|m| m.permalink }
-      }
-    end
+    _pars = {
+      id: party_id,
+      period: []
+    }
+    _pars[:period] = Period.annual.limit(3).map{|m| m.permalink } if periods.nil?
     # dt = []
 
     gon.root_url = root_url
@@ -311,8 +310,8 @@ class RootController < ApplicationController
 
     # gon.donor_list = Donor.list(donation_pars[:donor]) if donation_pars.key?(:donor)
 
-    # @period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
-    # gon.period_list = Period.list_from(@period_list)
+    period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
+    gon.period_list = Period.list_from(period_list)
 
     # gon.is_donation = is_donation
 
@@ -321,7 +320,7 @@ class RootController < ApplicationController
 
     # dsid = gon.donation_data[:sid]
 
-    # gon.finance_data = Dataset.party_explore(_pars, { periods: @period_list })
+    gon.finance_data = Dataset.party_explore(_pars, { periods: period_list })
 
    pars.delete(:locale)
 

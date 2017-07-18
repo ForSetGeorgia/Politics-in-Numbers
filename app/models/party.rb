@@ -127,15 +127,15 @@ class Party
     Dataset.period_for_party(self.id)
   end
 
-  def get_total(type)
+  def get_stats(type)
      # Rails.logger.debug("--------------------------------------------#{type} #{self.id}")
-    total = 0
+    stats = [ 0, 0 ]
     if type == :donations
-      total = Donor.total_donations_for_party(self.id)
+      stats = Donor.total_donations_for_party(self.id)
     elsif [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ].index(type).present?
-      total = Dataset.total_for_party_by_category(self.id, type)
+      stats = Dataset.total_for_party_by_category(self.id, type)
     end
-    total
+    stats
   end
 #field helpers
   def self.is_initiative(party_name)
