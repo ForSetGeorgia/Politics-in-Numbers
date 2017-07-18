@@ -157,7 +157,6 @@ class Donor
       tmp.each{|e| ors.push({ "$eq": ["$$donation.party_id", e ] }) }
       conditions.push({ "$or": ors });
     end
-
     if params[:period].present?
       tmp = params[:period][0]
       if tmp.present? && tmp != -1
@@ -240,10 +239,14 @@ class Donor
       # f[:period] = Period.get_ids_by_slugs(params[:period])
 
       tmp = params[:period]
-      if tmp.present? && tmp.class == Array && tmp.size == 2 && tmp.all?{|t| t.size == 13 && t.to_i.to_s == t }
+      if tmp.present? && tmp.class == Array && tmp.size == 2 && tmp.all?{|t| (t.size == 13 && t.to_i.to_s == t) || t.to_i == -1 }
         f[:period] = tmp.map { |t|
-            n = Time.at(t.to_i/1000)
-            Time.utc(n.year, n.month, n.day, 0, 0, 0)
+            if t.to_i != -1
+              n = Time.at(t.to_i/1000)
+              Time.utc(n.year, n.month, n.day, 0, 0, 0)
+            else
+              -1
+            end
           }
       end
 
@@ -273,8 +276,8 @@ class Donor
     end
 
     chart_subtitle = ""
-    if f[:period].present? && f[:period][0] != -1 && f[:period][1] != -1
-      chart_subtitle = "#{I18n.l(f[:period][0], format: :date)} - #{I18n.l(f[:period][1], format: :date)}"
+    if f[:period].present? && (f[:period][0] != -1 || f[:period][1] != -1)
+      chart_subtitle = i18n_format_range(f[:period])
     else
       dte = Donor.date_span
       chart_subtitle = "#{I18n.l(dte[:first_date], format: :date)} - #{I18n.l(dte[:last_date], format: :date)}" if dte.present?
@@ -961,6 +964,20 @@ class Donor
           ret =  " > #{range[0]}"
         elsif range[1] != -1
           ret =  " < #{range[1]}"
+        end
+      end
+      ret
+    end
+
+    def self.i18n_format_range (range)
+      ret = ""
+      if range.length == 2
+        if range[0] != -1 && range[1] != -1
+          ret = range.map{|m| I18n.l(m, format: :date) }.join(" - ")
+        elsif range[0] != -1
+          ret = " > #{I18n.l(range[0], format: :date)}"
+        elsif range[1] != -1
+          ret = " < #{I18n.l(range[1], format: :date)}"
         end
       end
       ret
