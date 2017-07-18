@@ -46,6 +46,7 @@ Rails.application.routes.draw do
     get '/api' => 'root#api'
     get '/parties' => 'root#parties', as: :parties
     get '/party/:id' => 'root#party', as: :party
+    get 'party_filter' => 'root#party_filter'
     get '/embed/:type/:id' => 'root#embed' , as: :embed, :constraints => { :type => /(static|dynamic)/ }, :defaults => { :type => 'dynamic' }
     get '/embed_static/:id' => 'root#embed_static', as: :embed_static, constraints: lambda { |req| req.format == :json }
     get '/embed_test/:type/:id/:chart' => 'root#embed_test', as: :embed_test

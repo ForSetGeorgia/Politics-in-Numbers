@@ -44,6 +44,10 @@ class Party
   def permalink
     id.to_s #slug.present? ? slug : id.to_s
   end
+
+  def get_permalink
+    slug.present? ? slug : id.to_s
+  end
 #scopes
   def self.sorted
     order_by([[:title, :asc]])#.limit(3)

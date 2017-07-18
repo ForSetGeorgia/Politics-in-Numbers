@@ -58,5 +58,7 @@ module StarterTemplate
     #config.mongoid.logger = nil #Logger.new($stdout, :info)
     Mongo::Logger.logger.level = ::Logger::FATAL
     config.middleware.use Rack::Deflater
+
+    config.i18n.enforce_available_locales = false
   end
 end

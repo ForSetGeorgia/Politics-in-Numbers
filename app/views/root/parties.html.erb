@@ -10,7 +10,7 @@
         <div class="grid-row">
           <div class="grid-column">
             <div class="caption">
-              <a href="<%= party_path(id: item.id) %>"><%= item.title %></a>
+              <a href="<%= party_path(id: item.get_permalink) %>"><%= item.title %></a>
             </div>
             <% if item.leader.present? %>
               <div class="leader">

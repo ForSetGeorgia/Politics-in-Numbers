@@ -484,6 +484,222 @@ class Donor
     res
   end
 
+  def self.party_explore(params)#, type = "a", inner_pars = false, global_data = {})
+    limiter = 5
+    default_f = {
+      party: nil,
+      period: [-1,-1]
+    }
+    title_options = {}
+
+    f = default_f.dup
+
+    tmp = params[:period]
+    if tmp.present? && tmp.class == Array && tmp.size == 2 && tmp.all?{|t| t.size == 13 && t.to_i.to_s == t }
+      f[:period] = tmp.map { |t|
+          n = Time.at(t.to_i/1000)
+          Time.utc(n.year, n.month, n.day, 0, 0, 0)
+        }
+    end
+    f[:party] = Party.get_ids_by_slugs(params[:party])
+
+
+    chart_subtitle = ""
+    if f[:period].present? && f[:period][0] != -1 && f[:period][1] != -1
+      chart_subtitle = "#{I18n.l(f[:period][0], format: :date)} - #{I18n.l(f[:period][1], format: :date)}"
+    else
+      dte = Donor.date_span
+      chart_subtitle = "#{I18n.l(dte[:first_date], format: :date)} - #{I18n.l(dte[:last_date], format: :date)}" if dte.present?
+    end
+
+
+
+
+    ds = 0
+    ps = f[:party].nil? ? 0 : f[:party].length
+    # ds == 0 && ps == 0
+    # ds == 0 && ps == 1
+    # ds == 0 && ps > 1
+    # ds == 1 && ps == 0
+    # ds > 1 && ps == 0
+    # ds >= 1 && ps >= 1
+    # above is schema for below statement
+    chart_type = ds == 0 ? ( ps == 0 ? 0 : ( ps == 1 ? 1 : 2) ) : ( ps == 0 ? ( ds == 1 ? 3 : 4) : 5 )
+
+
+    data = filter(f).to_a
+
+    parties_list = {}
+    parties = {}
+    (global_data.key?(:parties) ? global_data[:parties] : Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true] }).each{ |e| parties[e[0]] = { value: 0, name: e[1] } }
+
+    if ps > 0 # filling parties_list with initial data
+      f[:party].each{ |e|
+        es = BSON::ObjectId(e)
+        parties_list[es] = { value: 0, name: parties[es][:name] } if parties[es].present?
+      }
+    # else
+    #   parties.each{|k,v| parties_list[k] = { value: 0, name: v[:name] } }
+    end
+    all_donors = Donor.donors_by_ids(f[:donor])
+    partial = all_donors.length > 0
+    n = 0
+    if partial # recreating 'data' to include those donors that have no donations data
+
+      all_donors.each_with_index { |e,e_i|
+        dnr_index = data.index{|i| i[:_id] == e[:_id]}
+        if dnr_index.nil?
+          e[:donations] = []
+          data << e
+        end
+      }
+    end
+
+
+    total_amount = 0
+    recent_donations = []
+    donors_list = []
+
+    data.each{|e|
+
+      donors_list << e[:name]# if [3,4].index(chart_type).present?
+
+      e[:partial_donated_amount] = 0
+      e[:donations].each { |ee|
+        am = ee[:amount]
+
+        parties[ee[:party_id]][:value] += am if chart_type == 0
+
+        if [2,3,4,5].index(chart_type).present?
+          parties_list[ee[:party_id]] = { value: 0, name: parties[ee[:party_id]][:name] } if !parties_list[ee[:party_id]].present?
+          parties_list[ee[:party_id]][:value] += am
+        end
+
+        recent_donations.push({ date: ee[:give_date], out: { name: e[:name], value: am } }) if chart_type == 1
+        recent_donations.push({ date: ee[:give_date], out: { name: parties[ee[:party_id]][:name], value: am } }) if chart_type == 3
+
+        e[:partial_donated_amount] += am
+
+        total_amount += am
+
+        n  += 1
+      }
+      e[:partial_donated_amount] = e[:partial_donated_amount].round(2)
+    }
+    parties.each_pair { |k, v| parties[k][:value] = v[:value].round(2) }
+    parties_list.each_pair { |k, v| parties_list[k][:value] = v[:value].round(2) }
+    total_amount = total_amount.round(2)
+    has_no_data = total_amount == 0
+
+    # prepare data for both charts
+    ca = []
+    cb = []
+    ca_title = { n: 0, obj: nil, objb: nil }
+    cb_title = { n: 0, obj: nil, objb: nil }
+    labels = {
+      donors: I18n.t("shared.chart.label.donors"),
+      parties: I18n.t("shared.chart.label.parties"),
+      donations: I18n.t("shared.chart.label.donations")
+    }
+    if chart_type == 0 # If select anything other than party and donor -> charts show the top 5
+      ca_tmp = pull_n(data, limiter, :donated_amount, labels[:donors])
+      cb_tmp = pull_n(parties.sort_by { |k, v| -1*v[:value] }.map{|k,v| v }, limiter, :value, labels[:parties])
+    elsif chart_type == 1 # If select 1 party -> top 5 donors for party, last 5 donations for party
+      tmp = parties[BSON::ObjectId(f[:party][0])][:name]
+      ca_title[:obj] = cb_title[:obj] = tmp
+
+      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donors])
+      cb_tmp = pull_n(recent_donations.sort{ |x,y| y[:date] <=> x[:date] }.map{|m| m[:out] }, limiter, :value, labels[:donations])
+
+    elsif chart_type == 2 || chart_type == 4
+      # If select > 1 party -> top 5 donors for parties, total donations for selected parties
+      # If select > 1 donor-> total donations for each donor, top 5 parties donated to
+
+      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[chart_type == 2 ? :parties : :donors])
+      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:value] <=> x[:value] }, limiter, :value, labels[chart_type == 2 ? :donations : :parties])
+
+      ca_title[:obj] = chart_type == 4 ? ca_tmp[:title] : cb_tmp[:title]
+      cb_title[:obj] = chart_type == 4 ? donors_list.join(", ") : cb_tmp[:title]
+
+    elsif chart_type == 3 # If select 1 donor-> last 5 donations for donor, top 5 parties donated to
+      ca_tmp = pull_n(recent_donations.sort{ |x,y| y[:date] <=> x[:date] }.map{|m| m[:out] }, limiter, :value, labels[:donations])
+      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:name] <=> x[:name] }, limiter, :value, labels[:parties])
+
+      ca_title[:obj] = cb_title[:obj] = donors_list.join(", ")
+
+    elsif chart_type == 5 # show selected donors sorted by who donated most and show selected parties sorted by who received most
+      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donations])
+      cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:value] <=> x[:value] }, limiter, :value, labels[:donations])
+
+      ca_title[:obj] = cb_title[:obj] = ca_tmp[:title]
+      ca_title[:objb] = cb_title[:objb] = cb_tmp[:title]
+    end
+
+    ca = ca_tmp[:data]
+    cb = cb_tmp[:data]
+
+    ca_title[:n] = ca.size
+    cb_title[:n] = cb.size
+
+    if ["a"].index(type).present?
+      f.keys.each{|e|
+        if f[e] == default_f[e]
+          f.delete(e)
+        else
+          if f[e].class == Array
+            if f[e].empty?
+              f.delete(e)
+            else
+              f[e].each_with_index{|ee,ii|
+                f[e][ii] = ee.to_s if ee.class == BSON::ObjectId
+              }
+            end
+          end
+        end
+      }
+      sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
+    end
+
+    res = {}
+    if ["t", "a"].index(type).present?
+      res = {
+        table: {
+          header: ["", human_attribute_name(:name), human_attribute_name(:tin),
+            human_attribute_name(:nature), Donation.human_attribute_name(:give_date),
+            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party),
+            Donation.human_attribute_name(:monetary)],
+          classes: ["no-padding", "", "center", "center", "center", "right", "", "center"]
+        }
+      }
+    end
+
+    if ["ca", "a", "co", "coa"].index(type).present?
+      res.merge!({
+        ca: {
+          series: has_no_data ? [] : ca,
+          title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
+          subtitle: chart_subtitle
+        }
+      })
+    end
+    if ["cb", "a", "co", "cob"].index(type).present?
+      res.merge!({
+        cb: {
+          series: has_no_data ? [] : cb,
+          title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
+          subtitle: chart_subtitle
+        }
+      })
+    end
+    if ["a"].index(type).present?
+      res.merge!({
+        sid: sid,
+        pars: f
+      })
+    end
+    res
+  end
+
   def self.filter_table(params, opts = { meta: false, skip: nil, limit: nil, sort: nil, q: nil })
     # Rails.logger.debug("****************************************#{opts}")
     lang = I18n.locale

@@ -268,15 +268,85 @@ class RootController < ApplicationController
 
   def party
     @show_page_title = false
-    @item = Party.find(params[:id])
+    pars = party_params
+    party_id = params[:id]
+    periods = params[:period]
+    @item = Party.find(party_id)
 
     categories = Category.non_virtual.only_sym
     @main_categories = {}
     categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
-     Rails.logger.debug("--------------------------------------------#{@main_categories}")
+    Rails.logger.debug("--------------------------------------------#{@main_categories}")
 
     @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true, m.type] }
     gon.party_list = Party.list_from(@party_list)
+
+    if periods.nil?
+      _pars = {
+        party: party_id,
+        period: Period.annual.limit(3).map{|m| m.permalink }
+      }
+    end
+    # dt = []
+
+    gon.root_url = root_url
+
+    gon.path = party_path
+    gon.filter_path = party_filter_path
+    gon.embed_path = embed_static_path(id: "_id_")
+    gon.share_url = share_url({ id: "_id_", chart: "_chart_" })
+    gon.share_desc = t("shared.common.description").html_safe
+    gon.app_name = "pins.ge"
+    gon.app_name_long = t('shared.common.name')
+    gon.date_format = t('date.formats.jsdate')
+    gon.mdate_format = t('date.formats.jsmomentdate')
+    gon.filter_item_close = t('.filter_item_close')
+    gon.all = t('shared.common.all')
+    gon.campaign = t('.campaign')
+    gon.numericSymbols = t('shared.common.numericSymbols')
+    gon.lari = t('shared.common.lari')
+    gon.gonned = true
+    gon.chart_path = chart_path({id: ""})
+    gon.na = t('shared.common.na')
+
+    # gon.donor_list = Donor.list(donation_pars[:donor]) if donation_pars.key?(:donor)
+
+    # @period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
+    # gon.period_list = Period.list_from(@period_list)
+
+    # gon.is_donation = is_donation
+
+
+    gon.donation_data = Donor.party_explore(_pars)
+
+    # dsid = gon.donation_data[:sid]
+
+    # gon.finance_data = Dataset.party_explore(_pars, { periods: @period_list })
+
+   pars.delete(:locale)
+
+    # fsid = gon.finance_data[:sid]
+
+    gon.params = _pars
+
+    # respond_to do |format|
+    #   format.html
+    # end
+  end
+
+  def party_filter
+    pars = party_filter_params
+    res = {}
+
+    party = pars[:party]
+    periods = pars[:period]
+
+    tmp = Donor.party_explore(party, period)
+    res[:donation] = tmp
+    tmp = Dataset.party_explore(party, period)
+    res[:finance] = tmp
+
+    render :json => res
   end
 
   def embed_static
@@ -450,6 +520,14 @@ class RootController < ApplicationController
 
     def download_params
       params.permit([:filter, :locale, :format, :type, period: [], party: [], ids: []])
+    end
+
+    def party_params
+      params.permit(:id, :filter, :locale, period: [])
+    end
+
+    def party_filter_params
+      params.permit(:locale, :id, period: [])
     end
 
     def embed_params
