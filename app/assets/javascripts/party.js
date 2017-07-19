@@ -9,20 +9,16 @@
 
 $(document).ready(function (){
   // console.log("explore ready");
-  if (typeof global_filter_callback === 'undefined') {
-    global_filter_callback = function () {}
+  if (typeof global_process_callback === 'undefined') {
+    global_process_callback = function () {}
   }
   var
     w = 0,
     h = 0,
+    current_id,
     decPoint = ".",
-    // explore = $("#explore"),
-    // explore_button = $("#explore_button"),
-    // finance_toggle = $("#finance_toggle"),
-    // donation_toggle = $("#donation_toggle"),
-    // filter_type = $("#filter_type"),
     $filter = $(".filter"),
-    // finance_category = $("#finance_category"),
+    explore_button = $("#explore_button"),
     view_content = $(".result"),
     view_not_found = $(".not-found"),
     loader = {
@@ -49,16 +45,6 @@ $(document).ready(function (){
       hide: function () { this.el.hide(); },
       type: function (tp) { this._type = (typeof tp === "undefined" || ["circle", "message", "empty"].indexOf(tp) === -1) ? "circle" : tp; return this; }
     },
-    // donation_total_amount = $("#donation_total_amount span"),
-    // donation_total_donations = $("#donation_total_donations span"),
-    // donation_table = $("#donation_table table"),
-    // finance_table = $("#finance_table table"),
-    chart_ids = {
-      "da": "#donation_chart_1",
-      "db": "#donation_chart_2"//,
-      // "fa": "#finance_chart"
-    },
-    // finance_datatable,
     autocomplete = {
       push: function (autocomplete_id, key, value) {
         // console.log(autocomplete_id, key,value);
@@ -71,14 +57,6 @@ $(document).ready(function (){
           this[autocomplete_id][key] = value;
         }
       },
-      // pop: function (autocomplete_id, key) {
-      //   if(this.hasOwnProperty(autocomplete_id) && this[autocomplete_id].hasOwnProperty(key)) {
-      //     $("[data-autocomplete-view='" + autocomplete_id + "'] li[data-id='" + key + "']").remove();
-      //     $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li .item[data-id='" + key + "']").removeClass("selected");
-      //     delete this[autocomplete_id][key];
-      //     if($.isEmptyObject(this[autocomplete_id])) { delete this[autocomplete_id]; }
-      //   }
-      // },
       clear: function (autocomplete_id) {
         if(this.hasOwnProperty(autocomplete_id)) {
           $("[data-autocomplete-view='" + autocomplete_id + "'] li").remove();
@@ -232,25 +210,20 @@ $(document).ready(function (){
         period: $("#filter_period")
       },
       data: {},
-      fsid: undefined,
-      dsid: undefined,
       get: function() {
         var t = this, tp, tmp, tmp_v, tmp_d, lnk;
-        t.data = { filter: "finance" };
+        t.data = { };
         // console.log(autocomplete, "before", t.data);
         Object.keys(this.elem).forEach(function(el){
           var is_elem = [].indexOf(el) === -1;
-          (is_elem ? [t.elem[el]] : Object.keys(t.elem[el]).map(function(m){ return t.elem[el][m]; })).forEach(function(elem, elem_i){
+          ([t.elem[el]]).forEach(function(elem, elem_i){
             tmp = $(elem);
             tmp_v = [];
             tp = tmp.attr("data-type");
             if(tp === "autocomplete") {
               lnk = tmp.attr("data-autocomplete-view");
               if(autocomplete.hasOwnProperty(lnk)) {
-                tmp_v = Object.keys(autocomplete[lnk]);
-              }
-              else if(t.states[el]) {
-                tmp_v = [gon.main_categories[el]];
+                tmp_v = Object.keys(autocomplete[lnk])[0];
               }
 
               if(tmp_v.length) {
@@ -272,15 +245,6 @@ $(document).ready(function (){
             }
           });
         });
-        var at_least_one = false;
-        t.categories.forEach(function(d){
-          if(t.data.hasOwnProperty(d)) {
-            at_least_one = true;
-            return;
-          }
-        });
-
-        if(!at_least_one) { loader.retype("message"); t.animate(); return null; }
         return t.data;
       },
       set_by_params: function() {
@@ -347,32 +311,15 @@ $(document).ready(function (){
         });
         return CryptoJS.MD5(tmp.join("&")).toString();
       },
-      url: function (sid) {
-        if(typeof sid === "undefined") { sid = this.sid; }
-        js.sid = sid;
-        this.sid = sid;
-        window.history.pushState(sid, null, gon.path + "/" + sid);
-        this.download.attr("href", gon.path + "/" + sid + "?format=csv");
-      },
-      set_sid: function (sid) {
-        if(typeof sid !== "undefined") { this.sid = sid; }
-      },
-      toggle: function (element, turn_on) {
-        // console.log(element, turn_on);
-        var t = this, p = t.elem[element].parent();
-        p.attr("data-on", turn_on);
-        t.states[element] = turn_on;
-        if(!turn_on) {
-          var tmp = p.find(".autocomplete[data-autocomplete-id='finance-" + element + "']");
-          autocomplete.clear("finance-" + element);
-          tmp.find("input").val(null).trigger("change");
+      url: function () {
+        var t = this, period = ''
+        if (t.data.hasOwnProperty('period')) {
+          period = '?'
+          t.data.period.forEach(function (per) {
+            period += 'period[]=' + per
+          })
         }
-      },
-      animate: function () {
-        [finance_category.find("li div"), explore_button].forEach(function (d) {
-          d.one("webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend", function() { $(this).removeClass("swing animated"); })
-          .addClass("swing animated");
-        });
+        window.history.pushState(current_id, null, gon.path.replace('_id_', t.data.party) + '' + period);
       }
     };
 
@@ -471,22 +418,23 @@ $(document).ready(function (){
         f_type = t.attr("data-type"),
         p = t.parent().parent(),
         c_type = p.attr("data-chart"),
-        target = chart_ids[c_type],
-        chart = $(target).highcharts(),
-        mimes = {
-          "png": "image/png",
-          "jpeg": "image/jpeg",
-          "svg": "image/svg+xml",
-          "pdf": "application/pdf",
-        };
+        chart_id = p.closest('.actions').attr('data-chart-id')
 
       if(f_type === "print") {
+        var chart = $(chart_id).highcharts()
         chart.print();
       }
       else {
-        var tmp_sid = (c_type[0] == "d" ? donation : finance).sid;
+        var is_donation = c_type[0] == 'd'
+        var currentTmp = js.cache[current_id][is_donation ? 'donation' : 'finance']
+        var tmp_sid
+        if (is_donation) {
+          tmp_sid = currentTmp.sid
+        }
+        else {
+          tmp_sid = currentTmp.data[chart_id.replace('fc_', '')].sid
+        }
         window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
-        // chart.exportChart({ type: mimes[type] });
       }
     });
     autocomplete.bind();
@@ -540,67 +488,58 @@ $(document).ready(function (){
 
   function process() {
     loader.start();
-    //console.log("start filter", js.is_donation);
+    console.log("process");
     var tmp, cacher_id, _id, _id, finance_id;//, obj;
-    console.log('test filter 1')
     if(gon.gonned) {
       filter.set_by_params()
-      var obj_data = gon.donation_data
-      js.cache[obj_data.sid] = obj_data
-      filter_callback(js.cache[obj_data.sid], 'donation');
-
-      obj_data = gon.finance_data
-      js.cache[obj_data.sid] = obj_data
-      console.log(obj_data)
-      // filter_callback(js.cache[obj_data.sid], 'finance');
+      filter.get()
+      _id = filter.id()
+      current_id = _id
+      js.cache[_id] = { donation: gon.donation_data, finance: gon.finance_data }
+      process_callback(js.cache[_id]);
 
       gon.gonned = false;
     } else {
-      // obj = js.is_donation ? donation : finance;
-      // tmp = obj.get();
-      // _id = obj.id();
-      // if(tmp === null) { return; }
-
-
-      // if(!js.cache.hasOwnProperty(_id)) {
-      //   var filters = {};
-      //   delete tmp["filter"];
-      //   filters[obj.name] = $.isEmptyObject(tmp) ? { "all": true } : tmp;
-      //   // console.log("-----------remote--------", _id, filters);
-      //   $.ajax({
-      //     url: gon.filter_path,
-      //     dataType: 'json',
-      //     data: filters,
-      //     success: function(data) {
-      //       // console.log("explore_filter", data);
-      //       js.cache[_id] = data[obj.name];
-      //       js.cache[js.cache[_id].sid] = _id
-      //       obj.url(js.cache[_id].sid);
-      //       if(data.hasOwnProperty("donation")) { filter_callback(data.donation, "donation"); }
-      //       if(data.hasOwnProperty("finance")) { filter_callback(data.finance, "finance"); }
-      //     }
-      //   });
-      // }
-      // else {
-      //   obj.url(js.cache[_id].sid);
-      //   filter_callback(js.cache[_id], obj.name);
-      // }
+      filter.get()
+      _id = filter.id();
+      if(!js.cache.hasOwnProperty(_id)) {
+        $.ajax({
+          url: gon.filter_path,
+          dataType: 'json',
+          data: filter.get(),
+          success: function(data) {
+            js.cache[_id] = data;
+            current_id = _id
+            filter.url();
+            process_callback(js.cache[_id])
+          }
+        });
+      }
+      else {
+        current_id = _id
+        filter.url()
+        process_callback(js.cache[_id])
+      }
     }
   }
-  function filter_callback(data, partial) {
-    console.log("filter_callback", data, partial);
+  function process_callback(data) {
+    console.log("process_callback", data);
     view_not_found.addClass("hidden");
     var is_data_ok = typeof data !== "undefined";
     if(is_data_ok) {
-      if(partial === "donation") {
-        bar_chart(chart_ids.da, data.ca, "#EBE187");
-        bar_chart(chart_ids.db, data.cb, "#B8E8AD");
-      }
-      else {
-        //grouped_column_chart("#finance_chart", data.ca, "#fff");
-        grouped_advanced_column_chart(chart_ids.fa, data.ca, "#fff");
-      }
-      global_filter_callback(data.sid, partial)
+      var dt = data.donation
+      dt.ca.title = '<a href="/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
+      bar_chart('#dc_top', dt.ca, "#EBE187");
+      dt.cb.title = '<a href="/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
+      bar_chart('#dc_last', dt.cb, "#B8E8AD");
+
+      dt = data.finance
+      filter.categories.forEach( function(cat) {
+        var tmp = dt.data[cat]
+        tmp['categories'] = dt.categories
+        tmp.title = '<a href="/explore/' + tmp.sid + '">' + tmp.title + '</a>'
+        grouped_advanced_column_chart("#fc_" + cat, tmp, "#fff");
+      })
     }
     else {
       view_not_found.removeClass("hidden");

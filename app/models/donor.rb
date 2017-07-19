@@ -506,8 +506,9 @@ class Donor
           Time.utc(n.year, n.month, n.day, 0, 0, 0)
         }
     end
-    f[:party] = Party.get_ids_by_slugs([params[:party]])
 
+    party = Party.find(params[:party])
+    f[:party] = [party.id]
 
     chart_subtitle = ""
     if f[:period].present? && f[:period][0] != -1 && f[:period][1] != -1

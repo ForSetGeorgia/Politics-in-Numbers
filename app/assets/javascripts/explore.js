@@ -971,7 +971,6 @@ $(document).ready(function (){
     var tmp, cacher_id, _id, _id, finance_id, obj;
 
     if(gon.gonned) {
-      debugger;
       [donation, finance].forEach( function (obj) {
         obj.set_by_url();
         tmp = obj.get();
@@ -1017,7 +1016,7 @@ $(document).ready(function (){
     }
   }
   function filter_callback(data, partial) {
-    //console.log("filter_callback", data, partial);
+    console.log("filter_callback", data, partial);
     view_not_found.addClass("hidden");
     var is_data_ok = typeof data !== "undefined";
     if(is_data_ok) {

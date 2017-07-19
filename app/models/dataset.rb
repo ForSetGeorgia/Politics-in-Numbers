@@ -503,8 +503,8 @@ class Dataset
     limiter = 5
 
     f = { }
-    f[:party] = Party.get_ids_by_slugs([params[:id]])
-    party = Party.find_by(params[:id])
+    party = Party.find(params[:party])
+    f[:party] = [party.id]
     f[:period] = Period.get_ids_by_slugs(params[:period])
 
     categories = {}
@@ -575,7 +575,7 @@ class Dataset
 
     # prepaire data for charts
       categories.each {|k,v|
-        categories[k][:series] = { name: party.title, data: v[:data].map{|m| m.round } }
+        categories[k][:series] = [{ name: party.title, data: v[:data].map{|m| m.round } }]
       }
 
       chart_categories = []
@@ -615,17 +615,20 @@ class Dataset
         end
       end
     }
-    sid = ShortUri.explore_uri(f.merge({filter: "finance"}))
-
-    # extend ActionView::Helpers::NumberHelper
     cats = {}
+    tmp_f = {
+      filter: "finance",
+      party: f[:party],
+      period: f[:period]
+    }
     categories.each {|k,v|
       ct = categories[k]
-      cats[ct[:sym]] = { title: chart_title.gsub('_category_', ct[:title]), series: ct[:series] }
+      tmp_ff = {}
+      tmp_ff[ct[:sym]] = f[ct[:sym]]
+      cats[ct[:sym]] = { sid: ShortUri.explore_uri(tmp_f.merge(tmp_ff)), title: chart_title.gsub('_category_', ct[:title]), series: ct[:series] }
     }
 
     {
-      sid: sid,
       pars: f,
       data: cats,
       categories: chart_categories

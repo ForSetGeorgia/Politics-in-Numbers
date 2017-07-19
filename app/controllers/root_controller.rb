@@ -276,21 +276,21 @@ class RootController < ApplicationController
     categories = Category.non_virtual.only_sym
     @main_categories = {}
     categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
+    categories.sort_by!{|x| Category::SYMS.index x[:sym]}
     Rails.logger.debug("--------------------------------------------#{@main_categories}")
 
     @party_list = Party.sorted.map { |m| [m.id, m.title, m.get_permalink, m.type == 0 && m.member == true, m.type] }
     gon.party_list = Party.list_from(@party_list)
 
     _pars = {
-      id: party_id,
+      party: party_id,
       period: []
     }
-    _pars[:period] = Period.annual.limit(3).map{|m| m.permalink } if periods.nil?
-    # dt = []
+    _pars[:period] = Period.annual.map{|m| m.permalink } if periods.nil?
 
     gon.root_url = root_url
 
-    gon.path = party_path
+    gon.path = party_path(id: '_id_')
     gon.filter_path = party_filter_path
     gon.embed_path = embed_static_path(id: "_id_")
     gon.share_url = share_url({ id: "_id_", chart: "_chart_" })
@@ -322,7 +322,7 @@ class RootController < ApplicationController
 
     gon.finance_data = Dataset.party_explore(_pars, { periods: period_list })
 
-   pars.delete(:locale)
+    pars.delete(:locale)
 
     # fsid = gon.finance_data[:sid]
 
@@ -335,17 +335,16 @@ class RootController < ApplicationController
 
   def party_filter
     pars = party_filter_params
-    res = {}
 
-    party = pars[:party]
-    periods = pars[:period]
+    _pars = {
+      party: pars[:party],
+      period: pars[:period]
+    }
 
-    tmp = Donor.party_explore(party, period)
-    res[:donation] = tmp
-    tmp = Dataset.party_explore(party, period)
-    res[:finance] = tmp
-
-    render :json => res
+    render :json => {
+      donation: Donor.party_explore(_pars),
+      finance: Dataset.party_explore(_pars)
+    }
   end
 
   def embed_static
@@ -526,7 +525,7 @@ class RootController < ApplicationController
     end
 
     def party_filter_params
-      params.permit(:locale, :id, period: [])
+      params.permit(:locale, :party, period: [])
     end
 
     def embed_params

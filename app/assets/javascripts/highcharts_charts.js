@@ -37,7 +37,8 @@
           fontSize:"18px",
           fontFamily: "firasans_r",
           textShadow: 'none'
-        }
+        },
+        useHTML: true
       },
       subtitle: {
         text: resource.subtitle,
@@ -120,7 +121,7 @@
     });
   }
   function grouped_advanced_column_chart (elem, resource, bg) {
-    // console.log("fca", resource);
+    console.log("fca", resource);
     var cat_max_len = 0,
       groupedOptions = [],
       groupedOptionsRotation = 0;

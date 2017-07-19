@@ -13,7 +13,7 @@
         </div>
         <div class="filter-inputs">
           <%= render partial: 'autocomplete_input', :locals => { input_for: "filter", input_field: "party", on: true,
-            list: generate_li_list(@party_list.select{|s| s[3] == true }) , category_label: 0 } %>
+            list: generate_li_list(@party_list.select{|s| s[3] == true }.map{|m| [m[2], m[1]]}) , category_label: 0 } %>
           <div class="row filter-input" data-field="period" data-type="period_mix">
             <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time') %><i title="<%= t('.filter_toggle') %>"></i></a>
             <ul id="filter_period" class="list" data-type="period_mix"></ul>
@@ -86,12 +86,12 @@
           </div>
           <div class="charts">
             <div class="chart-container">
-              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'a', share_title: 'donation_chart_1' } %>
-              <div id="donation_chart_1"></div>
+              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'a', share_title: 'dc_top', chart_id: 'dc_top' } %>
+              <div id="dc_top"></div>
             </div>
             <div class="chart-container">
-              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'b', share_title: 'donation_chart_2' } %>
-              <div id="donation_chart_2"></div>
+              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'b', share_title: 'dc_last', chart_id: 'dc_last' } %>
+              <div id="dc_last"></div>
             </div>
           </div>
         </div>
@@ -105,10 +105,12 @@
               <% } %>
             </div>
           </div>
-          <% @main_categories.each{|category| %>
+          <% @main_categories.each{|category|
+            chart_id = "fc_#{category[0]}"
+          %>
             <div class="chart-container" data-type="<%= category[0] %>">
-              <%= render partial: 'chart_actions', locals: { type: 'f', chart: 'a', share_title: 'finance_chart' } %>
-              <div id="finance_chart_<%= category[0] %>"></div>
+              <%= render partial: 'chart_actions', locals: { type: 'f', chart: 'a', share_title: chart_id, chart_id: chart_id } %>
+              <div id="<%= chart_id %>"></div>
             </div>
           <% } %>
         </div>
