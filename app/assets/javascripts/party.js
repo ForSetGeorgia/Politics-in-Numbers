@@ -19,6 +19,8 @@ $(document).ready(function (){
     decPoint = ".",
     $filter = $(".filter"),
     explore_button = $("#explore_button"),
+    finance_toggle = $("#finance_toggle"),
+    donation_toggle = $("#donation_toggle"),
     view_content = $(".result"),
     view_not_found = $(".not-found"),
     loader = {
@@ -201,13 +203,25 @@ $(document).ready(function (){
     },
     filter = {
       types: {
-        party: "autocomplete",
-        period: "period_mix"
+        finance: {
+          party: "autocomplete",
+          period: "period_mix"
+        },
+        donation: {
+          party: "autocomplete",
+          period: "period"
+        }
       },
       categories: ["income", "expenses", "reform_expenses", "property_assets", "financial_assets", "debts" ],
       elem: {
-        party: $("#filter_party"),
-        period: $("#filter_period")
+        finance: {
+          party: $("#filter_party"),
+          period: $("#filter_period_mix")
+        },
+        donation: {
+          party: $("#filter_party"),
+          period: $("#filter_period")
+        }
       },
       data: {},
       get: function() {
@@ -231,6 +245,19 @@ $(document).ready(function (){
               }
               else {
                 delete t.data[el];
+              }
+            }
+            else if(tp === "period") {
+              tmp_v = tmp.datepicker('getDate');
+              tmp_d = t.data.hasOwnProperty(el) ? t.data[el] : [-1, -1];
+              if(isDate(tmp_v)) {
+                tmp_d[elem_i] =  Date.UTC(tmp_v.getFullYear(), tmp_v.getMonth(), tmp_v.getDate(), 0, 0, 0);
+              }
+              if(tmp_d.toString() === [-1, -1].toString()) {
+                delete t.data[el];
+              }
+              else {
+                t.data[el] = tmp_d;
               }
             }
             else if(tp === "period_mix") {
@@ -262,6 +289,13 @@ $(document).ready(function (){
               var fld = p.attr("data-field")
               autocomplete.push(p.find(".autocomplete[data-autocomplete-id]").attr("data-autocomplete-id"), v, gon[fld + "_list"].filter(function(d) { return d[0] == v; })[0][1])
             }
+            else if(tp === "period") {
+              v = [moment.utc(v[0]).format(gon.mdate_format), moment.utc(v[1]).format(gon.mdate_format)];
+              el.from.datepicker('setDate', v[0]);
+              el.to.datepicker('setDate', v[1]);
+              tmp = formatRange(v);
+              create_list_item(el.from.parent().parent().find(".list"), tmp, tmp);
+            }
             else if(tp === "period_mix") {
               p = el.parent();
               var group = p.find(".input-group .input-checkbox-group"),
@@ -292,6 +326,9 @@ $(document).ready(function (){
               tmp.find("input").val(null).trigger("change");
               if(typeof global_click_callback === "function") { global_click_callback(); }
             }
+            else if(type === "period") {
+              t.find(".input-group input[type='text'].datepicker").datepicker('setDate', null);
+            }
             else if(type === "period_mix") {
               t.find(".input-group .input-radio-group input:first-of-type").prop("checked", true);
               var group = t.find(".input-group .input-checkbox-group");
@@ -300,9 +337,10 @@ $(document).ready(function (){
               group.find("ul[data-type='campaign']").addClass("hidden");
             }
             list.empty();
-        });
+        })
       },
       id: function() {
+        TODO
         var t = this, tmp = [], p;
         Object.keys(t.data).sort().forEach(function (k) {
           p = t.data[k];
@@ -312,6 +350,7 @@ $(document).ready(function (){
         return CryptoJS.MD5(tmp.join("&")).toString();
       },
       url: function () {
+        TODO
         var t = this, period = ''
         if (t.data.hasOwnProperty('period')) {
           period = '?'
@@ -324,6 +363,37 @@ $(document).ready(function (){
     };
 
 // -----------------------------------------------------------------
+  finance_toggle.click(function (event){
+    js.is_donation = false;
+    finance.url();
+    var p = finance_toggle.parent().parent();
+    donation_toggle.parent().removeClass("active");
+
+    if(!p.hasClass("active")) {
+      p.addClass("active");
+      filter_type.attr("data-type", "finance");
+      filter_extended.attr("data-type", "finance");
+      explore.attr("data-type", "finance");
+    }
+
+    filter_type.addClass("in-depth");
+    event.stopPropagation();
+  });
+
+  donation_toggle.click(function (event){
+    js.is_donation = true;
+    donation.url();
+    var p = donation_toggle.parent();
+    finance_toggle.parent().parent().removeClass("active");
+
+    if(!p.hasClass("active")) {
+      p.addClass("active");
+      filter_type.attr("data-type", "donation");
+      filter_extended.attr("data-type", "donation");
+      explore.attr("data-type", "donation");
+    }
+    event.stopPropagation();
+  });
 
   function create_list_item(list, text, vbool) {
     list.html(vbool ? "<span>" + text + "<i class='close' title='" + gon.filter_item_close + "'></i></span>" : "").toggleClass("hidden", !vbool);
@@ -375,18 +445,36 @@ $(document).ready(function (){
         t.toggleClass("expanded", !state);
       }
     });
-    $filter.find(".filter-input button.clear").click(function () {
-      var tmp = $(this).parent();
-      autocomplete.clear(tmp.attr("data-autocomplete-id"));
-      tmp.find("input").val(null).trigger("change");
-    });
     $(window).on("resize", function(){
       resize();
       $filter.find(".filter-inputs").css("max-height", $(window).height() - $filter.find(".filter-toggle").offset().top);
     });
     resize();
 
+    donation.elem.period.from.datepicker({
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: gon.date_format,
+      onClose: function( selectedDate ) {
+        donation.elem.period.to.datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    donation.elem.period.to.datepicker({
+      firstDay: 1,
+      changeMonth: true,
+      changeYear: true,
+      dateFormat: gon.date_format,
+      onClose: function( selectedDate ) {
+        donation.elem.period.from.datepicker( "option", "maxDate", selectedDate );
+      }
+    });
 
+    $("#donation_period_campaigns a").click(function(){
+      var t = $(this), v = t.attr("data-value").split(";");
+      donation.elem.period.from.datepicker('setDate', new Date(v[0]));
+      donation.elem.period.to.datepicker('setDate', new Date(v[1]));
+    });
 
     $(document).on("click", ".list > span .close, .list > li .close", function(event) {
       var t = $(this);
@@ -405,36 +493,28 @@ $(document).ready(function (){
       event.stopPropagation();
     });
     $("#reset").click(function(){
-      clear_embed();
       filter.reset()
+      filter.set_by_params()
     });
-    explore_button.click(function(){ clear_embed(); process(); });
+    explore_button.click(function(){ process(); });
 
-    function clear_embed() {
-      js.esid[js.is_donation ? "d" : "f"] = undefined;
-    }
     $(".chart_download a").click(function(){
       var t = $(this),
         f_type = t.attr("data-type"),
         p = t.parent().parent(),
-        c_type = p.attr("data-chart"),
-        chart_id = p.closest('.actions').attr('data-chart-id')
+        chart_id = p.closest('.chart-container').attr('data-chart-id'),
+        chart_info = get_chart_info_by_id(chart_id)
 
       if(f_type === "print") {
         var chart = $(chart_id).highcharts()
         chart.print();
       }
       else {
-        var is_donation = c_type[0] == 'd'
+        var is_donation = chart_info.type == 'd'
         var currentTmp = js.cache[current_id][is_donation ? 'donation' : 'finance']
-        var tmp_sid
-        if (is_donation) {
-          tmp_sid = currentTmp.sid
-        }
-        else {
-          tmp_sid = currentTmp.data[chart_id.replace('fc_', '')].sid
-        }
-        window.location.href = gon.chart_path + tmp_sid + "/" + c_type[1] + "/" + f_type;
+        var tmp_sid = is_donation ? currentTmp.sid : currentTmp.data[chart_info.category].sid
+
+        window.location.href = gon.chart_path + tmp_sid + "/" + chart_info.inner_category + "/" + f_type;
       }
     });
     autocomplete.bind();
@@ -472,23 +552,36 @@ $(document).ready(function (){
     });
 
     $(document).on("click", "[data-dialog]", function () {
-
       var t = $(this),
-        pars = t.attr("data-dialog").split(";"), // ex: embed;a
-        dialog_type = pars[0],
-        options = { chart_type: pars[1] };
+        dialog_type =  t.attr("data-dialog"), // ex: embed
+        chart_id = t.closest('.chart-container').attr('data-chart-id'),
+        chart_info = get_chart_info_by_id(chart_id)
+
+      var options = { type: chart_info.type, chart_type: chart_info.inner_category, sid: get_current_sid_by_id(chart_id) };
 
       if(dialog_type === "share") {
-        options["title"] = js.share["#" + t.attr("data-share-title")];
+        options["title"] = js.share[chart_id];
       }
 
-      js_dialog.open(pars[0], options);
+      js_dialog.open(dialog_type, options);
     });
   }
-
+  function get_chart_info_by_id (id) {
+    var parts = id.split('c_')
+    return { type: parts[0], category: parts[1], inner_category: (parts[0] === 'd' ? (parts[1] === 'first' ? 'a' : 'b') : 'a') }
+  }
+  function get_current_sid_by_id(id) {
+    var ch_info = get_chart_info_by_id(id)
+    if(ch_info.type === 'd') {
+      return js.cache[current_id].donation.sid
+    } else {
+      return js.cache[current_id].finance.data[ch_info.category].sid
+    }
+  }
   function process() {
+    return
     loader.start();
-    console.log("process");
+    // console.log("process");
     var tmp, cacher_id, _id, _id, finance_id;//, obj;
     if(gon.gonned) {
       filter.set_by_params()
@@ -508,6 +601,7 @@ $(document).ready(function (){
           dataType: 'json',
           data: filter.get(),
           success: function(data) {
+            console.log(data)
             js.cache[_id] = data;
             current_id = _id
             filter.url();
@@ -523,39 +617,55 @@ $(document).ready(function (){
     }
   }
   function process_callback(data) {
-    console.log("process_callback", data);
+    // console.log("process_callback", data);
     view_not_found.addClass("hidden");
     var is_data_ok = typeof data !== "undefined";
     if(is_data_ok) {
       var dt = data.donation
+      dt.ca.orig_title = dt.ca.title
       dt.ca.title = '<a href="/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
-      bar_chart('#dc_top', dt.ca, "#EBE187");
+      bar_chart('#dc_first', dt.ca, "#EBE187");
+      dt.cb.orig_title = dt.cb.title
       dt.cb.title = '<a href="/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
-      bar_chart('#dc_last', dt.cb, "#B8E8AD");
+      bar_chart('#dc_second', dt.cb, "#B8E8AD");
 
       dt = data.finance
       filter.categories.forEach( function(cat) {
         var tmp = dt.data[cat]
         tmp['categories'] = dt.categories
+        tmp.orig_title = tmp.title
         tmp.title = '<a href="/explore/' + tmp.sid + '">' + tmp.title + '</a>'
         grouped_advanced_column_chart("#fc_" + cat, tmp, "#fff");
       })
+      party_info_populate(data.party)
     }
     else {
       view_not_found.removeClass("hidden");
     }
     loader.stop();
   }
+  function party_info_populate (party) {
+    if(typeof party === 'undefined') { return }
+    var info = $('.info')
+    info.find('.caption div').text(party.title)
+    info.find('.leader span').text(party.hasOwnProperty('leader') ? party.leader : '')
+    info.find('.range').text(party.range)
+    info.find('.description').text(party.description)
+    var stats_box = $('#donation .stats-box')
+    stats_box.find('[data-stat="amount"] span').text(party.stats.donations[0])
+    stats_box.find('[data-stat="count"] span').text(party.stats.donations[1])
+    stats_box = $('#finance .stats-box')
+    stats_box.find('[data-category="income"] span').text(party.stats.finances.income[0])
+    stats_box.find('[data-category="expenses"] span').text(party.stats.finances.expenses[0])
+    stats_box.find('[data-category="reform_expenses"] span').text(party.stats.finances.reform_expenses[0])
+    stats_box.find('[data-category="financial_assets"] span').text(party.stats.finances.financial_assets[0])
+    stats_box.find('[data-category="property_assets"] span').text(party.stats.finances.property_assets[0])
+    stats_box.find('[data-category="debts"] span').text(party.stats.finances.debts[0])
+  }
 
-
-
-  // dev block
-  // filter_extended.find(".filter-toggle").trigger("click");
-  // filter_extended.find(".filter-input:nth-of-type(3) .toggle").trigger("click");
   (function init() {
     init_highchart();
     bind();
-    // js.is_donation = gon.is_donation;
     process();
   })();
 });

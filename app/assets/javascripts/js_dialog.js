@@ -6,7 +6,8 @@ var js_dialog = (function () {
     $dialog = $("dialog"),
     state = 0,
     prev_originator = undefined,
-    sid = undefined,
+    dynamic_sid,
+    static_sid,
     binded = {},
     fn = function () {}
     callback = function() {},
@@ -34,19 +35,16 @@ var js_dialog = (function () {
 
   obj = {
     open: function open (type, options) {
-      // console.log(type, options)
+      console.log(type, options)
+      dynamic_sid = options.sid
       callback = this.callbacks[type].open
 
       close_callback = this.callbacks[type].hasOwnProperty('close') ? this.callbacks[type].close : fn
 
       if(!binded.hasOwnProperty(type) && this.callbacks[type].hasOwnProperty('bind')) {
-        this.callbacks[type].bind()
+        this.callbacks[type].bind(options)
         binded[type] = true
       }
-
-      // if(["embed", "highlight"].indexOf(type) !== -1) { options = options.chart; }
-
-      // sid = undefined;
 
       var sec = $dialog.find("section[data-type='" + type + "']");
 
@@ -90,7 +88,7 @@ var js_dialog = (function () {
             tmp_h = tmp[1];
           }
 
-          var uri = textarea.attr("data-iframe-link").replace("_type_", type).replace("_id_", type === "dynamic" ? js.sid : sid);
+          var uri = textarea.attr("data-iframe-link").replace("_type_", type).replace("_id_", type === "dynamic" ? dynamic_sid : static_sid);
           textarea.text("<iframe src='" + uri + "?c=" + chart_type + "' width='"+tmp_w+"px' height='" + tmp_h + "px' frameborder='0'></iframe>");
 
           prev_originator = chart_type;
@@ -98,7 +96,7 @@ var js_dialog = (function () {
         close: function () {
           $("dialog [data-type='embed'] .embed-type .toggle-group .toggle[data-toggle='dynamic']").trigger("click");
         },
-        bind: function () {
+        bind: function (options) {
           var dialog = $('dialog [data-type="embed"]')
               // embed dialog
           dialog.find(".iframe-sizes").change(function () {
@@ -117,21 +115,21 @@ var js_dialog = (function () {
             var t = $(this), tp = t.attr("data-toggle");
             t.parent().attr("data-toggle", tp);
             if(tp === "static") {
-              if(typeof js.sid !== "undefined") {
-                var tmp = js.esid[js.is_donation ? "d" : "f"];
+              if(typeof dynamic_sid !== "undefined") {
+                var tmp = js.embed_static_sid[dynamic_sid];
                 if(typeof tmp !== "undefined") {
-                  sid = tmp;
+                  static_sid = tmp;
                   callback();
                 }
                 else {
                   // console.log("remote embed static id");
                   $.ajax({
-                    url: gon.embed_path.replace("_id_", js.sid),
+                    url: gon.embed_path.replace("_id_", dynamic_sid),
                     dataType: "json",
                     success: function (data) {
                       if(data.hasOwnProperty("sid")) {
-                        sid = data.sid;
-                        js.esid[js.is_donation ? "d" : "f"] = sid;
+                        static_sid = data.sid;
+                        js.embed_static_sid[dynamic_sid] = static_sid;
                         callback();
                       }
                     }
@@ -152,11 +150,14 @@ var js_dialog = (function () {
         open: function (option) {
           // console.log("share_callback", option);
           var dialog = $('dialog [data-type="share"]')
-          var lnk = dialog.find(".facebook a"), uri = gon.share_url.replace("_id_", js.sid).replace("_chart_", option.chart);
+          var uri = gon.share_url.replace("_id_", dynamic_sid).replace("_chart_", option.chart)
 
+          var lnk = dialog.find(".facebook a")
           lnk.attr("href", lnk.attr("data-href").replace("_url_", uri));
+
           lnk = dialog.find(".twitter a");
           lnk.attr("href", lnk.attr("data-href").replace("_url_", uri).replace("_text_", option.title));
+
           lnk = dialog.find(".more .addthis_inline_share_toolbox");
           lnk.attr("data-url", uri);
           lnk.attr("data-title", option.title);

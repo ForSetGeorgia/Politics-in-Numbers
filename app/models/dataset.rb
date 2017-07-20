@@ -229,7 +229,8 @@ class Dataset
 
     f[:period].each { |p_id|
       if !period_list.key?(BSON::ObjectId(p_id))
-        period_list[p_id] = { id: p_id, name: periods[BSON::ObjectId(p_id)][:name], date: periods[BSON::ObjectId(p_id)][:date], type: periods[BSON::ObjectId(p_id)][:type]  }
+        per = periods[BSON::ObjectId(p_id)]
+        period_list[p_id] = { id: p_id, name: per[:name], date: per[:date], type: per[:type]  }
       end
     }
 
@@ -304,10 +305,10 @@ class Dataset
       }
     end
 
-    chart_titles[1].concat(f[:party].map{|m| parties[BSON::ObjectId(m)][:name] }) # grab selected party names
+    chart_titles[1].concat(parties_list.map{|k,v| v[:name] }) # grab selected party names
 
     if f[:period].present? # grab selected period names
-      chart_titles[2].concat(f[:period].map{|m| "#{periods[BSON::ObjectId(m)][:name]}" })
+      chart_titles[2].concat(period_list.map{|m| "#{m[:name]}" })
     end
 
     chart_title = ""
@@ -499,7 +500,7 @@ class Dataset
 
     res
   end
-  def self.party_explore(params, global_data = {})
+  def self.party_explore(params, inner_pars = false, global_data = {})
     limiter = 5
 
     f = { }
@@ -586,9 +587,9 @@ class Dataset
     # title generator
       chart_titles = [[],[],[]]
       chart_titles[0].push('_category_')
-      chart_titles[1].concat(f[:party].map{|m| parties[BSON::ObjectId(m)][:name] }) # grab selected party names
+      chart_titles[1].concat(parties_list.map{|k,v| v[:name] }) # grab selected party names
       if f[:period].present? # grab selected period names
-        chart_titles[2].concat(f[:period].map{|m| "#{periods[BSON::ObjectId(m)][:name]}" })
+        chart_titles[2].concat(period_list.map{|m| "#{m[:name]}" })
       end
 
       chart_title = ""

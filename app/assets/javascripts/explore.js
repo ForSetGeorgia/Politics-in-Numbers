@@ -873,7 +873,6 @@ $(document).ready(function (){
       event.stopPropagation();
     });
     $("#reset").click(function(){
-      clear_embed();
       if(js.is_donation) {
         donation.reset();
       }
@@ -881,10 +880,7 @@ $(document).ready(function (){
         finance.reset();
       }
     });
-    explore_button.click(function(){ clear_embed(); filter(); });
-    function clear_embed() {
-      js.esid[js.is_donation ? "d" : "f"] = undefined;
-    }
+    explore_button.click(function(){ filter(); });
     $(".chart_download a").click(function(){
       var t = $(this),
         f_type = t.attr("data-type"),
@@ -955,7 +951,7 @@ $(document).ready(function (){
       var t = $(this),
         pars = t.attr("data-dialog").split(";"), // ex: embed;a
         dialog_type = pars[0],
-        options = { chart_type: pars[1] };
+        options = { chart_type: pars[1], sid: js.sid };
 
       if(dialog_type === "share") {
         options["title"] = js.share["#" + t.attr("data-share-title")];

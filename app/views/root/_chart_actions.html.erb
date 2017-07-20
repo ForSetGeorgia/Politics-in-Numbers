@@ -1,13 +1,9 @@
-<div class="actions" data-chart-id="<%= chart_id %>">
-  <div class="share" data-dialog="share;<%= chart %>" data-share-title="<%= share_title %>" title="<%= t('.share_chart') %>"><i></i>
-  <% if type == 'f' %>
-    <div class="addthis_sharing_toolbox"></div>
-  <% end %>
-  </div>
-  <div class="embed" data-dialog="embed;<%= chart %>" title="<%= t('.embed_chart') %>"><i></i></div>
+<div class="actions">
+  <div class="share" data-dialog="share" title="<%= t('.share_chart') %>"><i></i></div>
+  <div class="embed" data-dialog="embed" title="<%= t('.embed_chart') %>"><i></i></div>
   <div class="download download_menu" title="<%= t('.download_chart') %>">
     <i></i>
-    <ul class="chart_download" data-chart="<%= type %><%= chart %>">
+    <ul class="chart_download">
       <li><a href="javascript:void(0);" data-type="print"><%= t('.export_type.print') %></a></li>
       <li><a href="javascript:void(0);" data-type="pdf"><%= t('.export_type.pdf') %></a></li>
       <li><a href="javascript:void(0);" data-type="svg"><%= t('.export_type.svg') %></a></li>

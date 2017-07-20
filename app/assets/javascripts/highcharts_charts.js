@@ -1,8 +1,9 @@
   function bar_chart(elem, resource, bg) {
-    console.log("chart", elem, resource);
+    // console.log("chart", elem, resource);
+
     var ln = 0;
     resource.series.forEach(function (d) { ln += Math.round(d[0].length/15)+1; });
-    js.share[elem] = encodeURI(resource.title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
+    js.share[elem] = encodeURI(resource.orig_title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
     // console.log(view_content, w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12)
     $(elem).highcharts({
       chart: {
@@ -121,7 +122,7 @@
     });
   }
   function grouped_advanced_column_chart (elem, resource, bg) {
-    console.log("fca", resource);
+    // console.log("fca", resource);
     var cat_max_len = 0,
       groupedOptions = [],
       groupedOptionsRotation = 0;
@@ -135,7 +136,7 @@
       groupedOptions = [{ rotation: 0 }, { rotation: -90 }];
       groupedOptionsRotation = -90;
     }
-    js.share[elem] = encodeURI(resource.title + " | " + gon.app_name_long);
+    js.share[elem] = encodeURI(resource.orig_title + " | " + gon.app_name_long);
     $(elem).highcharts({
       chart: {
           type: 'column',

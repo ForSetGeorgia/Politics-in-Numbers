@@ -249,9 +249,7 @@
               <% if can? :create, Highlight %>
                 <div class="highlight" data-dialog="highlight;a" data-only="chart"><i></i></div>
               <% end %>
-              <div class="share" data-dialog="share;a" data-share-title="finance_chart" title="<%= t('.share_chart') %>" data-only="chart"><i></i>
-                  <div class="addthis_sharing_toolbox"></div>
-              </div>
+              <div class="share" data-dialog="share;a" data-share-title="finance_chart" title="<%= t('.share_chart') %>" data-only="chart"><i></i></div>
               <div class="embed" data-dialog="embed;a" data-only="chart" title="<%= t('.embed_chart') %>"><i></i></div>
               <div class="download">
                 <a href='<%= "#{@finance_download_link}" %>' id="finance_csv_download" data-only="table" title="<%= t('.export_type.csv') %>"><i></i></a>

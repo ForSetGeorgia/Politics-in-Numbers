@@ -3,6 +3,19 @@
   label_key = "mongoid.attributes.party."
 %>
 <div id="party">
+  <div class="switch">
+    <div id="fltr" class="filter-type" data-type="<%= @fltr %>">
+      <div class="donation<%= @button_state[0] %>" data-type="donation">
+        <button type="button" id="donation_toggle" class="donation-toggle" tabindex="4"><%= t('shared.filters.donations') %></button>
+      </div>
+      <div class="sep"></div>
+      <div class="finance<%= @button_state[1] %>" data-type="finance">
+        <div class="finance-container">
+          <button type="button" id="finance_toggle" class="finance-toggle" tabindex="4"><%= t('shared.filters.party_finances').html_safe %></button>
+        </div>
+      </div>
+    </div>
+  </div>
   <div class="content">
     <div class="filter">
       <div class="filter-toggle"><i class="filter-icon" title="<%= t('.filters') %>"></i><%= t('.filters') %></div>
@@ -13,30 +26,45 @@
         </div>
         <div class="filter-inputs">
           <%= render partial: 'autocomplete_input', :locals => { input_for: "filter", input_field: "party", on: true,
-            list: generate_li_list(@party_list.select{|s| s[3] == true }.map{|m| [m[2], m[1]]}) , category_label: 0 } %>
+            list: generate_li_list(@party_list.select{|s| s[3] == true }.map{|m| [m[2], m[1]]}) , category_label: 0, without_clear: true } %>
+          <div class="row filter-input" data-field="period" data-type="period">
+            <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time_period') %><i title="<%= t('.filter_toggle') %>"></i></a>
+            <div id="filter_period" class="list"></div>
+            <div class="input-group">
+              <input id="filter_period_from" type="text" placeholder="<%= t('.from') %>" class="datepicker" data-type="period">
+              <input id="filter_period_to" type="text" placeholder="<%= t('.to') %>" class="datepicker" data-type="period">
+              <div class="sublabel"><%= t('.campaign') %>:</div>
+              <ul id="filter_period_campaigns">
+                <% period_campaigns = Period.campaigns.to_a %>
+                <% period_campaigns.each {|r| %>
+                  <li><a href="javascript:void(0);" data-value="<%= "#{r.start_date};#{r.end_date}"%>"><%= "#{l r.start_date, format: :date} - #{l r.end_date, format: :date}"%></a></li>
+                <% } %>
+              </ul>
+            </div>
+          </div>
           <div class="row filter-input" data-field="period" data-type="period_mix">
             <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time') %><i title="<%= t('.filter_toggle') %>"></i></a>
-            <ul id="filter_period" class="list" data-type="period_mix"></ul>
+            <ul id="filter_period_mix" class="list" data-type="period_mix"></ul>
             <div class="input-group">
               <div class="input-radio-group">
-                <input type="radio" id="filter_period_annual" name="filter_period" value="annual" data-type="period_mix" checked>
-                <label for="filter_period_annual" data-type="annual"><%= t('.annual') %></label>
+                <input type="radio" id="filter_period_mix_annual" name="filter_period_mix" value="annual" data-type="period_mix" checked>
+                <label for="filter_period_mix_annual" data-type="annual"><%= t('.annual') %></label>
                 <span class="or"><%= t('shared.common.or') %></span>
-                <input type="radio" id="filter_period_campaign" name="filter_period" value="campaign" data-type="period_mix">
-                <label for="filter_period_campaign" data-type="campaign"><%= t('.campaign') %></label>
+                <input type="radio" id="filter_period_mix_campaign" name="filter_period_mix" value="campaign" data-type="period_mix">
+                <label for="filter_period_mix_campaign" data-type="campaign"><%= t('.campaign') %></label>
               </div>
               <div class="input-checkbox-group">
                 <ul data-type="annual">
                   <% Period.annual.each{|e| %>
-                    <li><input type="checkbox" id='filter_period_annual_<%= "#{e.permalink}" %>' name='filter_period_annual' value="<%= "#{e.permalink}" %>">
-                    <label for='filter_period_annual_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
+                    <li><input type="checkbox" id='filter_period_mix_annual_<%= "#{e.permalink}" %>' name='filter_period_mix_annual' value="<%= "#{e.permalink}" %>">
+                    <label for='filter_period_mix_annual_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
                   <% } %>
                 </ul>
                 <ul class="hidden" data-type="campaign">
                   <% period_campaigns = Period.campaigns.to_a %>
                   <% period_campaigns.each{|e| %>
-                    <li><input type="checkbox" id='filter_period_campaign_<%= "#{e.permalink}" %>' name='filter_period_campaign' value="<%= "#{e.permalink}" %>">
-                    <label for='filter_period_campaign_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
+                    <li><input type="checkbox" id='filter_period_mix_campaign_<%= "#{e.permalink}" %>' name='filter_period_mix_campaign' value="<%= "#{e.permalink}" %>">
+                    <label for='filter_period_mix_campaign_<%= "#{e.permalink}" %>'><span></span><%= "#{e.title}" %></label></li>
                   <% } %>
                 </ul>
               </div>
@@ -85,13 +113,13 @@
             </div>
           </div>
           <div class="charts">
-            <div class="chart-container">
-              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'a', share_title: 'dc_top', chart_id: 'dc_top' } %>
-              <div id="dc_top"></div>
+            <div class="chart-container" data-chart-id="dc_first">
+              <%= render partial: 'chart_actions' %>
+              <div id="dc_first"></div>
             </div>
-            <div class="chart-container">
-              <%= render partial: 'chart_actions', locals: { type: 'd', chart: 'b', share_title: 'dc_last', chart_id: 'dc_last' } %>
-              <div id="dc_last"></div>
+            <div class="chart-container" data-chart-id="dc_second">
+              <%= render partial: 'chart_actions' %>
+              <div id="dc_second"></div>
             </div>
           </div>
         </div>
@@ -108,8 +136,8 @@
           <% @main_categories.each{|category|
             chart_id = "fc_#{category[0]}"
           %>
-            <div class="chart-container" data-type="<%= category[0] %>">
-              <%= render partial: 'chart_actions', locals: { type: 'f', chart: 'a', share_title: chart_id, chart_id: chart_id } %>
+            <div class="chart-container" data-chart-id="<%= chart_id %>">
+              <%= render partial: 'chart_actions' %>
               <div id="<%= chart_id %>"></div>
             </div>
           <% } %>
@@ -119,23 +147,64 @@
     </div>
   </div>
 </div>
-
+<dialog>
+  <div class="bg"></div>
+  <section id="embed" class="dialog-embed" data-type="embed">
+    <div class="caption"><%= t('shared.dialog.embed.caption') %></div>
+    <div class="content">
+      <label><%= t('shared.dialog.embed.copy_code') %></label>
+      <textarea rows="4" cols="38" data-iframe-link="<%= embed_url({ id: "_id_"}).gsub("/dynamic/", "/_type_/") %>" readonly="" onfocus="copy(this);"></textarea>
+      <div class="copied"><%= t('shared.dialog.embed.copied') %></div>
+      <div class="embed-size">
+        <label><%= t('shared.dialog.embed.frame_size') %></label>
+        <select class="iframe-sizes">
+          <option value="560x315">560x315</option>
+          <option value="640x360" selected>640x360</option>
+          <option value="853x480">853x480</option>
+          <option value="1280x720">1280x720</option>
+          <option value="custom"><%= t('shared.dialog.embed.custom_size') %></option>
+        </select>
+        <div class="iframe-custom" style="display:none;">
+          <input type="number" value="640" min="100" step="10" class="iframe-width">
+          <span>×</span>
+          <input type="number" value="360" min="100" step="10" class="iframe-height">
+        </div>
+      </div>
+      <div class="embed-type">
+        <label><%= t('shared.dialog.embed.embed_type') %></label>
+        <div class="toggle-group" data-toggle="dynamic">
+          <button type="button" class="toggle" data-toggle="dynamic"><%= t('shared.dialog.embed.dynamic') %></button><button type="button" class="toggle" data-toggle="static"><%= t('shared.dialog.embed.static') %></button>
+        </div>
+        <span class="hint">* <%= t('shared.dialog.embed.type_hint').html_safe %></span>
+      </div>
+    </div>
+    <div class="button">
+      <button type="button" class="dialog-button"><%= t('shared.dialog.close') %></button>
+    </div>
+  </section>
+  <section id="share" class="dialog-share" data-type="share">
+    <div class="caption"><%= t('shared.dialog.share.caption') %></div>
+    <div class="content">
+      <label><%= t('shared.dialog.share.share_chart') %></label>
+      <div class="facebook">
+        <a target="_blank" data-href="https://www.facebook.com/sharer/sharer.php?u=_url_" onclick="javascript:window.open(this.href,
+                          '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag('facebook.svg', alt: t('shared.common.facebook'), title: t('shared.common.facebook')) %><%= t('shared.common.facebook') %></a>
+      </div>
+      <div class="twitter">
+        <a target="_blank" data-href='https://twitter.com/share?url=_url_&text=_text_' onclick="javascript:window.open(this.href,
+                          '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=600,width=600');return false;"><%= image_tag('twitter.svg', alt: t('shared.common.twitter'), title: t('shared.common.twitter')) %><%= t('shared.common.twitter') %>
+        </a>
+      </div>
+      <div class="more">
+        <div class="addthis_inline_share_toolbox"></div>
+      </div>
+    </div>
+    <div class="button">
+      <button type="button" class="dialog-button"><%= t('shared.dialog.close') %></button>
+    </div>
+  </section>
+</dialog>
 <%
   @custom_js = ["highcharts.js", "highcharts-grouped-categories.js", "crypto.min.js", "party"]
   content_for :custom_css, "party"
 %>
-
-
-Profile detail page
-- party name
-- leader
-- summary
-- time range
-
-- block for each of the party finances with chart and total value as big number
-- for donations, show both charts and total donations
-- each chart should include the embed/donation options
-- each block should include link to go to the explore page for that data
-- page will have filter similar to explore page with party and time fields
-- by default all year time fields are selected
- -->

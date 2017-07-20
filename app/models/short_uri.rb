@@ -3,7 +3,7 @@ class ShortUri
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  TYPES = [:explore, :embed_static]
+  TYPES = [:explore, :embed_static, :party]
   OTHER_STATES = [:donation, :finance]
 
   field :sid, type: String # base58 string from nid
@@ -104,6 +104,47 @@ class ShortUri
     sid = Base58.encode(nid)
     ShortUri.create({ sid: sid, nid: nid, rid: rid, pars: pars, tp: 1, other: is_donation ? 0 : 1 })
 
+    sid
+  end
+
+  def self.party_uri(pars)
+    pars = pars.to_h
+    return nil if pars.class != Hash || !pars.present?
+    is_donation = pars[:filter] == "donation"
+    tmp = []
+    except = []
+    if is_donation
+      if pars[:period].present?
+        pars[:period_mils] = pars[:period].map{ |m| (m.to_f * 1000).to_i }
+        except = [:period]
+      end
+    end
+    pars.keys.sort.each{ |e|
+      p = pars[e]
+      if is_donation
+        next if e == :period_mils
+        if e == :period
+          p = pars[:period_mils]
+          pars.delete(:period_mils)
+        end
+      end
+
+      p = p.class == Array && except.index(e).nil? ? p.sort : [p]
+      tmp << "#{e}=#{p.join(',')}"
+    }
+    rid = Digest::MD5.hexdigest(tmp.join("&"))
+    # Rails.logger.fatal("************************")
+    # Rails.logger.fatal("#{rid}")
+    # Rails.logger.fatal("#{tmp.join("&")}")
+    shr = ShortUri.by_type(2).limit(1).find_by({ rid: rid })
+    sid = nil
+    if shr.present?
+      sid = shr.sid
+    else
+      nid = ShortUri.sequence_id_for("party_id")
+      sid = Base58.encode(nid)
+      ShortUri.create({ sid: sid, nid: nid, rid: rid, pars: pars, tp: 2, other: is_donation ? 0 : 1 })
+    end
     sid
   end
   def self.prune_inactive_records

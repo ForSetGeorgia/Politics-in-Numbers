@@ -1,4 +1,6 @@
-<% category_label = 1 if category_label != 0 %>
+<% category_label = 1 if category_label != 0
+  without_clear = false unless without_clear.present?
+%>
 <% label = t("root.explore.#{label.present? ? label : input_field}") %>
 <div class="row filter-input" data-field="<%= input_field %>" data-type="autocomplete" data-on="<%= on %>">
   <a href="javascript:void(0);" class="toggle" tabindex="5"><%= "#{label}" %><%= " #{t('root.explore.category')}" if category_label == 1 %><i title="<%= t('root.explore.filter_toggle') %>"></i></a>
@@ -6,7 +8,9 @@
   <div class="input-group">
     <div class="autocomplete" data-autocomplete-id="<%= "#{input_for}-#{input_field}" %>" data-local="<%= input_field %>"<%= " data-url=\"#{remote_url}\"".html_safe if defined?(remote_url) %><%= " data-source=\"#{source}\"".html_safe if defined?(source) %>>
       <input type="text" placeholder='<%= t("root.explore.placeholder.#{input_field}") %>' title='<%= t("root.explore.filter_autocomplete_title") %>'  tabindex="5">
-      <button class="clear" title="<%= t('root.explore.filter_clear') %>"></button>
+      <% if !without_clear %>
+        <button class="clear" title="<%= t('root.explore.filter_clear') %>"></button>
+      <% end %>
       <ul class="dropdown" id="filter_<%= input_for %>_by_<%= input_field %>" tabindex="5"><%= list if defined?(list) %></ul>
     </div>
   </div>

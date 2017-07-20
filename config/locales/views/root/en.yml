@@ -128,7 +128,7 @@ en:
         financial_assets: Select category
         debts: Select category
     party:
-      title: Explore
+      title: Explore Party
       filters: Filters
       donations: Party Donations
       finances: Party Finances

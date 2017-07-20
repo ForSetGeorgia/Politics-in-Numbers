@@ -489,7 +489,7 @@ class Donor
     res
   end
 
-  def self.party_explore(params)#, type = "a", inner_pars = false, global_data = {})
+  def self.party_explore(params, inner_pars = false)#, type = "a", inner_pars = false, global_data = {})
     limiter = 5
     default_f = {
       party: nil,

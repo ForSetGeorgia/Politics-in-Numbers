@@ -49,6 +49,7 @@ class Category
   index({_slugs: 1}, { unique: true, sparse: false })
   #index simple: 1
   SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SYMS_SHORT = [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
 
 
   def self.get_ids_by_slugs(id_or_slugs)

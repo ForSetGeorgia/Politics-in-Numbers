@@ -42,11 +42,12 @@ namespace :prepare do # WARNING ondeploy
     #
   end
 
-  desc "Create sequence document for explore and embed_static used by shortener"
+  desc "Create sequence document for explore, embed_static and party used by shortener"
   task :populate_sequence => :environment do |t, args|
     db = Mongoid.default_client
     db.command({ insert: "sequence", documents: [ { _id: "explore_id", seq: 1000000000000000000 } ] })
     db.command({ insert: "sequence", documents: [ { _id: "embed_static_id", seq: 2000000000000000000 } ] })
+    db.command({ insert: "sequence", documents: [ { _id: "party_id", seq: 3000000000000000000 } ] })
   end
 
   desc "Recreate sequence collection and document for explore and embed_static used by shortener"
@@ -64,4 +65,9 @@ namespace :prepare do # WARNING ondeploy
   end
   # WARNING call slug generator function for Category, Donor, Party, Period
 
+  desc "Create sequence document for party used by shortener"
+  task :populate_party_sequence => :environment do |t, args|
+    db = Mongoid.default_client
+    db.command({ insert: "sequence", documents: [ { _id: "party_id", seq: 3000000000000000000 } ] })
+  end
 end

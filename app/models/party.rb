@@ -48,6 +48,9 @@ class Party
   def get_permalink
     slug.present? ? slug : id.to_s
   end
+  def get_short_uri
+    ShortUri.party_uri({ party: self.id, filter: 'finance' })
+  end
 #scopes
   def self.sorted
     order_by([[:title, :asc]])#.limit(3)
