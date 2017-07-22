@@ -4,16 +4,12 @@
 %>
 <div id="party">
   <div class="switch">
-    <div id="fltr" class="filter-type" data-type="<%= @fltr %>">
-      <div class="donation<%= @button_state[0] %>" data-type="donation">
-        <button type="button" id="donation_toggle" class="donation-toggle" tabindex="4"><%= t('shared.filters.donations') %></button>
-      </div>
-      <div class="sep"></div>
-      <div class="finance<%= @button_state[1] %>" data-type="finance">
-        <div class="finance-container">
-          <button type="button" id="finance_toggle" class="finance-toggle" tabindex="4"><%= t('shared.filters.party_finances').html_safe %></button>
-        </div>
-      </div>
+    <div class="donation<%= @button_state[0] %>" data-type="donation">
+      <button type="button" id="donation_toggle" class="donation-toggle" tabindex="4"><%= t('shared.filters.donations') %></button>
+    </div>
+    <div class="sep"></div>
+    <div class="finance<%= @button_state[1] %>" data-type="finance">
+      <button type="button" id="finance_toggle" class="finance-toggle" tabindex="4"><%= t('shared.filters.party_finances').html_safe %></button>
     </div>
   </div>
   <div class="content">
@@ -103,44 +99,46 @@
           </div>
           <div class="description"><%= @item.description %> <%= lorem[0..(rand(150..400))] %></div>
         </div>
-        <div id="donation">
-          <div class="stats">
-            <div class='stats-caption'><%= t('.donations') %></div>
-            <div class="stats-box">
-              <% stats = @item.get_stats(:donations) %>
-              <div class="stat-box" data-stat="amount"><label><%= t('.total_amount') %>:</label><span><%= stats[0] %></span></div>
-              <div class="stat-box" data-stat="count"><label><%= t('.total_donations') %>:</label><span><%= stats[1] %></span></div>
+        <div class="panes">
+          <div id="donation" class="pane" data-type='donation'>
+            <div class="stats">
+              <div class='stats-caption'><%= t('.donations') %></div>
+              <div class="stats-box">
+                <% stats = @item.get_stats(:donations) %>
+                <div class="stat-box" data-stat="amount"><label><%= t('.total_amount') %>:</label><span><%= stats[0] %></span></div>
+                <div class="stat-box" data-stat="count"><label><%= t('.total_donations') %>:</label><span><%= stats[1] %></span></div>
+              </div>
+            </div>
+            <div class="charts">
+              <div class="chart-container" data-chart-id="dc_first">
+                <%= render partial: 'chart_actions' %>
+                <div id="dc_first"></div>
+              </div>
+              <div class="chart-container" data-chart-id="dc_second">
+                <%= render partial: 'chart_actions' %>
+                <div id="dc_second"></div>
+              </div>
             </div>
           </div>
-          <div class="charts">
-            <div class="chart-container" data-chart-id="dc_first">
-              <%= render partial: 'chart_actions' %>
-              <div id="dc_first"></div>
+          <div id="finance" class="pane" data-type='finance'>
+            <div class="stats">
+              <div class='stats-caption'><%= t('.finances') %></div>
+              <div class="stats-box">
+                <% @main_categories.each{|category| %>
+                  <% stats = @item.get_stats(category[0]) %>
+                  <div class="stat-box" data-category="<%= category[0] %>"><label><%= t(".#{category[0]}") %>:</label><span><%= stats[0] %></span></div>
+                <% } %>
+              </div>
             </div>
-            <div class="chart-container" data-chart-id="dc_second">
-              <%= render partial: 'chart_actions' %>
-              <div id="dc_second"></div>
-            </div>
+            <% @main_categories.each{|category|
+              chart_id = "fc_#{category[0]}"
+            %>
+              <div class="chart-container" data-chart-id="<%= chart_id %>">
+                <%= render partial: 'chart_actions' %>
+                <div id="<%= chart_id %>"></div>
+              </div>
+            <% } %>
           </div>
-        </div>
-        <div id="finance">
-          <div class="stats">
-            <div class='stats-caption'><%= t('.finances') %></div>
-            <div class="stats-box">
-              <% @main_categories.each{|category| %>
-                <% stats = @item.get_stats(category[0]) %>
-                <div class="stat-box" data-category="<%= category[0] %>"><label><%= t(".#{category[0]}") %>:</label><span><%= stats[0] %></span></div>
-              <% } %>
-            </div>
-          </div>
-          <% @main_categories.each{|category|
-            chart_id = "fc_#{category[0]}"
-          %>
-            <div class="chart-container" data-chart-id="<%= chart_id %>">
-              <%= render partial: 'chart_actions' %>
-              <div id="<%= chart_id %>"></div>
-            </div>
-          <% } %>
         </div>
         <div class="not-found hidden"><%= t('shared.msgs.data_not_found') %></div>
       </div>

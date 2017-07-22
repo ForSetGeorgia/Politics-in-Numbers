@@ -285,7 +285,8 @@ class RootController < ApplicationController
         redirect_to party_path and return
       end
     end
-    @fltr = pars[:filter]
+    Rails.logger.debug("--------------------------------------------#{pars} #{inner_pars} #{@item}")
+    type = pars[:filter]
 
 
     # party_id = params[:id]
@@ -307,12 +308,12 @@ class RootController < ApplicationController
       period: [] #Period.annual.limit(3).map{|m| m.permalink }
     }
 
-    if !(@fltr.present? && ["finance", "donation"].index(@fltr).present?)
-      @fltr = "finance"
+    if !(type.present? && ["finance", "donation"].index(type).present?)
+      type = "finance"
       pars.merge!(finance_pars)
     end
 
-    is_finance = @fltr == "finance"
+    is_finance = type == "finance"
     is_donation = !is_finance
 
     @button_state = ['', '']
@@ -351,7 +352,7 @@ class RootController < ApplicationController
     period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
     gon.period_list = Period.list_from(period_list)
 
-    gon.is_donation = is_donation
+    gon.type = type
 
     # _pars = {
     #   party: party_id,
@@ -371,7 +372,7 @@ class RootController < ApplicationController
 
     pars.delete(:locale)
 
-    gon.params = pars
+    # gon.params = pars
   end
 
   def party_filter
