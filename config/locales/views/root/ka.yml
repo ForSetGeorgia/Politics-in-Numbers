@@ -130,16 +130,39 @@ ka:
     party:
       title: Explore Party
       filters: ფილტრი
+      overall_summary: Overall Summary
+      income: Income
+      expenses: Expenses
+      reform_expenses: Reforms Fund Expenses
+      property_assets: Property Assets
+      financial_assets: Financial Assets
+      debts: Debts
       filter_toggle: ახალი ფილტრის დამატება
       filter_close: ფილტრის დახურვა
       time: პერიოდი
       annual: წლიური
       campaign: კამპანია
       reset: განახლება
+      time_period: პერიოდი
+      from: -დან
+      to: -მდე
       explore: დათვალიერება
       loader_missing_category: Please select a Party Finance type at the top.
+      total_amount: Total Amount
+      total_donations: Total Donations
     parties:
       income: შემოსავალი
       expenses: ხარჯები
       donations: შემოწირულებები
       no_parties: No parties have been recorded yet.
+    chart_actions:
+      share_chart: Share chart
+      embed_chart: Embed chart
+      download_chart: Download chart
+      export_type:
+        print: Print
+        pdf: Pdf document
+        svg: Svg image
+        jpeg: Jpeg image
+        png: Png image
+        csv: Csv document

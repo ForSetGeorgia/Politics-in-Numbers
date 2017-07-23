@@ -49,7 +49,7 @@ class Party
     slug.present? ? slug : id.to_s
   end
   def get_short_uri
-    ShortUri.party_uri({ party: self.id, filter: 'finance' })
+    ShortUri.party_uri({ party: self.id.to_s, filter: 'finance' })
   end
 #scopes
   def self.sorted
@@ -69,7 +69,7 @@ class Party
   end
 
   def self.list_from(parties)
-    parties.map{|t| [t[2], t[1]]}.sort{|x,y| x[1] <=> y[1] } # used while creating list in view
+    parties.map{|t| [t[0].to_s, t[1]]}.sort{|x,y| x[1] <=> y[1] } # used while creating list in view
   end
 
   def self.for_collection

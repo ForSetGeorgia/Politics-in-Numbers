@@ -1,6 +1,6 @@
-  function bar_chart(elem, resource, bg) {
+  function bar_chart(elem, resource, bg, width) {
     // console.log("chart", elem, resource);
-
+    console.log(width)
     var ln = 0;
     resource.series.forEach(function (d) { ln += Math.round(d[0].length/15)+1; });
     js.share[elem] = encodeURI(resource.orig_title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
@@ -10,6 +10,7 @@
           type: 'bar',
           backgroundColor: bg,
           height: 60*(Math.round(resource.title.length/40)+1) + ln*24,
+          width: width
           // width: w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12//,
           // events: {
           //   load: function () {
@@ -121,7 +122,7 @@
       }
     });
   }
-  function grouped_advanced_column_chart (elem, resource, bg) {
+  function grouped_advanced_column_chart (elem, resource, bg, width) {
     // console.log("fca", resource);
     var cat_max_len = 0,
       groupedOptions = [],
@@ -142,6 +143,7 @@
           type: 'column',
           backgroundColor: bg,
           height: 400 + cat_max_len*9,
+          width: width
           // width: view_content.width()-28 // w > 992 ? Math.floor((view_content.width()-28)/2) :
       },
       exporting: {

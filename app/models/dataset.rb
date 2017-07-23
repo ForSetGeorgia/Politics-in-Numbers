@@ -620,17 +620,19 @@ class Dataset
     tmp_f = {
       filter: "finance",
       party: f[:party],
-      period: f[:period]
+
     }
+    tmp_f.merge!({period: f[:period]}) if f[:period].present?
     categories.each {|k,v|
       ct = categories[k]
       tmp_ff = {}
-      tmp_ff[ct[:sym]] = f[ct[:sym]]
+      tmp_ff[ct[:sym]] = f.delete(ct[:sym])
       cats[ct[:sym]] = { sid: ShortUri.explore_uri(tmp_f.merge(tmp_ff)), title: chart_title.gsub('_category_', ct[:title]), series: ct[:series] }
     }
 
     {
-      pars: f,
+      pars: f.merge({ party: f[:party][0]}),
+      psid: ShortUri.party_uri(tmp_f),
       data: cats,
       categories: chart_categories
     }

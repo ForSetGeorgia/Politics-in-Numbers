@@ -273,31 +273,28 @@ class RootController < ApplicationController
     inner_pars = false
     sid = pars[:id]
     party_id = nil
+    type = nil
     @item = nil
     if sid.present?
       shr = ShortUri.by_sid(sid, :party)
       pars = Hash.transform_keys_to_symbols(shr.pars) if shr.present?
       party_id = pars[:party]
+       Rails.logger.debug("--------------------------------------------#{party_id}")
+      type = pars[:filter]
       @item = Party.find(party_id)
-      if @item.present?
+      if @item.present? && type.present? && ["finance", "donation"].index(type).present?
         inner_pars = true
       else
         redirect_to party_path and return
       end
     end
     Rails.logger.debug("--------------------------------------------#{pars} #{inner_pars} #{@item}")
-    type = pars[:filter]
 
-
-    # party_id = params[:id]
-    # periods = params[:period]
-    # @item = Party.find(party_id)
-
-    categories = Category.non_virtual.only_sym
-    @main_categories = {}
-    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
-    categories.sort_by!{|x| Category::SYMS.index x[:sym]}
-    # Rails.logger.debug("--------------------------------------------#{@main_categories}")
+    gon.type = type
+    is_finance = type == "finance"
+    @type = type
+    @button_state = ['', '']
+    @button_state[is_finance ? 1 : 0] = ' active'
 
     donation_pars = {
       party: party_id,
@@ -305,29 +302,42 @@ class RootController < ApplicationController
     }
     finance_pars = {
       party: party_id,
-      period: [] #Period.annual.limit(3).map{|m| m.permalink }
+      period: []
     }
 
-    if !(type.present? && ["finance", "donation"].index(type).present?)
-      type = "finance"
-      pars.merge!(finance_pars)
+    if is_finance
+      finance_pars = pars
+    else
+      donation_pars = pars
     end
 
-    is_finance = type == "finance"
-    is_donation = !is_finance
 
-    @button_state = ['', '']
-    @button_state[is_finance ? 1 : 0] = ' active'
 
-    dt = []
+    @party_list = Party.sorted.map { |m| [m.id, m.title, m.get_permalink, m.type == 0 && m.member == true, m.type] }
+    gon.party_list = Party.list_from(@party_list)
 
-    donation_pars = pars if !is_finance
-    finance_pars = pars if is_finance
+    period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
+    gon.period_list = Period.list_from(period_list)
 
+     Rails.logger.debug("--------------------------------------------#{donation_pars}")
+    tmp = Donor.party_explore(donation_pars, inner_pars)
+    gon.donation_params = tmp.delete(:pars)
+    gon.donation_data = tmp
+
+    tmp = Dataset.party_explore(finance_pars, inner_pars, { periods: period_list })
+    gon.finance_params = tmp.delete(:pars)
+    gon.finance_data = tmp
+
+    pars.delete(:locale)
+    gon.params = pars
+
+    categories = Category.non_virtual.only_sym
+    @main_categories = {}
+    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
+    categories.sort_by!{|x| Category::SYMS.index x[:sym]}
 
     gon.root_url = root_url
-
-    gon.path = party_path(id: '_id_')
+    gon.path = party_path
     gon.filter_path = party_filter_path
     gon.embed_path = embed_static_path(id: "_id_")
     gon.share_url = share_url({ id: "_id_", chart: "_chart_" })
@@ -344,64 +354,52 @@ class RootController < ApplicationController
     gon.gonned = true
     gon.chart_path = chart_path({id: ""})
     gon.na = t('shared.common.na')
-
-
-    @party_list = Party.sorted.map { |m| [m.id, m.title, m.get_permalink, m.type == 0 && m.member == true, m.type] }
-    gon.party_list = Party.list_from(@party_list)
-
-    period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
-    gon.period_list = Period.list_from(period_list)
-
-    gon.type = type
-
-    # _pars = {
-    #   party: party_id,
-    #   period: []
-    # }
-    # _pars[:period] = Period.annual.map{|m| m.permalink } if periods.nil?
-
-
-
-    tmp = Donor.party_explore(donation_pars, inner_pars)
-    gon.donation_params = tmp.delete(:pars)
-    gon.donation_data = tmp
-
-    tmp = Dataset.party_explore(finance_pars, inner_pars, { periods: period_list })
-    gon.finance_params = tmp.delete(:pars)
-    gon.finance_data = tmp
-
-    pars.delete(:locale)
-
-    # gon.params = pars
   end
 
   def party_filter
+
     pars = party_filter_params
+    Rails.logger.debug("--------------------------------------------#{pars} #{params}")
+    # type = pars[:filter]
+    party_id = pars[:party]
+    res = {}
+    item = Party.find(party_id) if party_id.present?
 
-    _pars = {
-      party: pars[:party],
-      period: pars[:period]
-    }
-    item = Party.find(pars[:party])
-    party = {
-      title: item.title,
-      range: item.get_range,
-      description: item.description,
-      stats: {
-        donations: item.get_stats(:donations),
-        finances: {}
+    if item.present?
+      if pars[:donation].present?
+        _pars = {
+          party: party_id
+        }
+        _pars[:period] = pars[:donation][:period] if pars[:donation][:period].present?
+        res[:donation] = Donor.party_explore(_pars)
+      end
+
+      if pars[:finance].present?
+        _pars = {
+          party: party_id
+        }
+        _pars[:period] = pars[:finance][:period] if pars[:finance][:period].present?
+        res[:finance] = Dataset.party_explore(_pars)
+      end
+
+
+      party = {
+        title: item.title,
+        range: item.get_range,
+        description: item.description,
+        stats: {
+          donations: item.get_stats(:donations),
+          finances: {}
+        }
       }
-    }
-    party[:leader] = item.leader if item.leader.present?
-    Category::SYMS_SHORT.each{|e|
-      party[:stats][:finances][e] = item.get_stats(e)
-    }
+      party[:leader] = item.leader if item.leader.present?
+      Category::SYMS_SHORT.each{|e|
+        party[:stats][:finances][e] = item.get_stats(e)
+      }
+      res[:party] = party
+    end
 
-    render :json => {
-      party: party,
-      donation: Donor.party_explore(_pars),
-      finance: Dataset.party_explore(_pars)
-    }
+    render :json => res
   end
 
   def embed_static
@@ -582,7 +580,7 @@ class RootController < ApplicationController
     end
 
     def party_filter_params
-      params.permit(:locale, :party, period: [])
+      params.permit(:locale, :party, :donation => [:required, period: []], :finance => [:required, period: []])
     end
 
     def embed_params

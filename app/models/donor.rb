@@ -508,7 +508,7 @@ class Donor
     end
 
     party = Party.find(params[:party])
-    f[:party] = [party.id]
+    f[:party] = party.id.to_s
 
     chart_subtitle = ""
     if f[:period].present? && f[:period][0] != -1 && f[:period][1] != -1
@@ -518,35 +518,17 @@ class Donor
       chart_subtitle = "#{I18n.l(dte[:first_date], format: :date)} - #{I18n.l(dte[:last_date], format: :date)}" if dte.present?
     end
 
-
-
-
-    ds = 0
-    ps = f[:party].nil? ? 0 : f[:party].length
-    # ds == 0 && ps == 0
-    # ds == 0 && ps == 1
-    # ds == 0 && ps > 1
-    # ds == 1 && ps == 0
-    # ds > 1 && ps == 0
-    # ds >= 1 && ps >= 1
-    # above is schema for below statement
-    chart_type = ds == 0 ? ( ps == 0 ? 0 : ( ps == 1 ? 1 : 2) ) : ( ps == 0 ? ( ds == 1 ? 3 : 4) : 5 )
-
-
-    data = filter(f).to_a
+    data = filter(f.merge({ party: [f[:party]]})).to_a
 
     parties_list = {}
     parties = {}
     Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true] }.each{ |e| parties[e[0]] = { value: 0, name: e[1] } }
 
-    if ps > 0 # filling parties_list with initial data
-      f[:party].each{ |e|
-        es = BSON::ObjectId(e)
-        parties_list[es] = { value: 0, name: parties[es][:name] } if parties[es].present?
-      }
-    # else
-    #   parties.each{|k,v| parties_list[k] = { value: 0, name: v[:name] } }
-    end
+    [f[:party]].each{ |e|
+      es = BSON::ObjectId(e)
+      parties_list[es] = { value: 0, name: parties[es][:name] } if parties[es].present?
+    }
+
     all_donors = Donor.donors_by_ids(f[:donor])
     partial = all_donors.length > 0
     n = 0
@@ -574,15 +556,7 @@ class Donor
       e[:donations].each { |ee|
         am = ee[:amount]
 
-        parties[ee[:party_id]][:value] += am if chart_type == 0
-
-        if [2,3,4,5].index(chart_type).present?
-          parties_list[ee[:party_id]] = { value: 0, name: parties[ee[:party_id]][:name] } if !parties_list[ee[:party_id]].present?
-          parties_list[ee[:party_id]][:value] += am
-        end
-
-        recent_donations.push({ date: ee[:give_date], out: { name: e[:name], value: am } }) if chart_type == 1
-        recent_donations.push({ date: ee[:give_date], out: { name: parties[ee[:party_id]][:name], value: am } }) if chart_type == 3
+        recent_donations.push({ date: ee[:give_date], out: { name: e[:name], value: am } })
 
         e[:partial_donated_amount] += am
 
@@ -607,9 +581,8 @@ class Donor
       parties: I18n.t("shared.chart.label.parties"),
       donations: I18n.t("shared.chart.label.donations")
     }
-    # if chart_type == 1 # If select 1 party -> top 5 donors for party, last 5 donations for party
 
-    tmp = parties[BSON::ObjectId(f[:party][0])][:name]
+    tmp = parties[BSON::ObjectId(f[:party])][:name]
     ca_title[:obj] = cb_title[:obj] = tmp
 
     ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donors])
@@ -639,19 +612,23 @@ class Donor
       end
     }
     sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
+     Rails.logger.debug("--------------------------------------------#{f.merge({filter: "donation"})}")
+    psid = ShortUri.party_uri(f.merge({filter: "donation"}))
+    # f[:party]
 
     res = {
       ca: {
         series: has_no_data ? [] : ca,
-        title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
+        title: Donor.generate_title(ca_title.merge(title_options), [1, 0], has_no_data),
         subtitle: chart_subtitle
       },
       cb: {
         series: has_no_data ? [] : cb,
-        title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
+        title: Donor.generate_title(cb_title.merge(title_options), [1, 1], has_no_data),
         subtitle: chart_subtitle
       },
       sid: sid,
+      psid: psid,
       pars: f
     }
     res

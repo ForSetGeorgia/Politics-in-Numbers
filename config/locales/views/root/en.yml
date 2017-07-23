@@ -130,8 +130,7 @@ en:
     party:
       title: Explore Party
       filters: Filters
-      donations: Party Donations
-      finances: Party Finances
+      overall_summary: Overall Summary
       income: Income
       expenses: Expenses
       reform_expenses: Reforms Fund Expenses
@@ -144,6 +143,9 @@ en:
       annual: Annual
       campaign: Campaign
       reset: RESET
+      time_period: Time Period
+      from: From
+      to: To
       explore: EXPLORE
       loader_missing_category: Please select a Party Finance type at the top.
       total_amount: Total Amount

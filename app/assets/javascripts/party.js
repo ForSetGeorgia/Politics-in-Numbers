@@ -218,7 +218,7 @@ $(document).ready(function (){
       elem: {
         finance: {
           party: $("#filter_party"),
-          period: $("#filter_period_mix")
+          period_mix: $("#filter_period_mix")
         },
         donation: {
           party: $("#filter_party"),
@@ -232,25 +232,28 @@ $(document).ready(function (){
         finance: {},
         donation: {}
       },
+      sid: {
+        finance: undefined,
+        donation: undefined
+      },
       current_type: 'finance',
       get: function(type) {
         var t = this, tp, tmp, tmp_v, tmp_d, lnk,
           current_elem = t.elem[type],
-          dt = t.datap[type] = { }
-
+          dt = t.data[type] = { filter: type }
 
         // console.log(autocomplete, "before", t.data)
         Object.keys(current_elem).forEach(function(el){
-          var is_elem = ["period"].indexOf(el) === -1
+          var is_elem = ["period"].indexOf(el) === -1;
           (is_elem ? [current_elem[el]] : Object.keys(current_elem[el]).map(function (m){ return current_elem[el][m] }))
-            .forEach(function(elem, elem_i){
+          .forEach(function(elem, elem_i){
             tmp = $(elem)
             tmp_v = []
             tp = tmp.attr("data-type")
             if(tp === "autocomplete") {
               lnk = tmp.attr("data-autocomplete-view")
               if(autocomplete.hasOwnProperty(lnk)) {
-                tmp_v = Object.keys(autocomplete[lnk]) // TODO
+                tmp_v = Object.keys(autocomplete[lnk])[0]
               }
 
               if(tmp_v.length) {
@@ -277,26 +280,29 @@ $(document).ready(function (){
               tmp_d = tmp.find("li[data-id]")
               if(tmp_d.length) {
                 tmp_d.each(function(){ tmp_v.push(this.dataset.id) })
-                dt[el] = tmp_v
+                dt['period'] = tmp_v
               }
             }
             else {
-              console.log("Type is not specified", t.elem[el])
+              console.log("Type is not specified", tp, t.elem[el])
             }
           })
         })
+        // console.log(dt, 'get filter')
         return dt
       },
       set_by_params: function(type) {
-        var t = this, tmp, tp, v, p, el
+        var t = this, tmp, tp, v, p, el,
+          current_elem = t.elem[type],
+          current_type = t.types[type]
         // console.log("set_by_url finance", gon.params)
         if(gon[type + '_params']) {
           Object.keys(gon[type + '_params']).forEach(function(k) {
             // if(k == "filter" || !t.types.hasOwnProperty(k)) return
-              el = t.elem[k]
-              tp = t.types[k]
+              el = current_elem[k]
+              tp = current_type[k]
               v = gon[type + '_params'][k]
-
+            // console.log(el, tp, v)
             if(tp === "autocomplete") {
               p = el.parent()
               var fld = p.attr("data-field")
@@ -326,23 +332,24 @@ $(document).ready(function (){
           })
         }
       },
-      reset: function() {
+      reset: function(type) {
         $(".filter-inputs .filter-input").each(function(i,d) {
           var t = $(this)
             field = t.attr("data-field"),
-            type = t.attr("data-type")
+            tp = t.attr("data-type")
             list = t.find(".list")
-
-            if(type === "autocomplete") {
+            console.log(d, field, tp, list)
+            if(tp === "autocomplete") {
               var tmp = t.find(".autocomplete[data-autocomplete-id]")
               autocomplete.clear(tmp.attr("data-autocomplete-id"))
               tmp.find("input").val(null).trigger("change")
               if(typeof global_click_callback === "function") { global_click_callback() }
             }
-            else if(type === "period") {
+            else if(tp === "period" && type === 'donation') {
+              console.log('donation period',t.find(".input-group input[type='text'].datepicker"))
               t.find(".input-group input[type='text'].datepicker").datepicker('setDate', null)
             }
-            else if(type === "period_mix") {
+            else if(tp === "period_mix" && type === 'finance') {
               t.find(".input-group .input-radio-group input:first-of-type").prop("checked", true)
               var group = t.find(".input-group .input-checkbox-group")
               group.find("input[type='checkbox']:checked").prop("checked", false)
@@ -363,24 +370,17 @@ $(document).ready(function (){
         })
         return CryptoJS.MD5(tmp.join("&")).toString()
       },
-      url: function (sid) {
-        // if(typeof sid === "undefined") { sid = this.sid }
-        // js.sid = sid
-        // this.sid = sid
+      url: function () {
+        var t = this, sid = t.sid[t.current_type]
         window.history.pushState(sid, null, gon.path + "/" + sid)
-        // TODO
-        // var t = this, period = '', dt = t.data[type]
-        // if (t.data.hasOwnProperty('period')) {
-        //   period = '?'
-        //   t.data.period.forEach(function (per) {
-        //     period += 'period[]=' + per
-        //   })
-        // }
-        // window.history.pushState(current_id, null, gon.path.replace('_id_', t.data.party) + '' + period)
+      },
+      set_type: function (type) {
+        var t = this
+        t.current_type = type
       },
       switch: function (type) {
         var t = this
-        t.current_type = type
+        t.set_type(type)
         // switch type and get sid pass to url
         t.url()
       }
@@ -492,7 +492,7 @@ $(document).ready(function (){
     })
 
     $("#filter_period_campaigns a").click(function(){
-      var t = $(this), v = t.attr("data-value").split("")
+      var t = $(this), v = t.attr("data-value").split(";")
       tmp_from.datepicker('setDate', new Date(v[0]))
       tmp_to.datepicker('setDate', new Date(v[1]))
     })
@@ -517,8 +517,8 @@ $(document).ready(function (){
       event.stopPropagation()
     })
     $("#reset").click(function(){
-      filter.reset()
-      filter.set_by_params()
+      filter.reset(filter.current_type)
+      filter.set_by_params(filter.current_type)
     })
     explore_button.click(function(){ process() })
 
@@ -612,68 +612,95 @@ $(document).ready(function (){
     var tmp, cacher_id, _id, _id, finance_id//, obj
     if(gon.gonned) {
       ['donation', 'finance'].forEach( function (obj) {
+        // console.log()
         filter.set_by_params(obj)
         filter.get(obj)
-        current_id = _id = filter.id(obj)
-        process_callback(js.cache[_id] = gon[obj + '_data'], partial)
+        _id = filter.id(obj)
+        // console.log(_id, 'test')
+        filter.sid[obj] = gon[obj + '_data'].psid
+        process_callback(js.cache[_id] = gon[obj + '_data'], obj)
       })
-      // obj.url(filter.current_type)
+      filter.url()
       gon.gonned = false
     } else {
-      filter.get()
-      _id = filter.id()
-      if(!js.cache.hasOwnProperty(_id)) {
+      var pars = {}, missing = [], _ids = {};
+
+      ['donation', 'finance'].forEach( function (obj) {
+        tmp = filter.get(obj)
+        _id = filter.id(obj)
+        console.log(tmp, _id)
+        if(!js.cache.hasOwnProperty(_id)) {
+          _ids[obj] = _id
+          missing.push(obj)
+          pars[obj] = { required: true }
+          if( tmp.hasOwnProperty('period')) {
+            pars[obj]['period'] = tmp['period']
+          }
+          pars['party'] = tmp['party']
+        }
+      })
+      console.log(missing, pars)
+      // filter.get(filter.current_type)
+      // _id = filter.id(filter.current_type)
+      if(missing.length) { //!js.cache.hasOwnProperty(_id)) {
         $.ajax({
           url: gon.filter_path,
           dataType: 'json',
-          data: filter.get(),
+          data: pars, //filter.get(filter.current_type),
           success: function(data) {
-            console.log(data)
-            js.cache[_id] = data
-            current_id = _id
+            console.log('ajax', data)
+            // current_id = _id
+            // process_callback(js.cache[_id] = data)
+            if(data.hasOwnProperty("donation")) {
+              filter.sid['donation'] = data.donation.psid
+              process_callback(js.cache[_ids['donation']] = data.donation, 'donation')
+            }
+            if(data.hasOwnProperty("finance")) {
+              filter.sid['finance'] = data.finance.psid
+              process_callback(js.cache[_ids['finance']] = data.finance, 'finance')
+            }
             filter.url()
-            process_callback(js.cache[_id])
           }
         })
       }
       else {
-        current_id = _id
+        // current_id = _id
         filter.url()
         process_callback(js.cache[_id])
       }
     }
   }
   function process_callback(data, partial) {
-    // console.log("process_callback", data)
+    console.log("process_callback", data, partial)
     view_not_found.addClass("hidden")
-    var is_data_ok = typeof data !== "undefined"
+    var is_data_ok = typeof data !== "undefined",
+      dt
     if(is_data_ok) {
+      var tmp_width = $('.result').width()
+      if(tmp_width > 1024) {
+        tmp_width = 1024
+      }
+      if(partial === "donation") {
+        dt = data
+        dt.ca.orig_title = dt.ca.title
+        dt.ca.title = '<a href="/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
 
-      // if(partial === "donation") {
-      //   bar_chart(chart_ids.da, data.ca, "#EBE187")
-      //   bar_chart(chart_ids.db, data.cb, "#B8E8AD")
-      // }
-      // else {
-      //   //grouped_column_chart("#finance_chart", data.ca, "#fff")
-      //   grouped_advanced_column_chart(chart_ids.fa, data.ca, "#fff")
-      // }
-
-      var dt = data.donation
-      dt.ca.orig_title = dt.ca.title
-      dt.ca.title = '<a href="/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
-      bar_chart('#dc_first', dt.ca, "#EBE187")
-      dt.cb.orig_title = dt.cb.title
-      dt.cb.title = '<a href="/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
-      bar_chart('#dc_second', dt.cb, "#B8E8AD")
-
-      dt = data.finance
-      filter.categories.forEach( function(cat) {
-        var tmp = dt.data[cat]
-        tmp['categories'] = dt.categories
-        tmp.orig_title = tmp.title
-        tmp.title = '<a href="/explore/' + tmp.sid + '">' + tmp.title + '</a>'
-        grouped_advanced_column_chart("#fc_" + cat, tmp, "#fff")
-      })
+        bar_chart('#dc_first', dt.ca, "#EBE187", tmp_width)
+        dt.cb.orig_title = dt.cb.title
+        dt.cb.title = '<a href="/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
+        bar_chart('#dc_second', dt.cb, "#B8E8AD", tmp_width)
+      }
+      else {
+        dt = data
+        // console.log(dt)
+        filter.categories.forEach( function(cat) {
+          var tmp = dt.data[cat]
+          tmp['categories'] = dt.categories
+          tmp.orig_title = tmp.title
+          tmp.title = '<a href="/explore/' + tmp.sid + '">' + tmp.title + '</a>'
+          grouped_advanced_column_chart("#fc_" + cat, tmp, "#fff", tmp_width)
+        })
+      }
       party_info_populate(data.party)
     }
     else {
@@ -703,7 +730,7 @@ $(document).ready(function (){
   (function init() {
     init_highchart()
     bind()
-    filter.switch(gon.type)
+    filter.set_type(gon.type)
     process()
   })()
 })

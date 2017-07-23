@@ -2,7 +2,7 @@
   page_title t('.title')
   label_key = "mongoid.attributes.party."
 %>
-<div id="party">
+<div id="party" data-type="<%= @type %>">
   <div class="switch">
     <div class="donation<%= @button_state[0] %>" data-type="donation">
       <button type="button" id="donation_toggle" class="donation-toggle" tabindex="4"><%= t('shared.filters.donations') %></button>
@@ -22,8 +22,8 @@
         </div>
         <div class="filter-inputs">
           <%= render partial: 'autocomplete_input', :locals => { input_for: "filter", input_field: "party", on: true,
-            list: generate_li_list(@party_list.select{|s| s[3] == true }.map{|m| [m[2], m[1]]}) , category_label: 0, without_clear: true } %>
-          <div class="row filter-input" data-field="period" data-type="period">
+            list: generate_li_list(@party_list.select{|s| s[3] == true }.map{|m| [m[0], m[1]]}) , category_label: 0, without_clear: true } %>
+          <div class="row filter-input" data-belong-to="donation" data-field="period" data-type="period">
             <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time_period') %><i title="<%= t('.filter_toggle') %>"></i></a>
             <div id="filter_period" class="list"></div>
             <div class="input-group">
@@ -38,7 +38,7 @@
               </ul>
             </div>
           </div>
-          <div class="row filter-input" data-field="period" data-type="period_mix">
+          <div class="row filter-input" data-belong-to="finance" data-field="period" data-type="period_mix">
             <a href="javascript:void(0);" class="toggle" tabindex="5"><%= t('.time') %><i title="<%= t('.filter_toggle') %>"></i></a>
             <ul id="filter_period_mix" class="list" data-type="period_mix"></ul>
             <div class="input-group">
@@ -102,7 +102,7 @@
         <div class="panes">
           <div id="donation" class="pane" data-type='donation'>
             <div class="stats">
-              <div class='stats-caption'><%= t('.donations') %></div>
+              <div class='stats-caption'><%= t('.overall_summary') %></div>
               <div class="stats-box">
                 <% stats = @item.get_stats(:donations) %>
                 <div class="stat-box" data-stat="amount"><label><%= t('.total_amount') %>:</label><span><%= stats[0] %></span></div>
@@ -122,7 +122,7 @@
           </div>
           <div id="finance" class="pane" data-type='finance'>
             <div class="stats">
-              <div class='stats-caption'><%= t('.finances') %></div>
+              <div class='stats-caption'><%= t('.overall_summary') %></div>
               <div class="stats-box">
                 <% @main_categories.each{|category| %>
                   <% stats = @item.get_stats(category[0]) %>

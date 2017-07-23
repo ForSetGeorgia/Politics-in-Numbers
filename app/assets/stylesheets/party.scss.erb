@@ -216,7 +216,7 @@
         .row {
           padding:15px 2px;
         }
-        .row:not(:last-of-type) {
+        .row:first-of-type {
           border-bottom:1px solid #D7DDD4;
         }
         // .row:last-of-type {
@@ -600,14 +600,13 @@
         }
       }
       .stats {
-        display: flex;
-        flex-direction: row;
-        width: 100%;
+        display: inline-block;
+        text-align: center;
         max-width: 1024px;
         .stats-caption {
           color: #F78E69;
           font: 20px firasans_b;
-          flex: 1;
+          margin-bottom: 10px;
         }
         .stats-box {
           display: flex;
@@ -715,7 +714,7 @@
       }
       .result-container {
         max-width: 1024px;
-        > div:nth-of-type(1), > div:nth-of-type(2) {
+        > div:nth-of-type(1) {
           border-bottom: 1px dashed #F78E69;
           margin-bottom: 28px;
         }
@@ -723,6 +722,24 @@
     }
 
   }
+  & .result .pane[data-type='donation'] ,
+  & .result .pane[data-type='finance'],
+  & .filter [data-belong-to='donation'],
+  & .filter [data-belong-to='finance'] {
+    display:none;
+  }
+  &[data-type='donation'] .result .pane[data-type='donation'],
+  &[data-type='finance'] .result .pane[data-type='finance'],
+  &[data-type='donation'] .filter [data-belong-to='donation'],
+  &[data-type='finance'] .filter [data-belong-to='finance'] {
+    display:block;
+    width:100%;
+  }
+  & .result .panes.not-found .pane[data-type='donation'] ,
+  & .result .panes.not-found .pane[data-type='finance'] {
+    display:none;
+  }
+  & .result .pane { text-align: center; }
 }
 .view-loader {
   position:absolute;
@@ -918,6 +935,11 @@
               &:hover i { background-position: -50px -66px; }
             }
           }
+        }
+      }
+      .panes {
+        .pane {
+          width:100%;
         }
       }
     }
