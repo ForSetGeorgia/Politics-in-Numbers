@@ -1,13 +1,14 @@
 .highlight-grid {
   margin: 0 auto 0;
   max-width: 1432px;
-  padding: 0 26px;
+  padding: 0 5px;
   .highlight-item {
-    display: inline-block;
+    display: block;
     padding: 0 15px 30px;
     vertical-align: top;
+    // width: 100%;
     .description {
-      width: 420px;
+      max-width: 420px;
       padding: 30px 70px 26px;
       background-color: #f4f3ea;
       font: 16px firasans_r;
@@ -30,6 +31,27 @@
 
 .empty-page {
   color: #ffffff;
+}
+@media (min-width: 420px) {
+  .highlight-grid {
+    .chart-container {
+      width: 100%;
+    }
+  }
+}
+@media (min-width: 992px) {
+  .highlight-grid {
+    padding: 0 26px;
+    // .highlight-item {
+    //   width: 100%;
+    // }
+    .chart-container {
+      width: 420px;
+    }
+    .highlight-item {
+      display: inline-block;
+    }
+  }
 }
 // .highlight-grid {
 //   display: flex;
