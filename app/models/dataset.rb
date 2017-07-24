@@ -507,7 +507,7 @@ class Dataset
     party = Party.find(params[:party])
     f[:party] = [party.id]
     f[:period] = Period.get_ids_by_slugs(params[:period])
-
+     # Rails.logger.debug("--------------------------------------------#{f[:period]}")
     categories = {}
     Category.only_short_sym.each{|e|
       f[e.sym] = [e.id]
@@ -516,7 +516,7 @@ class Dataset
 
     # ln = 0
     # main_categories_count = 0
-    Rails.logger.debug("--------------------------inspect------#{params}------------#{party.inspect} #{f}")
+    # Rails.logger.debug("--------------------------inspect------#{params}------------#{party.inspect} #{f}")
     data = filter(f).to_a
 
 
@@ -738,13 +738,11 @@ class Dataset
   end
 
   def self.period_for_party(party_id)
-    p = Period.annual.pluck(:id)
     r = collection.aggregate([
       { "$match":
         { "$and":
           [
-            { 'party_id': party_id },
-            { "period_id": { "$in": p } }
+            { 'party_id': party_id }
           ]
         }
       },
@@ -753,12 +751,17 @@ class Dataset
         }
       }
     ])
-    period = I18n.t('shared.common.na')
+    period = []
+    years = []
     if r.to_a.size > 0
-      r = r.map{|m| Period.find(m[:_id]).start_date.year }.sort
-      period = "#{r[0]} - #{r.length > 1 ? r[1] : I18n.t('shared.common.na')}"
+      r.each{|e|
+        period = Period.find(e[:_id])
+        years << period.start_date.year
+        years << period.end_date.year
+      }
+      years = years.sort
+      period = [years.first, years.last]
     end
-
     period
   end
 

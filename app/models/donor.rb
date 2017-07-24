@@ -95,6 +95,23 @@ class Donor
     ).first
   end
 
+  def self.period_for_party(party_id)
+    r = collection.aggregate([
+      { "$unwind": '$donations' },
+      { "$match": { 'donations.party_id': party_id } },
+      {
+        "$group": {
+        "_id": nil, #"$_id",
+        "first_date": { "$min": "$donations.give_date" },
+        "last_date": { "$max": "$donations.give_date" }
+        }
+      }
+    ])
+     Rails.logger.debug("--------------------------------------------#{r.first.inspect}")
+
+    r.first.present? ? [r.first[:first_date].year, r.first[:last_date].year] : []
+  end
+
   def self.donations_count
     result = collection.aggregate([
       { "$unwind": '$donations' },

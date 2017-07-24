@@ -128,7 +128,7 @@ ka:
         financial_assets: კატეგორიის არჩევა
         debts: კატეგორიის არჩევა
     party:
-      title: Explore Party
+      title: Explore Political Party
       filters: ფილტრი
       overall_summary: Overall Summary
       income: Income
@@ -151,6 +151,7 @@ ka:
       total_amount: Total Amount
       total_donations: Total Donations
     parties:
+      title: Explore Political Parties
       income: შემოსავალი
       expenses: ხარჯები
       donations: შემოწირულებები

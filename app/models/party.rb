@@ -48,8 +48,8 @@ class Party
   def get_permalink
     slug.present? ? slug : id.to_s
   end
-  def get_short_uri
-    ShortUri.party_uri({ party: self.id.to_s, filter: 'finance' })
+  def get_short_uri(annuals)
+    ShortUri.party_uri({ party: self.id.to_s, filter: 'finance', period: annuals })
   end
 #scopes
   def self.sorted
@@ -127,7 +127,13 @@ class Party
   end
 
   def get_range
-    Dataset.period_for_party(self.id)
+    years = (Dataset.period_for_party(self.id) + Donor.period_for_party(self.id)).uniq
+    range = ''
+    if years.length == 1
+      range = years.first
+    elsif years.length >= 2
+      "#{years.first} - #{years.last}"
+    end
   end
 
   def get_stats(type)
@@ -139,6 +145,24 @@ class Party
       stats = Dataset.total_for_party_by_category(self.id, type)
     end
     stats
+  end
+
+  def get_info
+    party = {
+      id: self.id.to_s,
+      title: self.title,
+      range: self.get_range,
+      description: self.description,
+      stats: {
+        donations: self.get_stats(:donations),
+        finances: {}
+      }
+    }
+    party[:leader] = self.leader if self.leader.present?
+    Category::SYMS_SHORT.each{|e|
+      party[:stats][:finances][e] = self.get_stats(e)
+    }
+    party
   end
 #field helpers
   def self.is_initiative(party_name)

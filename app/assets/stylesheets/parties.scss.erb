@@ -77,18 +77,29 @@ $col-width: 660px;
         margin-bottom: 10px;
       }
     }
-    .totals {
-      > div {
-        font: 16px firasans_l;
-        color: #3a3f39;
-        border: 1px solid #56675b;
-        display: inline-block;
-        padding: 6px 10px;
-        margin:0 10px 10px 0;
-        // line-height: 1.4;
-        label{
-          font: 16px firasans_r;
-          color:#F78E69;
+    .stats {
+      display: flex;
+      flex-direction: row;
+      border: 1px solid #C1B02F;
+      .stat-box {
+        padding:8px 20px;
+        background-color:#F5F7F5;
+        flex: 1;
+        label {
+          display:block;
+          font:14px firasans_r;
+          margin-bottom:8px;
+          color:#C1B02F;
+          white-space: nowrap;
+        }
+        span {
+          display:block;
+          font:16px firasans_b;
+          color:#5D675B;
+          text-align: center;
+        }
+        &:not(:last-of-type) {
+          border-right: 1px solid #C1B02F;
         }
       }
     }

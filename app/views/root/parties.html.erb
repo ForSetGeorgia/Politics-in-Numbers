@@ -10,7 +10,7 @@
         <div class="grid-row">
           <div class="grid-column">
             <div class="caption">
-              <a href="<%= party_path(id: item.get_short_uri) %>"><%= item.title %></a>
+              <a href="<%= party_path(id: item.get_short_uri(@annuals)) %>"><%= item.title %></a>
             </div>
             <% if item.leader.present? %>
               <div class="leader">
@@ -24,16 +24,16 @@
           </div>
         </div>
         <div class="description"><%= item.description %> <%= lorem[0..(rand(150..400))] %></div>
-        <div class="totals">
-          <div class="total-donation">
+        <div class="stats">
+          <div class="stat-box total-donation">
             <label><%= t('.donations') %>:</label>
             <span><%= item.get_stats(:donations)[0] %></span>
           </div>
-          <div class="total-finances">
+          <div class="stat-box total-finances">
             <label><%= t('.income') %>:</label>
             <span><%= item.get_stats(:income)[0] %></span>
           </div>
-          <div class="total-expenses">
+          <div class="stat-box total-expenses">
             <label><%= t('.expenses') %>:</label>
             <span><%= item.get_stats(:expenses)[0] %></span>
           </div>

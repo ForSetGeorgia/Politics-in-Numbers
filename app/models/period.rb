@@ -25,7 +25,7 @@ class Period
     id_or_slugs = [] if !id_or_slugs.present?
     id_or_slugs = id_or_slugs.delete_if(&:blank?)
     if id_or_slugs.class == Array
-      x = only(:_id, :_slugs).find(id_or_slugs)
+      x = only(:_id, :_slugs).order_by([[:start_date, :desc]]).find(id_or_slugs)
       x.present? ? x.map{ |m| m[:_id].to_s } : []
     else
       []

@@ -128,7 +128,7 @@ en:
         financial_assets: Select category
         debts: Select category
     party:
-      title: Explore Party
+      title: Explore Political Party
       filters: Filters
       overall_summary: Overall Summary
       income: Income
@@ -151,6 +151,7 @@ en:
       total_amount: Total Amount
       total_donations: Total Donations
     parties:
+      title: Explore Political Parties
       income: Income
       expenses: Expenses
       donations: Donations
