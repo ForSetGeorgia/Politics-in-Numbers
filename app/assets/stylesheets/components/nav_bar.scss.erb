@@ -38,6 +38,7 @@
           font: 18px donaneue_u;
           color:#fff;
           text-decoration:none;
+
           &:hover, &:focus, &:active, &.active {
             background-color:#fff;
             color:#88D877;
@@ -46,6 +47,7 @@
       }
     }
   }
+
   .navbar-right {
     display:inline-block;
     width:50%;
@@ -214,10 +216,13 @@
           display:table-cell;
           width:auto;
           text-align:center;
-          padding:0 20px;
+          padding:0 8px;
+          &:lang(ka) {
+            padding: 0;
+          }
           a {
             display:inline-block;
-            padding:24px 18px 0;
+            padding:24px 14px 0;
             height:72px;
             white-space:nowrap;
           }
@@ -253,6 +258,19 @@
             a {
               color:#367652;
             }
+          }
+        }
+      }
+    }
+  }
+}
+@media (min-width: 1200px) {
+  .navbar {
+    .navbar-left {
+      .navbar-nav {
+        > li {
+          a {
+            padding:24px 18px 0;
           }
         }
       }
