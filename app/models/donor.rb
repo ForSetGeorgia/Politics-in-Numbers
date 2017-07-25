@@ -107,7 +107,6 @@ class Donor
         }
       }
     ])
-     Rails.logger.debug("--------------------------------------------#{r.first.inspect}")
 
     r.first.present? ? [r.first[:first_date].year, r.first[:last_date].year] : []
   end
@@ -123,10 +122,22 @@ class Donor
     ]).first[:total]
   end
 
-  def self.total_donations_for_party(party_id)
+  def self.total_donations_for_party(party_id, range)
+    matches = [{ 'donations.party_id': party_id }]
+    if range.present?
+      tmp = range[0]
+      if tmp.present? && tmp != -1
+        matches.push({ "donations.give_date": { "$gte": tmp } })
+      end
+      tmp = range[1]
+      if tmp.present? && tmp != -1
+        matches.push({ "donations.give_date": { "$lte": tmp } })
+      end
+    end
+
     r = collection.aggregate([
       { "$unwind": '$donations' },
-      { "$match": { 'donations.party_id': party_id } },
+      { "$match": { "$and": matches } },
       { "$group": {
           "_id": nil,
           "sum": { "$sum": "$donations.amount" },
@@ -134,6 +145,7 @@ class Donor
         }
       }
     ])
+
     r.to_a.size > 0 ?
       [
         ActionController::Base.helpers.number_with_precision(r.first[:sum].round),
@@ -250,7 +262,6 @@ class Donor
       }
      })
     options.push({ "$sort": { donated_amount: -1, name: 1 } })
-     Rails.logger.debug("---------options-----------------------------------#{options.inspect}")
     collection.aggregate(options)
   end
 
@@ -514,18 +525,23 @@ class Donor
     }
     title_options = {}
 
-    f = default_f.dup
+    if inner_pars
+      f = params
+      title_options = f
+    else
+      f = default_f.dup
 
-    tmp = params[:period]
-    if tmp.present? && tmp.class == Array && tmp.size == 2 && tmp.all?{|t| t.size == 13 && t.to_i.to_s == t }
-      f[:period] = tmp.map { |t|
-          n = Time.at(t.to_i/1000)
-          Time.utc(n.year, n.month, n.day, 0, 0, 0)
-        }
+      tmp = params[:period]
+      if tmp.present? && tmp.class == Array && tmp.size == 2 && tmp.all?{|t| t.size == 13 && t.to_i.to_s == t }
+        f[:period] = tmp.map { |t|
+            n = Time.at(t.to_i/1000)
+            Time.utc(n.year, n.month, n.day, 0, 0, 0)
+          }
+      end
+
+      party = Party.find(params[:party])
+      f[:party] = party.id.to_s
     end
-
-    party = Party.find(params[:party])
-    f[:party] = party.id.to_s
 
     chart_subtitle = ""
     if f[:period].present? && f[:period][0] != -1 && f[:period][1] != -1
@@ -629,7 +645,6 @@ class Donor
       end
     }
     sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
-     Rails.logger.debug("--------------------------------------------#{f.merge({filter: "donation"})}")
     psid = ShortUri.party_uri(f.merge({filter: "donation"}))
     # f[:party]
 
@@ -1319,7 +1334,6 @@ class Donor
 
       template_name = template_names[indexes[0]][indexes[1]]
       template = templates[template_name.to_sym]
-       Rails.logger.debug("--------------------------------------------#{template_name}")
       if template_name == "top_5_donors" && data[:nature].present? # this title has nature as obj
         data[:obj] = I18n.t("shared.chart.title.nature_#{data[:nature] == 0 ? 'individual' : 'organization'}")
       end

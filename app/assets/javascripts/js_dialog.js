@@ -150,7 +150,7 @@ var js_dialog = (function () {
         open: function (option) {
           // console.log("share_callback", option);
           var dialog = $('dialog [data-type="share"]')
-          var uri = gon.share_url.replace("_id_", dynamic_sid).replace("_chart_", option.chart)
+          var uri = gon.share_url.replace("_id_", dynamic_sid).replace("_chart_", option.chart_type)
 
           var lnk = dialog.find(".facebook a")
           lnk.attr("href", lnk.attr("data-href").replace("_url_", uri));

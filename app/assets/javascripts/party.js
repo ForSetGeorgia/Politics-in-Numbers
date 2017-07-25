@@ -6,9 +6,9 @@
 //= require explore_global
 //= require js_dialog
 //= require highcharts_charts
+//= require highcharts-exporting
 
 $(document).ready(function (){
-  // console.log("explore ready")
   if (typeof global_process_callback === 'undefined') {
     global_process_callback = function () {}
   }
@@ -50,7 +50,6 @@ $(document).ready(function (){
     },
     autocomplete = {
       push: function (autocomplete_id, key, value) {
-        // console.log(autocomplete_id, key,value)
         this.clear(autocomplete_id)
         if(!this.hasOwnProperty(autocomplete_id)) {
           this[autocomplete_id] = {}
@@ -167,24 +166,19 @@ $(document).ready(function (){
         })
 
         $(document).on("click keypress", ".autocomplete .dropdown li .item", function(event) {
-          // console.log("click keypress autocomplete name")
           if(event.type === "keypress" && event.keyCode !== 13) { return }
           var t = $(this), dropdown = t.closest(".dropdown"), p = dropdown.parent(), is_selected = t.hasClass("selected")
 
           t.toggleClass("selected")
           var autocomplete_id = p.attr("data-autocomplete-id")
           if(is_selected) {
-             //console.log("is selected")
             // autocomplete.pop(autocomplete_id, t.attr("data-id"))
           }
           else {
-            //console.log("is not selected")
-            // console.log(autocomplete_id, t.attr("data-id"), t.text())
             var extra = t.attr("data-extra")
             extra = typeof extra  !== "undefined" ? " (" + extra + ")": ""
             autocomplete.push(autocomplete_id, t.attr("data-id"), t.text() + extra)
           }
-          // console.log(autocomplete)
           event.stopPropagation()
         })
         $(document).on("click keypress", ".autocomplete .dropdown li .tree-toggle", function(event) {
@@ -192,14 +186,6 @@ $(document).ready(function (){
           $(this).parent().toggleClass("expanded")
           event.stopPropagation()
         })
-
-
-        // $(document).on("click", "[data-type='autocomplete'] .list li .close", function(event) {
-        //   var t = $(this).parent(), list = t.parent(), autocomplete_id = list.attr("data-autocomplete-view")
-        //   $("[data-autocomplete-id='" + autocomplete_id + "'] .dropdown li[data-id='" + t.attr("data-id") + "'] .item").toggleClass("selected")
-        //   autocomplete.pop(autocomplete_id, t.attr("data-id"))
-        //   event.stopPropagation()
-        // })
       }
     },
     filter = {
@@ -243,7 +229,6 @@ $(document).ready(function (){
           current_elem = t.elem[type],
           dt = t.data[type] = { filter: type }
 
-        // console.log(autocomplete, "before", t.data)
         Object.keys(current_elem).forEach(function(el){
           var is_elem = ["period"].indexOf(el) === -1;
           (is_elem ? [current_elem[el]] : Object.keys(current_elem[el]).map(function (m){ return current_elem[el][m] }))
@@ -290,22 +275,18 @@ $(document).ready(function (){
             }
           })
         })
-        // console.log(dt, 'get filter')
         return dt
       },
       set_by_params: function(type) {
         var t = this, tmp, tp, v, p, el,
           current_elem = t.elem[type],
           current_type = t.types[type];
-        // console.log("set_by_url finance", gon.params, current_elem, current_type)
         if(gon[type + '_params']) {
           Object.keys(gon[type + '_params']).forEach(function(k) {
-            // console.log('>', k, '<', tp === "period_mix")
-            // if(k == "filter" || !t.types.hasOwnProperty(k)) return
-              el = current_elem[k]
-              tp = current_type[k]
-              v = gon[type + '_params'][k]
-            // console.log(el, tp, v)
+            el = current_elem[k]
+            tp = current_type[k]
+            v = gon[type + '_params'][k]
+
             if(tp === "autocomplete") {
               p = el.parent()
               var fld = p.attr("data-field")
@@ -320,7 +301,6 @@ $(document).ready(function (){
               create_list_item(el.from.parent().parent().find(".list"), tmp, tmp)
             }
             else if(tp === "period_mix") {
-              // console.log('period_mix 1',tp,v)
               p = el.parent()
               var group = p.find(".input-group .input-checkbox-group"),
                 group_list = group.find("li input[value='" + v[0] + "']").parent().parent()
@@ -344,7 +324,6 @@ $(document).ready(function (){
             field = t.attr("data-field"),
             tp = t.attr("data-type")
             list = t.find(".list")
-            // console.log(d, field, tp, list)
             if(tp === "autocomplete") {
               var tmp = t.find(".autocomplete[data-autocomplete-id]")
               autocomplete.clear(tmp.attr("data-autocomplete-id"))
@@ -352,7 +331,6 @@ $(document).ready(function (){
               if(typeof global_click_callback === "function") { global_click_callback() }
             }
             else if(tp === "period" && type === 'donation') {
-              // console.log('donation period',t.find(".input-group input[type='text'].datepicker"))
               t.find(".input-group input[type='text'].datepicker").datepicker('setDate', null)
             }
             else if(tp === "period_mix" && type === 'finance') {
@@ -374,7 +352,6 @@ $(document).ready(function (){
           p = Array.isArray(p) ? p.sort() : [p]
           tmp.push(k + "=" + p.join(","))
         })
-        console.log(tmp)
         return CryptoJS.MD5(tmp.join("&")).toString()
       },
       url: function () {
@@ -382,8 +359,7 @@ $(document).ready(function (){
         window.history.pushState(sid, null, gon.path + "/" + sid)
       },
       set_type: function (type) {
-        var t = this
-        t.current_type = type
+        this.current_type = type
       },
       switch: function (type) {
         var t = this
@@ -537,16 +513,17 @@ $(document).ready(function (){
         chart_info = get_chart_info_by_id(chart_id)
 
       if(f_type === "print") {
-        var chart = $(chart_id).highcharts()
+        var chart = $('#' + chart_id).highcharts()
         chart.print()
       }
       else {
-        console.log(filter)
+        var _id
         var is_donation = chart_info.type == 'd'
-        var currentTmp = js.cache[current_id][is_donation ? 'donation' : 'finance']
+        var type = is_donation ? 'donation' : 'finance'
+        var currentTmp = js.cache[filter.id(type)]
         var tmp_sid = is_donation ? currentTmp.sid : currentTmp.data[chart_info.category].sid
 
-        window.location.href = gon.chart_path + chart_id + "/" + chart_info.inner_category + "/" + f_type
+        window.location.href = gon.chart_path + tmp_sid + "/" + chart_info.inner_category + "/" + f_type
       }
     })
     autocomplete.bind()
@@ -594,9 +571,8 @@ $(document).ready(function (){
         chart_type: chart_info.inner_category,
         sid: get_current_sid_by_id(chart_id)
       }
-
       if(dialog_type === "share") {
-        options["title"] = js.share[chart_id]
+        options["title"] = js.share['#' + chart_id]
       }
 
       js_dialog.open(dialog_type, options)
@@ -609,22 +585,19 @@ $(document).ready(function (){
   function get_current_sid_by_id(id) {
     var ch_info = get_chart_info_by_id(id)
     if(ch_info.type === 'd') {
-      return js.cache[current_id].donation.sid
+      return js.cache[filter.id(filter.current_type)].sid
     } else {
-      return js.cache[current_id].finance.data[ch_info.category].sid
+      return js.cache[filter.id(filter.current_type)].data[ch_info.category].sid
     }
   }
   function process() {
     loader.start()
-    // console.log("process")
-    var tmp, cacher_id, _id, _id, finance_id, objs = ['donation', 'finance']//, obj
+    var tmp, _id, objs = ['donation', 'finance']
     if(gon.gonned) {
       objs.forEach( function (obj) {
-        // console.log()
         filter.set_by_params(obj)
         filter.get(obj)
         _id = filter.id(obj)
-        console.log(_id, 'test')
         filter.sid[obj] = gon[obj + '_data'].psid
         process_callback(js.cache[_id] = gon[obj + '_data'], obj)
       })
@@ -637,7 +610,6 @@ $(document).ready(function (){
       objs.forEach( function (obj) {
         tmp = filter.get(obj)
         _id = filter.id(obj)
-        console.log( _id, 'test2', js.cache.hasOwnProperty(_id))
         _ids[obj] = _id
         pars[obj] = { required: true }
         if( tmp.hasOwnProperty('period')) {
@@ -649,19 +621,12 @@ $(document).ready(function (){
           missing.push(obj)
         }
       })
-      console.log(missing, pars, _ids)
-      // filter.get(filter.current_type)
-      // _id = filter.id(filter.current_type)
       if(missing.length !== 0) { //!js.cache.hasOwnProperty(_id)) {
         $.ajax({
           url: gon.filter_path,
           dataType: 'json',
           data: pars, //filter.get(filter.current_type),
           success: function(data) {
-            // console.log('ajax', data);
-            // current_id = _id
-            // process_callback(js.cache[_id] = data)
-            console.log(data)
             objs.forEach(function (obj) {
               if(data.hasOwnProperty(obj)) {
                 filter.sid[obj] = data[obj].psid
@@ -674,7 +639,6 @@ $(document).ready(function (){
         })
       }
       else {
-        console.log('other');
         objs.forEach(function (obj) {
           tmp = js.cache[_ids[obj]]
           filter.sid[obj] = tmp.psid
@@ -686,7 +650,6 @@ $(document).ready(function (){
     }
   }
   function process_callback(data, partial) {
-    // console.log("process_callback", data, partial)
     view_not_found.addClass("hidden")
     var is_data_ok = typeof data !== "undefined",
       dt
@@ -707,7 +670,6 @@ $(document).ready(function (){
       }
       else {
         dt = data
-        // console.log(dt)
         filter.categories.forEach( function(cat) {
           var tmp = dt.data[cat]
           tmp['categories'] = dt.categories
@@ -723,7 +685,6 @@ $(document).ready(function (){
     loader.stop()
   }
   function party_info_populate (party) {
-    // console.log(party)
     if(typeof party === 'undefined') { return }
     var info = $('.info')
     info.find('.caption div').text(party.title)
@@ -732,15 +693,15 @@ $(document).ready(function (){
     info.find('.range').text(party.range)
     info.find('.description').text(party.description)
     var stats_box = $('#donation .stats-box')
-    stats_box.find('[data-stat="amount"] span').text(party.stats.donations[0])
-    stats_box.find('[data-stat="count"] span').text(party.stats.donations[1])
+    stats_box.find('[data-stat="amount"] span').text(party.stats.donation[0])
+    stats_box.find('[data-stat="count"] span').text(party.stats.donation[1])
     stats_box = $('#finance .stats-box')
-    stats_box.find('[data-category="income"] span').text(party.stats.finances.income[0])
-    stats_box.find('[data-category="expenses"] span').text(party.stats.finances.expenses[0])
-    stats_box.find('[data-category="reform_expenses"] span').text(party.stats.finances.reform_expenses[0])
-    stats_box.find('[data-category="financial_assets"] span').text(party.stats.finances.financial_assets[0])
-    stats_box.find('[data-category="property_assets"] span').text(party.stats.finances.property_assets[0])
-    stats_box.find('[data-category="debts"] span').text(party.stats.finances.debts[0])
+    stats_box.find('[data-category="income"] span').text(party.stats.finance['income'])
+    stats_box.find('[data-category="expenses"] span').text(party.stats.finance['expenses'])
+    stats_box.find('[data-category="reform_expenses"] span').text(party.stats.finance['reform_expenses'])
+    stats_box.find('[data-category="financial_assets"] span').text(party.stats.finance['financial_assets'])
+    stats_box.find('[data-category="property_assets"] span').text(party.stats.finance['property_assets'])
+    stats_box.find('[data-category="debts"] span').text(party.stats.finance['debts'])
   }
 
   (function init() {

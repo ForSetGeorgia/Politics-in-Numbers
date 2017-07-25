@@ -156,7 +156,7 @@ workbook[0].each_with_index { |row, row_i|
     parenting[level] = cat_id
     parent_id = parenting[level-1].present? && level != 0 ? parenting[level-1] : nil
 
-     puts "--------------------------------------------#{cells.inspect}"
+    # puts "--------------------------------------------#{cells.inspect}"
     forms_and_cells = Category.parse_formula(cells[5])
     (puts "Form or Cell or Both are empty"; next) if forms_and_cells.nil?
 

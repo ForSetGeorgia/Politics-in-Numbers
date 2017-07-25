@@ -104,9 +104,8 @@
             <div class="stats">
               <div class='stats-caption'><%= t('.overall_summary') %></div>
               <div class="stats-box">
-                <% stats = @item.get_stats(:donations) %>
-                <div class="stat-box" data-stat="amount"><label><%= t('.total_amount') %>:</label><span><%= stats[0] %></span></div>
-                <div class="stat-box" data-stat="count"><label><%= t('.total_donations') %>:</label><span><%= stats[1] %></span></div>
+                <div class="stat-box" data-stat="amount"><label><%= t('.total_amount') %>:</label><span><%= @stats[:donation][0] %></span></div>
+                <div class="stat-box" data-stat="count"><label><%= t('.total_donations') %>:</label><span><%= @stats[:donation][1] %></span></div>
               </div>
             </div>
             <div class="charts">
@@ -124,15 +123,14 @@
             <div class="stats">
               <div class='stats-caption'><%= t('.overall_summary') %></div>
               <div class="stats-box">
-                <% @main_categories.each{|category| %>
-                  <% stats = @item.get_stats(category[0]) %>
-                  <div class="stat-box" data-category="<%= category[0] %>"><label><%= t(".#{category[0]}") %>:</label><span><%= stats[0] %></span></div>
+                <% (cats = Category::SYMS_SHORT).each{|cat| %>
+                  <div class="stat-box" data-category="<%= cat %>"><label><%= t(".#{cat}") %>:</label><span><%= @stats[:finance][cat.to_s] %></span></div>
                 <% } %>
               </div>
             </div>
-            <% @main_categories.each{|category|
-              chart_id = "fc_#{category[0]}"
-            %>
+            <% cats.each{|cat|
+              chart_id = "fc_#{cat}"
+              %>
               <div class="chart-container" data-chart-id="<%= chart_id %>">
                 <%= render partial: 'chart_actions' %>
                 <div id="<%= chart_id %>"></div>

@@ -136,13 +136,13 @@ class Party
     end
   end
 
-  def get_stats(type)
-     # Rails.logger.debug("--------------------------------------------#{type} #{self.id}")
-    stats = [ 0, 0 ]
-    if type == :donations
-      stats = Donor.total_donations_for_party(self.id)
-    elsif [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ].index(type).present?
-      stats = Dataset.total_for_party_by_category(self.id, type)
+  def get_stats(type, periods, cats=nil)
+    stats = nil
+    if type == :donation
+      stats = Donor.total_donations_for_party(self.id, periods)
+    elsif type == :finance
+      Category::SYMS_SHORT if !cats.present?
+      stats = Dataset.total_for_party_by_categories(self.id, periods, cats)
     end
     stats
   end
@@ -154,14 +154,14 @@ class Party
       range: self.get_range,
       description: self.description,
       stats: {
-        donations: self.get_stats(:donations),
+        # donations: self.get_stats(:donations),
         finances: {}
       }
     }
     party[:leader] = self.leader if self.leader.present?
-    Category::SYMS_SHORT.each{|e|
-      party[:stats][:finances][e] = self.get_stats(e)
-    }
+    # Category::SYMS_SHORT.each{|e|
+    #   party[:stats][:finances][e] = self.get_stats(e)
+    # }
     party
   end
 #field helpers

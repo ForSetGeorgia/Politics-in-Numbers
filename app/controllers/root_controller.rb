@@ -262,9 +262,9 @@ class RootController < ApplicationController
   def parties
     @show_page_title = false
     @items = Party.only_parties.members.sorted.page(params[:page]).per(10)
-    @annuals = Period.annual.sort{|x,y| x[:start_date] <=> y[:start_date] }.map{|m| m.permalink }
-     # Rails.logger.debug("--------------------------------------------#{@items.to_a.inspect}")
-    # @items.each {|item| item.leader = 'George Ivanishvili'; item.save }
+    periods = Period.annual.sort{|x,y| x[:start_date] <=> y[:start_date] }
+    @annuals = periods.map{|m| m.permalink }
+    @period_ids = periods.map{|m| m[:_id] }
   end
 
   def party
@@ -288,7 +288,6 @@ class RootController < ApplicationController
         redirect_to party_path and return
       end
     end
-
     gon.type = type
     is_finance = type == "finance"
     @type = type
@@ -318,15 +317,19 @@ class RootController < ApplicationController
     period_list = Period.sorted.map { |m| [m.id, m.title, m.permalink, m.start_date, m.type] }
     gon.period_list = Period.list_from(period_list)
 
+    @stats = {}
+
     tmp = Donor.party_explore(donation_pars, inner_pars)
     gon.donation_params = tmp.delete(:pars)
     gon.donation_data = tmp
 
+    @stats[:donation] = @item.get_stats(:donation, gon.donation_params[:period])
+
     tmp = Dataset.party_explore(finance_pars, inner_pars, { periods: period_list })
     gon.finance_params = tmp.delete(:pars)
-
-    gon.finance_params[:period_mix] = gon.finance_params.delete(:period) if gon.finance_params[:period].present?
     gon.finance_data = tmp
+
+    @stats[:finance] = @item.get_stats(:finance, gon.finance_params[:period_mix], Category::SYMS_SHORT)
 
     pars.delete(:locale)
     gon.params = pars
@@ -354,7 +357,7 @@ class RootController < ApplicationController
     gon.gonned = true
     gon.chart_path = chart_path({id: ""})
     gon.na = t('shared.common.na')
-    gon.party = @item.get_info
+    gon.party = @item.get_info.merge({ stats: @stats })
   end
 
   def party_filter
@@ -364,6 +367,7 @@ class RootController < ApplicationController
     res = {}
     item = Party.find(party_id) if party_id.present?
 
+    stats = {}
     if item.present?
       if pars[:donation].present?
         _pars = {
@@ -371,6 +375,7 @@ class RootController < ApplicationController
         }
         _pars[:period] = pars[:donation][:period] if pars[:donation][:period].present?
         res[:donation] = Donor.party_explore(_pars)
+        stats[:donation] = item.get_stats(:donation, _pars[:period])
       end
 
       if pars[:finance].present?
@@ -379,9 +384,10 @@ class RootController < ApplicationController
         }
         _pars[:period] = pars[:finance][:period] if pars[:finance][:period].present?
         res[:finance] = Dataset.party_explore(_pars)
+        stats[:finance] = item.get_stats(:finance, _pars[:period], Category::SYMS_SHORT)
       end
 
-      res[:party] = item.get_info
+      res[:party] = item.get_info.merge({ stats: stats })
     end
 
     render :json => res

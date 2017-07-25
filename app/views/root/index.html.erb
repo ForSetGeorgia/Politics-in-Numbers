@@ -1,4 +1,6 @@
-<% page_title t 'shared.common.name' %>
+<% page_title t 'shared.common.name'
+  income_path = explore_path(id: ShortUri.explore_uri({filter: 'finance', income: [@main_categories[:income]], party: @default_parties, period: @default_periods}))
+%>
 
   <div class="home-summary">
     <div class="home-summary-text">
@@ -10,15 +12,15 @@
       </div>
       <div class="launcher-group">
         <div class="launcher-buttons">
-          <%= link_to t('shared.filters.donations'), explore_path(filter: 'donation'), tabindex: 4, class: 'donation' %>
+          <%= link_to t('shared.filters.donations'), explore_path(id: ShortUri.explore_uri({filter: 'donation'})), tabindex: 4, class: 'donation' %>
           <div class="separator"></div>
-          <%= link_to t('shared.filters.party_finances').strip_html_tags, explore_path(filter: 'finance', :'income[]' => @main_categories[:income]), tabindex: 4, class: 'finance' %>
+          <%= link_to t('shared.filters.party_finances').strip_html_tags, income_path, tabindex: 4, class: 'finance' %>
         </div>
-        <%= link_to t('.go_explore'), explore_path(filter: 'finance', :'income[]' => @main_categories[:income]), class: 'explore' %>
+        <%= link_to t('.go_explore'), income_path, class: 'explore' %>
       </div>
       <ul class="launcher-list">
         <li>
-          <%= link_to t('shared.filters.income').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', income: [@main_categories[:income]], party: @default_parties, period: @default_periods})) %>
+          <%= link_to t('shared.filters.income').upcase, income_path %>
         </li>
         <li>
           <%= link_to t('shared.filters.expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', expenses: [@main_categories[:expenses]], party: @default_parties, period: @default_periods})) %>

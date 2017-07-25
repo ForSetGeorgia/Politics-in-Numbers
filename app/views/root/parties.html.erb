@@ -27,15 +27,16 @@
         <div class="stats">
           <div class="stat-box total-donation">
             <label><%= t('.donations') %>:</label>
-            <span><%= item.get_stats(:donations)[0] %></span>
+            <span><%= item.get_stats(:donation, [])[0] %></span>
           </div>
           <div class="stat-box total-finances">
+            <% stats = item.get_stats(:finance, @period_ids, [:income, :expenses]) %>
             <label><%= t('.income') %>:</label>
-            <span><%= item.get_stats(:income)[0] %></span>
+            <span><%= stats['income'] %></span>
           </div>
           <div class="stat-box total-expenses">
             <label><%= t('.expenses') %>:</label>
-            <span><%= item.get_stats(:expenses)[0] %></span>
+            <span><%= stats['expenses'] %></span>
           </div>
         </div>
       </div>

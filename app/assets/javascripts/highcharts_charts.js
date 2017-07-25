@@ -1,27 +1,14 @@
   function bar_chart(elem, resource, bg, width) {
     // console.log("chart", elem, resource);
-    console.log(width)
     var ln = 0;
     resource.series.forEach(function (d) { ln += Math.round(d[0].length/15)+1; });
     js.share[elem] = encodeURI(resource.orig_title + "( " + resource.subtitle + " )" + " | " + gon.app_name_long);
-    // console.log(view_content, w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12)
     $(elem).highcharts({
       chart: {
           type: 'bar',
           backgroundColor: bg,
           height: 60*(Math.round(resource.title.length/40)+1) + ln*24,
           width: width
-          // width: w > 992 ? Math.floor((view_content.width()-386)/2) : w - 12//,
-          // events: {
-          //   load: function () {
-          //     var tls = $(this.container).find(".highcharts-xaxis-labels text title");
-          //     tls.each(function (tl) {
-          //       tl = $(tl);
-          //       tl.parent().attr("data-retitle", tl.text());
-          //       tl.remove();
-          //     });
-          //   }
-          // }
       },
       exporting: {
         buttons: {
@@ -29,8 +16,7 @@
             enabled: false
           }
         },
-        scale: 1//,
-        // url: ""
+        scale: 1
       },
       title: {
         text: resource.title,
@@ -62,11 +48,7 @@
             fontFamily: "firasans_book",
             textShadow: 'none',
             textOverflow: "none"
-          },
-          // ,
-          // formatter: function(a,b,c) {
-          //   return this.value + "<title>hello</title>";
-          // }
+          }
         }
       },
       yAxis: { visible: false },
@@ -144,7 +126,6 @@
           backgroundColor: bg,
           height: 400 + cat_max_len*9,
           width: width
-          // width: view_content.width()-28 // w > 992 ? Math.floor((view_content.width()-28)/2) :
       },
       exporting: {
         buttons: {

@@ -507,7 +507,6 @@ class Dataset
     party = Party.find(params[:party])
     f[:party] = [party.id]
     f[:period] = Period.get_ids_by_slugs(params[:period])
-     # Rails.logger.debug("--------------------------------------------#{f[:period]}")
     categories = {}
     Category.only_short_sym.each{|e|
       f[e.sym] = [e.id]
@@ -516,7 +515,6 @@ class Dataset
 
     # ln = 0
     # main_categories_count = 0
-    # Rails.logger.debug("--------------------------inspect------#{params}------------#{party.inspect} #{f}")
     data = filter(f).to_a
 
 
@@ -629,7 +627,7 @@ class Dataset
       tmp_ff[ct[:sym]] = f.delete(ct[:sym])
       cats[ct[:sym]] = { sid: ShortUri.explore_uri(tmp_f.merge(tmp_ff)), title: chart_title.gsub('_category_', ct[:title]), series: ct[:series] }
     }
-
+    f[:period_mix] = f.delete(:period) if f[:period].present?
     {
       pars: f.merge({ party: f[:party][0]}),
       psid: ShortUri.party_uri(tmp_f),
@@ -717,24 +715,30 @@ class Dataset
     end
   end
 
-  def self.total_for_party_by_category(party_id, category)
-    c = Category.where(sym: category).first
+  def self.total_for_party_by_categories(party_id, periods, cats) # cats array of symbols for categories ex: :income
+
+    categories = Category.non_virtual.where(:sym.in => cats).pluck(:id, :sym)
+    matches = [{ 'party_id': party_id }]
+    matches.push({ "period_id": { "$in": periods.map{|m| BSON::ObjectId(m)} } }) if periods.present?
+
     r = collection.aggregate([
-      { "$match": { 'party_id': party_id } },
+
+      { "$match": { "$and": matches } },
       { "$unwind": '$category_datas' },
-      { "$match": { 'category_datas.category_id': c.id } },
+      { "$match": { 'category_datas.category_id': { '$in': categories.map{|m| m[0]}} } },
       { "$group": {
-          "_id": nil,
-          "sum": { "$sum": "$category_datas.value" },
-          "cnt": { "$sum": 1 }
+          "_id": '$category_datas.category_id',
+          "sum": { "$sum": "$category_datas.value" }
         }
       }
-    ])
-    r.to_a.size > 0 ?
-      [
-        ActionController::Base.helpers.number_with_precision(r.first[:sum].round),
-        ActionController::Base.helpers.number_with_precision(r.first[:cnt].round)
-      ] : [ 0, 0 ]
+    ]).to_a
+
+    cats = {}
+    categories.map{|e|
+      item = r.select{|s| s[:_id] == e[0] }.first
+      cats["#{e[1]}"] = (item.present? ? ActionController::Base.helpers.number_with_precision(item[:sum].round) : 0)
+    }
+    cats
   end
 
   def self.period_for_party(party_id)

@@ -6,6 +6,7 @@
 //= require moment
 //= require explore_global
 //= require js_dialog
+//= require highcharts-exporting
 
 $(document).ready(function (){
   // console.log("explore ready");
