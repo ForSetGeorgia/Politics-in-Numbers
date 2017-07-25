@@ -34,6 +34,7 @@ ka:
         name: Original name
         member: Member of main Party list
         leader: Current Leader
+        on_default: Used when no party is defined while exploring
       period:
         title: Title
         title_translations: Title
@@ -138,6 +139,12 @@ ka:
         type:
           party: Party
           initiative: Initiative
+        member:
+          _true: Member
+          _false: Not a member
+        on_default:
+          _true: 'Yes'
+          _false: 'No'
       period:
         type:
           annual: წლიური
@@ -178,6 +185,7 @@ ka:
         permalink: Party Permalink
         color: Party color for charts
         name: "Original party name, that is used while processing uploaded files"
+        leader: Party Leader
       period:
         title: Period Title
         type: "Select: Annual or Election period"

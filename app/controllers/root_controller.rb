@@ -17,7 +17,7 @@ class RootController < ApplicationController
     gon.explore_url = explore_path
 
 
-    @default_parties = Party.where(:tmp_id.in => [1,2,10]).map{|m| m.permalink }
+    @default_parties = Party.defaults.map{|m| m.permalink }
     @default_periods = Period.annual.limit(3).map{|m| m.permalink }
   end
 
@@ -46,7 +46,7 @@ class RootController < ApplicationController
     donation_pars = {}
     finance_pars = {
       income: [gon.main_categories[:income]],
-      party: Party.where(:tmp_id.in => [1,2,10]).map{|m| m.permalink },
+      party: Party.defaults.map{|m| m.permalink },
       period: Period.annual.limit(3).map{|m| m.permalink }
     }
     if !(@fltr.present? && ["finance", "donation"].index(@fltr).present?)

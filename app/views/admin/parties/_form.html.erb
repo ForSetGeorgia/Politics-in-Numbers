@@ -35,6 +35,15 @@
             <%= translation.input locale, hint: hint.html_safe, label: label, input_html: { class: "permalink-trigger", "data-permalink-receiver" => ".permalink-receiver-#{locale}"} %>
           <% end %>
 
+          <%= f.fields_for :leader_translations, OpenStruct.new(f.object.leader_translations) do |translation| %>
+            <%
+              label = t(label_key + 'leader')
+              hint = t(hint_key + 'leader')
+              hint << show_default_text(@item.leader_translations[default_locale]) if index > 0
+            %>
+            <%= translation.input locale, hint: hint.html_safe, label: label %>
+          <% end %>
+
           <%= f.fields_for :description_translations, OpenStruct.new(f.object.description_translations) do |translation| %>
               <%
                 label = t(label_key + 'description')
@@ -54,9 +63,10 @@
   <%= f.inputs do %>
     <%= f.input :type, :as => :radio, :collection => Party.types %>
     <%= f.input :member, :as => :boolean, label: false %>
+    <%= f.input :on_default, :as => :boolean, label: false %>
     <%= f.label :color %>
     <%= f.color_field :color, class: "colorpicker" %>
-    <%= f.input :name, hint: t(hint_key + 'name') %>
+    <%#= f.input :name, hint: t(hint_key + 'name') # require fix because name is array %>
   <% end %>
 
 

@@ -148,6 +148,7 @@ en:
       create: Create %{model}
       submit: Save %{model}
       update: Update %{model}
+    default_language: Default Language
   number:
     currency:
       format:

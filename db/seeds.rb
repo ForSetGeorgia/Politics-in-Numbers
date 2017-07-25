@@ -666,6 +666,7 @@ puts "Creating phase ----------------------"
   puts "  Party meta data"
   I18n.locale = :ka
   parties_data.each_with_index do |d,i|
+    d[:on_default] = true if [1,2,10].index(d[:tmp_id]).present?
     party = Party.create!(d)
     # puts "    #{party.name} was added"
   end

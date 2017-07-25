@@ -9,7 +9,7 @@
 <div class="row"><hr/></div>
 <div class="row">
   <div class="col-md-12">
-  <% [:title, :type, :description, :slug, :color, :name].each { |f| %>
+  <% [:title, :type, :description, :slug, :color, :name, :leader, :on_default].each { |f| %>
     <p><strong><%= @model.human_attribute_name(f) %>: </strong><%= @item.send(f) %></p>
   <% } %>
   </div>

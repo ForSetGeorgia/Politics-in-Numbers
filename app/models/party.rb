@@ -16,6 +16,7 @@ class Party
   field :type, type: Integer, default: 0 # 0 - party, 1 - initiative
   field :member, type: Boolean, default: false
   field :leader, type: String, localize: true
+  field :on_default, type: Boolean, default: false
 #slug
   slug :title, history: true, localize: true
 
@@ -39,6 +40,10 @@ class Party
           lang: Language.name_by_locale(default)))
       end
     }
+  end
+
+  def self.defaults
+    where({on_default: true})
   end
 
   def permalink

@@ -70,4 +70,11 @@ namespace :prepare do # WARNING ondeploy
     db = Mongoid.default_client
     db.command({ insert: "sequence", documents: [ { _id: "party_id", seq: 3000000000000000000 } ] })
   end
+
+  # was created after Party.on_default field was added, to indicate which parties should participate in filtering if no party is selected
+  desc "Set default parties while exploring data"
+  task :set_default_parties => :environment do |t, args|
+    Party.where(:tmp_id.in => [1,2,10]).each{|p| p.update_attributes({ on_default: true })} # ნაციონალური მოძრაობა, პატრიოტთა ალიანსი, ქართული ოცნება
+  end
+
 end

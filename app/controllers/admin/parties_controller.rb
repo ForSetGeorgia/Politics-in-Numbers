@@ -172,15 +172,16 @@ class Admin::PartiesController < AdminController
     puts "=================================#{pars}"
     # default = I18n.default_locale
     # locales = [:ka, :en, :ru]
-    [:title_translations, :description_translations].each do |f|
+    [:title_translations, :description_translations, :leader_translations].each do |f|
       pars[:party][f].delete_if { |_k, v| !v.present? }
     end
     # sls = pars[:party][:_slugs_translations];
     # sls.each{|k,v| sls[k] = [v] }
     pars.require(:party).permit(
-      :_id, :id, :title, :type, :color, :name, :tmp_id,
+      :_id, :id, :title, :type, :color, :name, :tmp_id, :member, :on_default,
       title_translations: [:ka, :en, :ru],
-      description_translations: [:ka, :en, :ru]
+      description_translations: [:ka, :en, :ru],
+      leader_translations: [:ka, :en, :ru]
     )
   end
 
