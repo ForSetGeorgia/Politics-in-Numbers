@@ -34,7 +34,7 @@ en:
         name: Original name
         member: Member of main Party list
         leader: Current Leader
-        on_default: Used when no party is defined while exploring
+        on_default: Default party for explore page
       period:
         title: Title
         title_translations: Title

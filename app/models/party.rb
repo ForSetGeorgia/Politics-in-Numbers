@@ -132,7 +132,7 @@ class Party
   end
 
   def get_range
-    years = (Dataset.period_for_party(self.id) + Donor.period_for_party(self.id)).uniq
+    years = (Dataset.period_for_party(self.id) + Donor.period_for_party(self.id)).uniq.sort
     range = ''
     if years.length == 1
       range = years.first
