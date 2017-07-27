@@ -77,4 +77,57 @@ namespace :prepare do # WARNING ondeploy
     Party.where(:tmp_id.in => [1,2,10]).each{|p| p.update_attributes({ on_default: true })} # ნაციონალური მოძრაობა, პატრიოტთა ალიანსი, ქართული ოცნება
   end
 
+  desc "Remove unused parties"
+  task :remove_unused_parties => :environment do |t, args|
+
+    Party.each {|party|
+      party_id = party.id
+
+      dataset = Dataset.collection.aggregate([
+
+        { "$match": { 'party_id': party_id } },
+        { "$unwind": '$category_datas' },
+        { "$group": {
+            "_id": nil,
+            "sum": { "$sum": "$category_datas.value" },
+            "cnt": { "$sum": 1 }
+          }
+        }
+      ]).to_a
+
+      donor = Donor.collection.aggregate([
+        { "$unwind": '$donations' },
+        { "$match": { 'donations.party_id': party_id } },
+        { "$group": {
+            "_id": nil,
+            "sum": { "$sum": "$donations.amount" },
+            "cnt": { "$sum": 1 }
+          }
+        }
+      ]).to_a
+
+      if (!dataset.present? && !donor.present?)
+        puts "-------------------#{party.title}----#{dataset.inspect}---#{donor.inspect}"
+        party.destroy
+      end
+      # if (dataset.present? && (dataset[0][:cnt] == 0 || dataset[0][:sum] == 0 ))
+      #   puts "------------------#{party.title}----#{dataset.inspect}---#{donor.inspect}"
+      # end
+      # if (donor.present? && (donor[0][:cnt] == 0 || donor[0][:sum] == 0 ))
+      #   puts "------------------#{party.title}----#{dataset.inspect}---#{donor.inspect}"
+      # end
+
+      # removed due call
+      # სამოქალაქო ალიანსი
+      # საზოგადოება "ივერია"
+      # ბურჭულაძე - საქართველოს განვითარებისთვის
+      # ალექსი შოშიკელაშვილის ამომრჩეველთა საინიციატივო ჯგუფი
+      # ვლადიმერ ვახანიას ამომრჩეველთა საინიციატივო ჯგუფი
+      # ზვიად ჩიტიშვილის ამომრჩეველთა საინიციატივო ჯგუფი
+      # ლევან ჩაჩუას ამომრჩეველთა საინიციატივო ჯგუფი
+      # ნუგზარ ავალიანის ამომრჩეველთა საინიციატივო ჯგუფი
+      # პარტია საქართველოს გზა
+      # საინიციატივო ჯგუფები
+    }
+  end
 end
