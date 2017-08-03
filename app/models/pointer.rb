@@ -1,4 +1,4 @@
-# Party class - meta information about parties
+# Pointer class
 class Pointer
   include Mongoid::Document
   embedded_in :category

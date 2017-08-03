@@ -124,98 +124,105 @@ class Job
         @dataset.category_datas << virtual_category_datas
 
         lg.info "Virtual Categories: #{virtual_category_datas.length}"
-        lg.info "Loading Details:"
-        Detail.each{ |item|
-          table = []
-          #next if item.code != "FF4.1"
-          schemas = item.detail_schemas.order_by(order: 1)
-          required = []
-          has_required_or = false
-          defaults = []
-          types = []
-          skipped = []
-          header_map = []
-          schemas.each do |sch|
-            has_required_or = true if sch.required == :or
-            required << sch.required
-            defaults << sch.default_value
-            types << sch.field_type
-            skipped << sch.skip
-            header_map << sch.orig_title
-          end
-          cnt = item.fields_count
 
-          worksheet = workbook[workbook_sheets_map[item.code]]
-          next if worksheet.nil?
+        begin
+          lg.info "Loading Details:"
+          Detail.each{ |item|
+            table = []
+            #next if item.code != "FF4.1"
+            schemas = item.detail_schemas.order_by(order: 1)
+            required = []
+            has_required_or = false
+            defaults = []
+            types = []
+            skipped = []
+            header_map = []
+            schemas.each do |sch|
+              has_required_or = true if sch.required == :or
+              required << sch.required
+              defaults << sch.default_value
+              types << sch.field_type
+              skipped << sch.skip
+              header_map << sch.orig_title
+            end
+            cnt = item.fields_count
 
-          is_header = true
-          terms = {}
-          item.terminators.each{|r|
-            terms[r.field_index] = [] if !terms.key?(r.field_index)
-            terms[r.field_index] << r.term
-          }
+            worksheet = workbook[workbook_sheets_map[item.code]]
+            next if worksheet.nil?
 
-          worksheet.each_with_index { |row, row_i|
-            if row && row.cells
-              cells = Array.new(header_map.length, nil)
-              row.cells.each_with_index do |c, c_i|
-                if c && c.value.present?
-                  cells[c_i] = c.value.class != String ? c.value : (!(c_i == 0 && c.value.to_s.strip == "...") ? c.value.to_s.strip : "" )
-                end
-              end
+            is_header = true
+            terms = {}
+            item.terminators.each{|r|
+              terms[r.field_index] = [] if !terms.key?(r.field_index)
+              terms[r.field_index] << r.term
+            }
 
-              if is_header
-                # if cells[0] == "N"
-                #   lg.info cells.inspect
-                # end
-                if cells == header_map
-                  # lg.info "plus one"
-                  is_header = false
-                end
-              else
-                or_state = 0
-                good_row = true
-                stop_row = false
-                required.each_with_index do |r, r_i|
-                  good_cell = r_i < cells.length && cells[r_i].present?
-                  (stop_row = true; good_row = false; break;) if good_cell && terms.key?(r_i+1) && terms[r_i+1].any? { |t| cells[r_i].to_s.include?(t) }
-                  # 11.2015 not stopping
-                  next if skipped[r_i]
-                  if r == :and
-                    (good_row = false;) if !good_cell
-                  elsif r == :or
-                    or_state += 1 if good_cell
-                  else
-
+            worksheet.each_with_index { |row, row_i|
+              if row && row.cells
+                cells = Array.new(header_map.length, nil)
+                row.cells.each_with_index do |c, c_i|
+                  if c && c.value.present?
+                    cells[c_i] = c.value.class != String ? c.value : (!(c_i == 0 && c.value.to_s.strip == "...") ? c.value.to_s.strip : "" )
                   end
                 end
-                good_row = false if has_required_or && or_state == 0
 
-                break if stop_row
-
-                if good_row
-                  cells.each_with_index do |r, r_i|
-                    cells[r_i] = defaults[r_i] if r.nil? && defaults[r_i].present?
-                    cells[r_i] = cells[r_i].to_f if types[r_i] == "Float"
+                if is_header
+                  # if cells[0] == "N"
+                  #   lg.info cells.inspect
+                  # end
+                  if cells == header_map
+                    # lg.info "plus one"
+                    is_header = false
                   end
-                  table << cells
                 else
-                  lg.info "bad row #{cells.join('; ')}" if cells.join('; ') != "; ; ; "
-                end
+                  or_state = 0
+                  good_row = true
+                  stop_row = false
+                  required.each_with_index do |r, r_i|
+                    good_cell = r_i < cells.length && cells[r_i].present?
+                    (stop_row = true; good_row = false; break;) if good_cell && terms.key?(r_i+1) && terms[r_i+1].any? { |t| cells[r_i].to_s.include?(t) }
+                    # 11.2015 not stopping
+                    next if skipped[r_i]
+                    if r == :and
+                      (good_row = false;) if !good_cell
+                    elsif r == :or
+                      or_state += 1 if good_cell
+                    else
 
+                    end
+                  end
+                  good_row = false if has_required_or && or_state == 0
+
+                  break if stop_row
+
+                  if good_row
+                    cells.each_with_index do |r, r_i|
+                      cells[r_i] = defaults[r_i] if r.nil? && defaults[r_i].present?
+                      cells[r_i] = cells[r_i].to_f if types[r_i] == "Float"
+                    end
+                    table << cells
+                  else
+                    lg.info "bad row #{cells.join('; ')}" if cells.join('; ') != "; ; ; "
+                  end
+
+                end
               end
+            }
+
+            if is_header
+              lg.info "Form header was not found. Should be #{item.code}/#{header_map}"
+              break
+            else
+              dd = DetailData.new({ table: table, detail_id: item._id }) if table.present?
+              #lg.info dd.inspect
+              @dataset.detail_datas << dd
             end
           }
-
-          if is_header
-            lg.info "Form header was not found. Should be #{item.code}/#{header_map}"
-            break
-          else
-            dd = DetailData.new({ table: table, detail_id: item._id }) if table.present?
-            #lg.info dd.inspect
-            @dataset.detail_datas << dd
-          end
-        }
+        rescue Exception => e
+          lg.info 'Exception in detail reading part. Dataset will still be created'
+          lg.info e.inspect
+          Notifier.about_dataset_file_process("Exception in detail reading part. Dataset will still be created. #{e.message} - #{e.backtrace}", @user);
+        end
         @dataset.set_state(:processed)
         lg.close
       rescue Exception => e

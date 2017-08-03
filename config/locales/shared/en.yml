@@ -28,24 +28,24 @@ en:
       default_text: Default Text
       default_url: Default URL
       unknown: Unknown
-      jumpstart:
-        slogan: JumpStart Georgia - We communicate data better!
+      forset:
+        slogan: "ForSet - Data Communication: Innovative. Effective. Simple."
       name: Politics in Numbers
       slogan: Explore Party Finances
-      description: Politics in Numbers is a project funded by the US State Department which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting. The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Project is implemented in cooperation with JumpStart Georgia and The State Audit Service of Georgia.
+      description: Politics in Numbers is a project funded by the US State Department and Internews Georgia which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting. The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Currently, the project is implemented by ForSet in cooperation with The State Audit Service of Georgia.
       language: Language Switch
       twitter: Share on Twitter
       facebook: Share on Facebook
       phone: Phone
       actual_phone: +995 598 476682
       email: Email
-      actual_email: info@pins.ge
+      actual_email: info@forset.ge
       address: Address
-      actual_address: "6 Melikishvili Street, Third Floor, 0179 Tbilisi, Georgia"
+      actual_address: "Impact Hub Tbilisi - Fabrika, 8 Egnate Ninoshvili Street, Tbilisi 0102"
       summary: |
-        Politics in Numbers is a project funded by the US State Department which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting.
+        Politics in Numbers is a project funded by the US State Department and Internews Georgia which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting.
 
-        The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Project is implemented in cooperation with JumpStart Georgia and The State Audit Service of Georgia.
+        The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Currently, the project is implemented by ForSet in cooperation with The State Audit Service of Georgia.
       back: Back
       ns: Not Specified
       or: or
