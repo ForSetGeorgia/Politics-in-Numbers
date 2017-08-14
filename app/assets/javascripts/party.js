@@ -661,11 +661,11 @@ $(document).ready(function (){
       if(partial === "donation") {
         dt = data
         dt.ca.orig_title = dt.ca.title
-        dt.ca.title = '<a href="/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
+        dt.ca.title = '<a href="/' + gon.locale + '/explore/' + dt.sid + '">' + dt.ca.title + '</a>'
 
         bar_chart('#dc_first', dt.ca, "#EBE187", tmp_width)
         dt.cb.orig_title = dt.cb.title
-        dt.cb.title = '<a href="/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
+        dt.cb.title = '<a href="/' + gon.locale + '/explore/' + dt.sid + '">' + dt.cb.title + '</a>'
         bar_chart('#dc_second', dt.cb, "#B8E8AD", tmp_width)
       }
       else {
@@ -674,7 +674,7 @@ $(document).ready(function (){
           var tmp = dt.data[cat]
           tmp['categories'] = dt.categories
           tmp.orig_title = tmp.title
-          tmp.title = '<a href="/explore/' + tmp.sid + '">' + tmp.title + '</a>'
+          tmp.title = '<a href="/' + gon.locale + '/explore/' + tmp.sid + '">' + tmp.title + '</a>'
           grouped_advanced_column_chart("#fc_" + cat, tmp, "#fff", tmp_width)
         })
       }
