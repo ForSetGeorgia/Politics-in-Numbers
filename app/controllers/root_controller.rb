@@ -285,7 +285,7 @@ class RootController < ApplicationController
       if @item.present? && type.present? && ["finance", "donation"].index(type).present?
         inner_pars = true
       else
-        redirect_to party_path and return
+        redirect_to parties_path and return
       end
     end
     gon.type = type
