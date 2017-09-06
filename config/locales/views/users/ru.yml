@@ -1,0 +1,6 @@
+---
+ru:
+  admin:
+    users:
+      show:
+        title: "%{user_model_name}: %{user_email}"

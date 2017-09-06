@@ -1,0 +1,185 @@
+---
+ru:
+  shared:
+    actions:
+      change_my_password: Change my password
+      destroy: Delete
+      edit: Edit
+      log_in: Log in
+      view: View
+      view_all: View All
+      new: New
+      reset: Reset
+      cancel: Cancel
+      save: Save
+      with_obj:
+        cancel: Cancel %{obj}
+        create: Create %{obj}
+        destroy: Delete %{obj}
+        edit: Edit %{obj}
+        new: New %{obj}
+        update: Update %{obj}
+        view: View %{obj}
+        view_all: View All %{obj}
+      remember_me: Remember Me
+    common:
+      account: Account
+      actions: Actions
+      default_text: Default Text
+      default_url: Default URL
+      unknown: Unknown
+      forset:
+        slogan: "ForSet - Data Communication: Innovative. Effective. Simple."
+      name: Politics in Numbers
+      slogan: Explore Party Finances
+      description: Politics in Numbers is a project funded by the US State Department and Internews Georgia which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting. The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Currently, the project is implemented by ForSet in cooperation with The State Audit Service of Georgia.
+      language: Language Switch
+      twitter: Share on Twitter
+      facebook: Share on Facebook
+      phone: Phone
+      actual_phone: +995 598 476682
+      email: Email
+      actual_email: info@forset.ge
+      address: Address
+      actual_address: "Impact Hub Tbilisi - Fabrika, 8 Egnate Ninoshvili Street, Tbilisi 0102"
+      summary: |
+        Проект «Политика в цифрах» работает при поддержке Государственного Департамента США. Наша цель обеспечить прозрачность процесса финансирования политических партий в Грузии. Материалы нашего портала предназначены для активного использования в СМИ.
+
+        Авторы проекта Digital Communication Network, выпускники проекта Кетеван Боджгуа и Нино Мачарашвили. Проект осуществляется совместно с “Jumpstart Georgia” при сотрудничестве со Службой государственного аудита Грузии.
+      back: Back
+      ns: Not Specified
+      or: or
+      parties: Parties
+      show_more: Show More
+      show_less: Show Less
+      and: and
+      all: All
+      numericSymbols: [ "k" , "M" , "G" , "T" , "P" , "E"]
+      no_result_found_for: "No Results Found for"
+      lari: Lari
+      na: "n/a"
+      highlight_chart: Highlight chart
+      update_or_remove_highlight: Update or remove highlight
+    locale:
+      short:
+        en: En
+        ka: "ქა"
+        ru: "Ру"
+      long:
+        en: "English"
+        ka: "ქართული"
+        ru: "Русский"
+    msgs:
+      data_not_found: Your requested data could not be found
+      does_not_exist: You tried to access a page that does not exist.
+      not_authorized: You are not authorized to view that page.
+      missing_parameter: Data for some fields is missing. Fill in all required fields
+      success_created: "%{obj} was successfully created."
+      success_created_with_pending_job: "Request for creating %{obj} accepted, you will receive notification as soon as server will process request (Based on server load it can take some time)"
+      success_destroyed: "%{obj} was successfully destroyed."
+      success_updated: "%{obj} was successfully updated."
+      unexpected_error: "Error occur while processing request, please log your action and send request to app support team."
+      fail_destroyed_existed_relation: "%{obj} was not destroyed, remove all relation before continue."
+    prompts:
+      confirm: Are you sure?
+      forgot_password: Forgot your password?
+    chart:
+      title:
+        top_5_donors: Top %{n} %{obj} Donors for All Parties
+        top_5_parties: Top %{n} Parties/Candidates for All Donors
+        top_5_donors_for_party: Top %{n} Donors for %{obj}
+        last_5_donations_for_party: Last %{n} Donations for %{obj}
+        top_5_donors_for_parties: Top %{n} Donors for %{obj}
+        total_donations_for_parties: Total Donations for %{obj}
+        last_5_donations_for_donor: Last %{n} Donations by %{obj}
+        top_5_parties_donated_to: Top %{n} Parties Donated to by %{obj}
+        total_donations_for_each_donor: Total Donations for %{obj}
+        donors_donations_sorted_by_amount: Top Donations by %{obj} to %{objb}
+        parties_donations_sorted_by_amount: Top Donations to %{objb} by %{obj}
+        to_multiple: Have donated to multiple parties
+        monetary_donation: "%{s} donation"
+        monetary_true: Monetary
+        monetary_false: Non-Monetary
+        of_amount: of %{s} GEL
+        donation_of_amount: Donation of %{s} GEL
+        for_parties: "For: %{s}"
+        receiving_monetary_amount: Receiving %{m} donation%{a}
+        from_donors: from %{s} Donors
+        from_donors_who: from %{s} Donors who
+        nature_individual: Individual
+        nature_organization: Organization
+        no_data:
+          top_5_donors: No Donations for All Parties
+          top_5_parties: No Donations for All Parties
+          top_5_donors_for_party: No Donations for %{obj}
+          last_5_donations_for_party: No Donations for %{obj}
+          top_5_donors_for_parties: No Donations for %{obj}
+          total_donations_for_parties: No Donations for %{obj}
+          last_5_donations_for_donor: No Donations by %{obj}
+          top_5_parties_donated_to: No Parties Donated to by %{obj}
+          total_donations_for_each_donor: No donations for %{obj}
+          donors_donations_sorted_by_amount: No Donations by %{obj} to %{objb}
+          parties_donations_sorted_by_amount: No Donations to %{objb} by %{obj}
+      finance:
+        title:
+          party_donations_for: "Party - Donations for"
+          category: Category
+          category_grouped_by: "Category - Grouped by"
+          time_period_annual: "Annual"
+          time_period_campaign: "Campaign"
+      label:
+        donors: Donors
+        parties: Parties
+        donations: Donations
+      filename:
+        finance: finances
+        donation: donations
+        missing: missing
+    filters:
+      donations: DONATIONS
+      party_finances: PARTY <br/>FINANCES
+      income: Income
+      income_campaign: Income Campaign
+      expenses: Expenses
+      expenses_campaign: Expenses Campaign
+      reform_expenses: REFORMS FUND <br/>EXPENSES
+      property_assets: PROPERTY <br/>ASSETS
+      financial_assets: FINANCIAL <br/>ASSETS
+      debts: DEBTS
+      campaign: Campaign
+    dialog:
+      save: Save
+      close: Close
+      embed:
+        caption: Embed
+        copy_code: "Copy and paste this embed code into your web page:"
+        copied: Copied
+        frame_size: "Frame size:"
+        custom_size: Custom size
+        embed_type: "Embed type:"
+        dynamic: Dynamic
+        static: Static
+        type_hint: "A dynamic embed will use the most up-to-date information<br/> while a static embed will be frozen to the data that is currently showing."
+      share:
+        caption: Share
+        share_chart: "Share chart:"
+      highlight:
+        caption: Highlight
+        intro: Use the textbox below to give context to the chart (optional)
+        description: 'Enter description'
+        unhighlight: Unhighlight
+        show_on_home: Show on home page
+  notifier:
+    job:
+      donorset_file_process:
+        donorset_not_found: "Donorset to process was not found, probably you already delete it."
+        operator_not_found: "Operator not found, send to nowhere."
+        invalid_party_name: "Party '%{name}', name is invalid, check row %{row} in excel, and make sure it has party name"
+        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
+        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>.%{missing_parties}"
+        missing_parties: "New parties were added, and you need to specify correct types <a href='%{link}'>link</a>"
+      dataset_file_process:
+        dataset_not_found: "Dataset to process was not found, probably you already delete it."
+        operator_not_found: "Operator not found, send to nowhere."
+        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
+        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>."

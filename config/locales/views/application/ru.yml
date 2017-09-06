@@ -1,0 +1,15 @@
+---
+ru:
+  application:
+    navbar_header:
+      explore: Explore
+      highlights: Highlights
+      about: About
+      media: In Media
+      download: Download
+      api: Api
+      parties: Parties
+      settings: Settings
+      account:
+        edit_profile: Edit Profile
+        logout: Logout
