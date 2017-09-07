@@ -39,14 +39,16 @@
         </li>
       </ul>
     </div>
-    <div class="home-highlights">
-      <div class="home-highlight-before-mask"></div>
-      <div class="home-highlight-mask">
-        <span><%= t('.highlights') %></span>
-        <i></i>
+      <div class="home-highlights">
+        <% if @highlights.present? %>
+          <div class="home-highlight-before-mask"></div>
+          <div class="home-highlight-mask">
+            <span><%= t('.highlights') %></span>
+            <i></i>
+          </div>
+          <div class="home-highlight-after-mask"></div>
+        <% end %>
       </div>
-      <div class="home-highlight-after-mask"></div>
-    </div>
   </div>
   <% if @highlights.present? %>
 
