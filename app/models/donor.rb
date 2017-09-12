@@ -189,7 +189,7 @@ class Donor
   end
 
   def self.filter(params)
-    #Rails.logger.debug("****************************************#{params}")
+    Rails.logger.debug("****************************************#{params}")
     lang = I18n.locale
     options = []
     matches = []
@@ -262,10 +262,12 @@ class Donor
       }
      })
     options.push({ "$sort": { donated_amount: -1, name: 1 } })
+     Rails.logger.debug("--------------------------------------------#{options.inspect}")
     collection.aggregate(options)
   end
 
   def self.explore(params, type = "a", inner_pars = false, global_data = {})
+     Rails.logger.debug("--------------------------------------------#{params.inspect}")
     limiter = 5
     default_f = {
       donor: nil,
@@ -432,7 +434,7 @@ class Donor
       # If select > 1 party -> top 5 donors for parties, total donations for selected parties
       # If select > 1 donor-> total donations for each donor, top 5 parties donated to
 
-      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[chart_type == 2 ? :parties : :donors])
+      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[chart_type == 2 ? :donors : :parties ])
       cb_tmp = pull_n(parties_list.map{|k,v| v }.sort{ |x,y| y[:value] <=> x[:value] }, limiter, :value, labels[chart_type == 2 ? :donations : :parties])
 
       ca_title[:obj] = chart_type == 4 ? ca_tmp[:title] : cb_tmp[:title]
