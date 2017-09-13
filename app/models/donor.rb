@@ -421,7 +421,7 @@ class Donor
       donations: I18n.t("shared.chart.label.donations")
     }
     if chart_type == 0 # If select anything other than party and donor -> charts show the top 5
-      ca_tmp = pull_n(data, limiter, :donated_amount, labels[:donors])
+      ca_tmp = pull_n(data.sort{ |x,y| y[:partial_donated_amount] <=> x[:partial_donated_amount] }, limiter, :partial_donated_amount, labels[:donors])
       cb_tmp = pull_n(parties.sort_by { |k, v| -1*v[:value] }.map{|k,v| v }, limiter, :value, labels[:parties])
     elsif chart_type == 1 # If select 1 party -> top 5 donors for party, last 5 donations for party
       tmp = parties[BSON::ObjectId(f[:party][0])][:name]
