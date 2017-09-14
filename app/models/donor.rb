@@ -95,6 +95,43 @@ class Donor
     ).first
   end
 
+  def self.donations_for_period(from, to)
+    d = collection.aggregate(
+       [
+        {
+          "$match": { "$and": [
+              { "donations.give_date": { "$gte": from } },
+              { "donations.give_date": { "$lte": to }}
+            ]}
+        },
+        { "$project": {
+            donations: {
+              "$filter": {
+                input: "$donations",
+                as: "donation",
+                cond: { "$and": [
+                    {"$gte": [ "$$donation.give_date", from ]},
+                    {"$lte": [ "$$donation.give_date", to ]}
+                  ]
+                }
+              }
+            }
+          }
+        },
+        { "$unwind": "$donations" },
+        { "$project": {
+            # _id: 0,
+            # "donations._id": 1,
+            md5: "$donations.md5",
+            amount: "$donations.amount"
+          }
+        }
+      ]
+    ).to_a
+
+     # puts "--------------------------------------------#{d.to_a.inspect}"
+  end
+
   def self.donations_count
     result = collection.aggregate([
       { "$unwind": '$donations' },

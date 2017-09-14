@@ -183,3 +183,7 @@ en:
         operator_not_found: "Operator not found, send to nowhere."
         unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
         success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>."
+      donation_uploader:
+        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
+        success: "%{length} rows for period %{from} - %{to} was successfully processed. %{missing_parties}"
+        missing_parties: "New parties were added, and you need to specify correct types <a href='%{link}'>link</a>"

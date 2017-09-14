@@ -21,6 +21,7 @@
 /public/assets
 /public/system
 /public/tmp
+/public/upload/sao/*
 # Temporary files often end with ~ character
 *~
 /sources/*

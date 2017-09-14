@@ -12,7 +12,15 @@ class Donation
   field :comment, type: String
   field :monetary, type: Boolean, default: true
 
-  validates_presence_of :amount, :party_id, :give_date, :donorset_id
+
+  field :md5, type: String # md5 string from donor and donation info, for comparison ease
+
+  # indexes
+  index({ md5: 1 }, { unique: true })
+
+
+
+  validates_presence_of :amount, :party_id, :give_date#, :donorset_id
 
   # scope :from_date, -> (v) { where("give_date >= ?", v) if v.present? }
   # scope :to_date, -> (v) { where("give_date <= ?", v) if v.present? }
