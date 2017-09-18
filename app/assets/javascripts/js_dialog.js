@@ -76,7 +76,7 @@ var js_dialog = (function () {
 
           var textarea = dialog.find("textarea"),
             sel = dialog.find(".iframe-sizes option:selected"),
-            type = dialog.find(".embed-type .toggle-group").attr("data-toggle"),
+            type = 'dynamic', //dialog.find(".embed-type .toggle-group").attr("data-toggle"),
             tmp_w, tmp_h;
           if (sel.val() === "custom") {
             tmp_w = dialog.find(".iframe-width").val();
@@ -94,7 +94,7 @@ var js_dialog = (function () {
           prev_originator = chart_type;
         },
         close: function () {
-          $("dialog [data-type='embed'] .embed-type .toggle-group .toggle[data-toggle='dynamic']").trigger("click");
+          // $("dialog [data-type='embed'] .embed-type .toggle-group .toggle[data-toggle='dynamic']").trigger("click");
         },
         bind: function (options) {
           var dialog = $('dialog [data-type="embed"]')
@@ -111,39 +111,40 @@ var js_dialog = (function () {
           dialog.find(".iframe-custom input").change(function () {
             callback();
           });
-          dialog.find(".embed-type .toggle-group .toggle").click(function () {
-            var t = $(this), tp = t.attr("data-toggle");
-            t.parent().attr("data-toggle", tp);
-            if(tp === "static") {
-              if(typeof dynamic_sid !== "undefined") {
-                var tmp = js.embed_static_sid[dynamic_sid];
-                if(typeof tmp !== "undefined") {
-                  static_sid = tmp;
-                  callback();
-                }
-                else {
-                  // console.log("remote embed static id");
-                  $.ajax({
-                    url: gon.embed_path.replace("_id_", dynamic_sid),
-                    dataType: "json",
-                    success: function (data) {
-                      if(data.hasOwnProperty("sid")) {
-                        static_sid = data.sid;
-                        js.embed_static_sid[dynamic_sid] = static_sid;
-                        callback();
-                      }
-                    }
-                  });
-                }
-              }
-              else {
-                console.log("Explore page before embeding.");
-              }
-            }
-            else {
-              callback();
-            }
-          });
+
+          // dialog.find(".embed-type .toggle-group .toggle").click(function () {
+          //   var t = $(this), tp = t.attr("data-toggle");
+          //   t.parent().attr("data-toggle", tp);
+          //   if(tp === "static") {
+          //     if(typeof js.sid !== "undefined") {
+          //       var tmp = js.esid[js.is_donation ? "d" : "f"];
+          //       if(typeof tmp !== "undefined") {
+          //         sid = tmp;
+          //         callback();
+          //       }
+          //       else {
+          //         // console.log("remote embed static id");
+          //         $.ajax({
+          //           url: gon.embed_path.replace("_id_", js.sid),
+          //           dataType: "json",
+          //           success: function (data) {
+          //             if(data.hasOwnProperty("sid")) {
+          //               sid = data.sid;
+          //               js.esid[js.is_donation ? "d" : "f"] = sid;
+          //               callback();
+          //             }
+          //           }
+          //         });
+          //       }
+          //     }
+          //     else {
+          //       console.log("Explore page before embeding.");
+          //     }
+          //   }
+          //   else {
+          //     callback();
+          //   }
+          // });
         }
       },
       share: {

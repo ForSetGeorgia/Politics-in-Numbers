@@ -39,19 +39,18 @@
         </li>
       </ul>
     </div>
-      <div class="home-highlights">
-        <% if @highlights.present? %>
-          <div class="home-highlight-before-mask"></div>
-          <div class="home-highlight-mask">
-            <span><%= t('.highlights') %></span>
-            <i></i>
-          </div>
-          <div class="home-highlight-after-mask"></div>
-        <% end %>
-      </div>
+    <div class="home-highlights">
+      <% if @highlights.present? %>
+        <div class="home-highlight-before-mask"></div>
+        <div class="home-highlight-mask">
+          <span><%= t('.highlights') %></span>
+          <i></i>
+        </div>
+        <div class="home-highlight-after-mask"></div>
+      <% end %>
+    </div>
   </div>
   <% if @highlights.present? %>
-
     <div class="highlight-grid">
       <% @highlights.each do |highlight| %>
         <div class="highlight-item" data-id="<%= highlight.base_id %>">

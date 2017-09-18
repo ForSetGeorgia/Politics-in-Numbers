@@ -365,7 +365,9 @@ $(document).ready(function (){
               });
             }
             else if(tp === "period") {
-              v = [moment.utc(v[0]).format(gon.mdate_format), moment.utc(v[1]).format(gon.mdate_format)];
+              console.log(v)
+              v = v.map(function(m) { return m === -1 ? null : moment.utc(m).format(gon.mdate_format) })
+              console.log(v)
               el.from.datepicker('setDate', v[0]);
               el.to.datepicker('setDate', v[1]);
               tmp = formatRange(v);

@@ -299,13 +299,15 @@
           <input type="number" value="360" min="100" step="10" class="iframe-height">
         </div>
       </div>
-      <div class="embed-type">
-        <label><%= t('shared.dialog.embed.embed_type') %></label>
-        <div class="toggle-group" data-toggle="dynamic">
-          <button type="button" class="toggle" data-toggle="dynamic"><%= t('shared.dialog.embed.dynamic') %></button><button type="button" class="toggle" data-toggle="static"><%= t('shared.dialog.embed.static') %></button>
+      <% if false %>
+        <div class="embed-type">
+          <label><%= t('shared.dialog.embed.embed_type') %></label>
+          <div class="toggle-group" data-toggle="dynamic">
+            <button type="button" class="toggle" data-toggle="dynamic"><%= t('shared.dialog.embed.dynamic') %></button><button type="button" class="toggle" data-toggle="static"><%= t('shared.dialog.embed.static') %></button>
+          </div>
+          <span class="hint">* <%= t('shared.dialog.embed.type_hint').html_safe %></span>
         </div>
-        <span class="hint">* <%= t('shared.dialog.embed.type_hint').html_safe %></span>
-      </div>
+      <% end %>
     </div>
     <div class="button">
       <button type="button" class="dialog-button"><%= t('shared.dialog.close') %></button>

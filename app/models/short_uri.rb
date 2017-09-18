@@ -59,7 +59,7 @@ class ShortUri
     except = []
     if is_donation
       if pars[:period].present?
-        pars[:period_mils] = pars[:period].map{ |m| (m.to_f * 1000).to_i }
+        pars[:period_mils] = pars[:period].map{ |m| m != -1 ? (m.to_f * 1000).to_i : m }
         except = [:period, :amount]
       end
     end

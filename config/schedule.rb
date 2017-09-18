@@ -22,3 +22,7 @@
 every :day, :at => '2:00am' do
   runner "ShortUri.prune_inactive_records"
 end
+
+every :day, :at => '2:00am' do
+  rake "uploader:start"
+end

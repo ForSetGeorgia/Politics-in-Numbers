@@ -24,7 +24,8 @@ class Donorset
     :url => '/system/:class/:attachment/:id/:style.:extension'
 
 
-  validates_attachment :source, presence: true, content_type: { content_type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" }, size: { in: 0..25.megabytes }
+  validates_attachment :source, presence: true, size: { in: 0..25.megabytes }
+  validates_attachment_content_type :source, content_type: ["application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "application/zip"]
   validates_inclusion_of :state, in: [0, 1, 2]
 
   def self.sorted
