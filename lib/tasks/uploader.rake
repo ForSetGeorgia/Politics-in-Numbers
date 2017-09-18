@@ -248,7 +248,7 @@ namespace :uploader do
   end
   def time_range(format=false)
     from = Time.parse('2017/1/1')
-    to = n_months_back(1, false)
+    to = n_months_back(0, false)
 
     [from, to].map{|m| format ? m.strftime("%Y-%m-%d") : m}
   end
