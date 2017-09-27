@@ -7,7 +7,7 @@ class Donor
   before_save :regenerate_fullname
   after_create  :prune_share_images
 
-  embeds_many :donations, after_add: :calculate_donated_amount, after_remove: :calculate_donated_amount
+  embeds_many :donations#, after_add: :calculate_donated_amount, after_remove: :calculate_donated_amount
   accepts_nested_attributes_for :donations
   NATURE_TYPES = ["individual", "organization"]
 
@@ -15,9 +15,9 @@ class Donor
   field :last_name, type: String, localize: true
   field :full_name, type: String, localize: true
   field :tin, type: String
-  field :donated_amount, type: Float
+  # field :donated_amount, type: Float
   field :nature, type: Integer, default: 0
-  field :multiple, type: Boolean, default: false # if donated to multiple parties
+  # field :multiple, type: Boolean, default: false # if donated to multiple parties
   field :color, type: String, default: "##{SecureRandom.hex(3)}"
 
   slug :full_name, history: true, localize: true
@@ -33,7 +33,7 @@ class Donor
   # indexes
   index ({ :tin => 1})
   index ({ :first_name => 1, :last_name => 1, :tin => 1 })
-  index ({ :multiple => 1})
+  # index ({ :multiple => 1})
   index ({ :'donations.party_id' => 1})
   index ({ :'donations.give_data' => 1})
   index ({ :'donations.amount' => 1})
@@ -55,21 +55,21 @@ class Donor
     end
   end
 
-  def calculate_donated_amount(v)
-    da = 0 # donated amount
-    tmp_party_ids = []
-    donations.each{ |e|
-      da += e.amount.round(2)
-      tmp_party_ids.push(e.party_id.to_s)
-    }
-    # self.update_attributes!(
-    #   donated_amount: da,
-    #   multiple:
-    # )
-    self.set(donated_amount: da)
-    self.set(multiple: tmp_party_ids.uniq.size > 1)
-    # save
-  end
+  # def calculate_donated_amount(v)
+  #   da = 0 # donated amount
+  #   tmp_party_ids = []
+  #   donations.each{ |e|
+  #     da += e.amount.round(2)
+  #     tmp_party_ids.push(e.party_id.to_s)
+  #   }
+  #   # self.update_attributes!(
+  #   #   donated_amount: da,
+  #   #   multiple:
+  #   # )
+  #   self.set(donated_amount: da)
+  #   self.set(multiple: tmp_party_ids.uniq.size > 1)
+  #   # save
+  # end
 
   def self.sorted
     order_by([[:first_name, :asc], [:last_name, :asc]])
@@ -234,7 +234,7 @@ class Donor
     conditions = []
 
     matches.push({ "_id": { "$in": params[:donor].map{|m| BSON::ObjectId(m)} } }) if params[:donor].present?
-    matches.push({ "multiple": { "$eq": params[:multiple] } }) if params[:multiple].present? && params[:multiple] == true
+    # matches.push({ "multiple": { "$eq": params[:multiple] } }) if params[:multiple].present? && params[:multiple] == true
 
     if params[:party].present?
       tmp = params[:party].map{|m| BSON::ObjectId(m) }
@@ -287,7 +287,7 @@ class Donor
         name: mongodb_field_with_fallback("full_name"),
         tin: 1,
         nature: 1,
-        donated_amount: 1,
+        # donated_amount: 1,
         donations: {
           "$filter": {
             input: "$donations",
@@ -297,14 +297,51 @@ class Donor
 
         }
       }
-     })
+    })
+
+    # unwind so each donation is separate row
+    options.push({ "$unwind": "$donations" })
+
+    # group donor so aggregation can be applied to donations
+    options.push(
+      {
+         "$group": {
+          "_id": { _id: '$_id', name: "$name", tin: "$tin", nature: "$nature" },
+           donations: { "$push":  { _id: "$donations._id", monetary: "$donations.monetary", give_date: "$donations.give_date", amount: "$donations.amount", party_id: "$donations.party_id", comment: "$donations.comment", md5: "$donations.md5" } },
+           donated_amount: { "$sum": "$donations.amount" },
+           parties: { "$addToSet": "$donations.party_id" } # used only when multiple
+        }
+      }
+    )
+
+    # clean output and count unique party for each donor
+    options.push({
+      "$project": {
+        _id: "$_id._id",
+        name: "$_id.name",
+        tin: "$_id.tin",
+        nature: "$_id.nature",
+        donated_amount: 1,
+        donations: 1,
+        parties: { "$size": "$parties" } # used only when multiple
+      }
+    })
+
+    if params[:multiple].present? && params[:multiple] == true
+      options.push({
+        "$match": {
+          parties: { "$gt": 1 }
+        }
+      })
+    end
+
     options.push({ "$sort": { donated_amount: -1, name: 1 } })
-     Rails.logger.debug("--------------------------------------------#{options.inspect}")
+    # Rails.logger.debug("--------------------------------------------#{options.inspect}")
     collection.aggregate(options)
   end
 
   def self.explore(params, type = "a", inner_pars = false, global_data = {})
-     Rails.logger.debug("--------------------------------------------#{params.inspect}")
+    # Rails.logger.debug("--------------------------------------------#{params.inspect}")
     limiter = 5
     default_f = {
       donor: nil,
@@ -717,7 +754,7 @@ class Donor
     matches = []
 
     matches.push({ "_id": { "$in": params[:donor].map{|m| BSON::ObjectId(m)} } }) if params[:donor].present?
-    matches.push({ "multiple": { "$eq": params[:multiple] } }) if params[:multiple].present? && params[:multiple] == true
+    # matches.push({ "multiple": { "$eq": params[:multiple] } }) if params[:multiple].present? && params[:multiple] == true
 
     if params[:party].present?
       tmp = params[:party].map{|m| BSON::ObjectId(m) }
@@ -753,6 +790,40 @@ class Donor
     options.push({ "$unwind": '$donations' })
     options.push({ "$match": { "$and": matches } }) if !matches.blank?
 
+
+    # group donor so aggregation can be applied to donations
+    options.push(
+      {
+         "$group": {
+          "_id": { _id: '$_id', full_name: "$full_name", tin: "$tin", nature: "$nature" },
+           donations: { "$push":  { _id: "$donations._id", monetary: "$donations.monetary", give_date: "$donations.give_date", amount: "$donations.amount", party_id: "$donations.party_id", comment: "$donations.comment", md5: "$donations.md5" } },
+           donated_amount: { "$sum": "$donations.amount" },
+           parties: { "$addToSet": "$donations.party_id" } # used only when multiple
+        }
+      }
+    )
+
+    # clean output and count unique party for each donor
+    options.push({
+      "$project": {
+        _id: "$_id._id",
+        full_name: "$_id.full_name",
+        tin: "$_id.tin",
+        nature: "$_id.nature",
+        donated_amount: 1,
+        donations: 1,
+        parties: { "$size": "$parties" } # used only when multiple
+      }
+    })
+
+    if params[:multiple].present? && params[:multiple] == true
+      options.push({
+        "$match": {
+          parties: { "$gt": 1 }
+        }
+      })
+    end
+    options.push({ "$unwind": '$donations' })
 
     full_name = mongodb_field_with_fallback("full_name")
 
