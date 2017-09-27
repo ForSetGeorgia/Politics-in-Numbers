@@ -2,168 +2,168 @@
 ru:
   root:
     index:
-      summary: Do you want to know where the political parties get money from? Politics in Numbers has all the official data about the party finances. You can see and compare political party income and expenses, campaign funds, donations, assets, financial obligations and other interesting details.
-      filter_summary: You can explore data by<br />categories and compare them
-      go_explore: Go Explore!
-      highlights: Highlights
-      view_all_highlights: View All Highlights
+      summary: Вы хотите знать, откуда политические партии получают деньги? Политика в числах содержит все официальные данные о партийных финансах. Вы можете видеть и сравнивать доходы и расходы политической партии, фонды кампании, пожертвования, активы, финансовые обязательства и другие интересные детали.
+      filter_summary: Вы можете изучить данные по<br /> категориям и сравнить их
+      go_explore: 'Давай начнём '
+      highlights: Избранные факты
+      view_all_highlights: Посмотреть все избранные факты
     highlights:
-      title: Highlights
+      title: Избранные факты
       no_highlights: No highlights have been recorded yet.
     about:
-      title: About
-      methodology: Methodology
-      donations: Donations
-      party_finances: Party Finances
-      sponsors: Sponsors and Partners
+      title: О нас
+      methodology: Методология
+      donations: Пожертвования
+      party_finances: Партийные Финансы
+      sponsors: Спонсоры и партнеры
       alt:
-        forset: "ForSet"
-        us: "U.S. Department of State"
-        us_embassy: "Embassy of the Unites States Georgia"
-        dcn: "Digital Communication Network"
-        sao: "State Audit Office of Georgia"
+        forset: Форсет
+        us: Государственный департамент США
+        us_embassy: Посольство Соединенных Штатов в Грузии
+        dcn: Digital Communication Network
+        sao: Служба государственного аудита Грузии
     media:
-      title: In Media
-      no_media: No mentions of Politics in Number in the media have been recorded yet.
+      title: В СМИ
+      no_media: Записи о политике в числах СМИ еще нет
     download:
-      title: Download
-      filters: Filters
-      filter_donations: Donations
-      filter_finance: Party Finances
-      filter_toggle: Toggle to add new filtering option
-      filter_close: Close Filter Window
-      filter_item_close: Remove item from filter
-      filter_clear: Remove all items from filter
-      time: Time
-      annual: Annual
-      campaign: Campaign
-      from: From
-      to: To
-      reset: RESET
-      filter_submit: GENERATE
-      download: Download
-      filename_donation: Donations
-      search: Search
-      filename: Name
-      filename_period: Period
-      file_size: File Size
-      filename_finance: PartyFinances
+      title: Скачать
+      filters: Фильтры
+      filter_donations: Пожертвования
+      filter_finance: партийные Финансы
+      filter_toggle: Переключить для добавления новой опции фильтрации
+      filter_close: Закрыть окно фильтра
+      filter_item_close: Удалить элемент из фильтра
+      filter_clear: Удалить все элементы из фильтра
+      time: Время
+      annual: Годовой
+      campaign: Кампания
+      from: От
+      to: До
+      reset: СБРОС
+      filter_submit: СГЕНЕРИРОВАТЬ
+      download: Скачать
+      filename_donation: Пожертвования
+      search: Поиск
+      filename: Имя
+      filename_period: Период
+      file_size: Размер файла
+      filename_finance: Партийные Финансы
     explore:
-      title: Explore
-      category: Category
-      add_hint: Add category to filter
-      remove_hint: Remove category from filter
-      filters: Filters
-      filter_toggle: Toggle to add new filtering option
-      filter_close: Close Filter Window
-      filter_item_close: Remove item from filter
-      filter_clear: Remove all items from filter
-      filter_autocomplete_title: Please enter at least 3 characters to perform a search
-      donor: ID/Name
-      time_period: Time Period
-      amount: Amount
-      party: Party
-      parties: Parties
-      candidates: Candidates
-      party_candidate: Party/Candidate
-      donation_type: Donation Type
-      donated_multiple_parties: Donated to multipled parties?
-      donor_nature: Donor Type
-      reset: RESET
-      from: From
-      to: To
-      monetary: Monetary
-      non_monetary: Non-Monetary
-      _yes: "Yes"
-      _no: "No"
-      individual: Individual
-      organization: Organization
-      total_amount: Total Amount
-      total_donations: Total Donations
-      categories: Categories
-      time: Time
-      annual: Annual
-      explore: EXPLORE
-      share_chart: Share chart
-      embed_chart: Embed chart
-      download_chart: Download chart
-      share_table: Share table
-      embed_table: Embed table
-      download_table: Download table
-      donors: DONORS
-      party_donations: PARTY <br/>DONATIONS
-      view: View
-      view_as: View as
-      view_as_chart: Chart view
-      view_as_table: Table view
-      search: Search
-      table_length: Show _MENU_ entries
-      not_found: Your requested data could not be found
-      income: Income
-      income_campaign: Income Campaign
-      expenses: Expenses
-      expenses_campaign: Expenses Campaign
-      reform_expenses: Reforms Fund Expenses
-      property_assets: Property Assets
-      financial_assets: Financial Assets
-      debts: Debts
-      campaign: Campaign
-      loader_missing_category: Please select a Party Finance type at the top.
+      title: Исследовать
+      category: Категория
+      add_hint: Добавить категорию для фильтрации
+      remove_hint: Удалить категорию из фильтра
+      filters: Фильтры
+      filter_toggle: Добавить новый фильтр
+      filter_close: Закрыть окно фильтра
+      filter_item_close: Удалить элемент из фильтра
+      filter_clear: Удалить все элементы из фильтра
+      filter_autocomplete_title: Пожалуйста, введите не менее 3 символов для выполнения поиска
+      donor: Идентификатор / имя
+      time_period: Период времени
+      amount: Сумма
+      party: Партия
+      parties: Партии
+      candidates: Кандидаты
+      party_candidate: партия/Кандидаты
+      donation_type: Тип пожертвования
+      donated_multiple_parties: Пожертвовал нескольким партиям?
+      donor_nature: Тип донора
+      reset: СБРОС
+      from: От
+      to: До
+      monetary: Монетарный
+      non_monetary: Неденежный
+      _yes: Да
+      _no: Нет
+      individual: Физическое лицо
+      organization: Организация
+      total_amount: Общая сумма
+      total_donations: Всего пожертвований
+      categories: Категории
+      time: Время
+      annual: Годовой
+      explore: ИССЛЕДОВАТЬ
+      share_chart: Поделиться диаграммой
+      embed_chart: Вставить диаграмму
+      download_chart: Скачать диаграмму
+      share_table: Поделиться таблицей
+      embed_table: Вставить таблицу
+      download_table: Загрузить таблицу
+      donors: ДОНОРЫ
+      party_donations: ПАРТИЯ <br/> ПОЖЕРТВОВАНИЯ
+      view: Посмотреть
+      view_as: Посмотреть как
+      view_as_chart: Просмотр диаграммы
+      view_as_table: Просмотр таблицы
+      search: Поиск
+      table_length: Показать_ записи_ меню
+      not_found: Запрошенные вами данные не найдены
+      income: Доход
+      income_campaign: Доход кампании
+      expenses: Расходы
+      expenses_campaign: Расходы на кампанию
+      reform_expenses: Затраты фонда реформ
+      property_assets: Недвижимость
+      financial_assets: Финансовые активы
+      debts: Долги
+      campaign: Кампания
+      loader_missing_category: Пожалуйста, выберите тип партийного финансирования наверху.
       export_type:
-        print: Print
-        pdf: Pdf document
-        svg: Svg image
-        jpeg: Jpeg image
-        png: Png image
-        csv: Csv document
+        print: Печать
+        pdf: Документ Pdf
+        svg: Изображение Svg
+        jpeg: Изображение Jpeg
+        png: Изображение Png
+        csv: Документ Csv
       placeholder:
-        donor: Search donor
-        party: Select party
-        income: Select category
-        income_campaign: Select category
-        expenses: Select category
-        expenses_campaign: Select category
-        reform_expenses: Select category
-        property_assets: Select category
-        financial_assets: Select category
-        debts: Select category
+        donor: Поиск донора
+        party: Выбрать партию
+        income: Выберите категорию
+        income_campaign: Выберите категорию
+        expenses: Выберите категорию
+        expenses_campaign: Выберите категорию
+        reform_expenses: Выберите категорию
+        property_assets: Выберите категорию
+        financial_assets: Выберите категорию
+        debts: Выберите категорию
     party:
-      title: Explore Political Party
-      filters: Filters
-      overall_summary: Overall Summary
-      income: Income
-      expenses: Expenses
-      reform_expenses: Reforms Fund Expenses
-      property_assets: Property Assets
-      financial_assets: Financial Assets
-      debts: Debts
-      filter_toggle: Toggle to add new filtering option
-      filter_close: Close Filter Window
-      time: Time
-      annual: Annual
-      campaign: Campaign
-      reset: RESET
-      time_period: Time Period
-      from: From
-      to: To
-      explore: EXPLORE
-      loader_missing_category: Please select a Party Finance type at the top.
-      total_amount: Total Amount
-      total_donations: Total Donations
+      title: Исследуйте политическую партию
+      filters: фильтры
+      overall_summary: Общее резюме
+      income: Доход
+      expenses: Расходы
+      reform_expenses: Затраты фонда реформ
+      property_assets: Недвижимость
+      financial_assets: Финансовые активы
+      debts: Долги
+      filter_toggle: Переключить для добавления новой опции фильтрации
+      filter_close: Закрыть окно фильтра
+      time: Время
+      annual: Годовой
+      campaign: Кампания
+      reset: СБРОС
+      time_period: Период времени
+      from: От
+      to: До
+      explore: Исследовать
+      loader_missing_category: Пожалуйста, выберите тип партийного финансирования наверху.
+      total_amount: Общая сумма
+      total_donations: Всего пожертвований
     parties:
-      title: Explore Political Parties
-      income: Income
-      expenses: Expenses
-      donations: Donations
-      no_parties: No parties have been recorded yet.
+      title: Исследуйте политические партии
+      income: Доход
+      expenses: Расходы
+      donations: Пожертвования
+      no_parties: Партии пока еще не зарегистрированы.
     chart_actions:
-      share_chart: Share chart
-      embed_chart: Embed chart
-      download_chart: Download chart
+      share_chart: Поделиться диаграммой
+      embed_chart: Вставить диаграмму
+      download_chart: Скачать диаграмму
       export_type:
-        print: Print
-        pdf: Pdf document
-        svg: Svg image
-        jpeg: Jpeg image
-        png: Png image
-        csv: Csv document
+        print: Печать
+        pdf: Документ Pdf
+        svg: Изображение Svg
+        jpeg: Изображение Jpeg
+        png: Изображение Png
+        csv: Документ Csv

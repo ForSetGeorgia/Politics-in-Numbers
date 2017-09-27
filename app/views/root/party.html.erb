@@ -97,7 +97,9 @@
               <div class="range"><%= @item.get_range %></div>
             </div>
           </div>
-          <div class="description"><%= @item.description %></div>
+          <% if false %>
+            <div class="description"><%= @item.description %></div>
+          <% end %>
         </div>
         <div class="panes">
           <div id="donation" class="pane" data-type='donation'>

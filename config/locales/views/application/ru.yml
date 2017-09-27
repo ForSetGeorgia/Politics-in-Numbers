@@ -2,14 +2,14 @@
 ru:
   application:
     navbar_header:
-      explore: Explore
-      highlights: Highlights
-      about: About
-      media: In Media
-      download: Download
+      explore: Исследовать
+      highlights: Выделить
+      about: О нас
+      media: В СМИ
+      download: Скачать
       api: Api
-      parties: Parties
-      settings: Settings
+      parties: Партии
+      settings: Настройки
       account:
-        edit_profile: Edit Profile
-        logout: Logout
+        edit_profile: Изменить профиль
+        logout: Выход

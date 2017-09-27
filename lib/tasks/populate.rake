@@ -327,7 +327,7 @@ desc "Read and upload new election files from folder"
         dataset = nil
         if prt.present? && per.present?
           if !Dataset.where({party_id: prt._id, period_id: per._id}).present?
-            dataset = Dataset.new({party_id: prt._id, period_id: period_id = per._id, source: File.open(f), version: 2 }) #[4,5,9,10,15,23,34,36].include?(tmp_id.to_i) ? 1 :
+            dataset = Dataset.new({party_id: prt._id, period_id: period_id = per._id, source: File.open(f), version: 3 }) #[4,5,9,10,15,23,34,36].include?(tmp_id.to_i) ? 1 :
             dataset.save
             Job.dataset_file_process(dataset._id, User.all[0]._id, [])
           else
@@ -435,7 +435,7 @@ namespace :repair do
     parenting = [nil, nil, nil, nil, nil]
     orders = [0, 0, 0, 0, 0, 0]
     parent_id = nil
-    versions = [1,2]
+    versions = [1,2,3]
     ln = 12 + versions.length*2
 
     cat_info = {}
@@ -464,7 +464,7 @@ namespace :repair do
     workbook[0].each_with_index { |row, row_i|
       next if row_i == 0
       if row && row.cells
-        cells = Array.new(ln, nil) # Level0  Level1  Level2  Level3  Level4  Cells_V1 Codes_V1 Details Short Alias ka ru Cells_V2 Codes_V2
+        cells = Array.new(ln, nil) # Level0  Level1  Level2  Level3  Level4  Cells_V1 Codes_V1 Details Short Alias ka ru Cells_V2 Codes_V2 Cells_V3 Codes_V3
         row.cells.each_with_index do |c, c_i|
           if c && c.value.present?
             cells[c_i] = c.value.class != String ? c.value : c.value.to_s.strip

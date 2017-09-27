@@ -2,184 +2,184 @@
 ru:
   shared:
     actions:
-      change_my_password: Change my password
-      destroy: Delete
-      edit: Edit
-      log_in: Log in
-      view: View
-      view_all: View All
-      new: New
-      reset: Reset
-      cancel: Cancel
-      save: Save
+      change_my_password: Изменить пароль
+      destroy: Удалить
+      edit: Редактировать
+      log_in: Вход
+      view: Просмотр
+      view_all: Просмотреть все
+      new: Новый
+      reset: Сбросить
+      cancel: Отменить
+      save: Сохранить
       with_obj:
-        cancel: Cancel %{obj}
-        create: Create %{obj}
-        destroy: Delete %{obj}
-        edit: Edit %{obj}
-        new: New %{obj}
-        update: Update %{obj}
-        view: View %{obj}
-        view_all: View All %{obj}
-      remember_me: Remember Me
+        cancel: Отменить %{obj}
+        create: Создать %{obj}
+        destroy: Удалить %{obj}
+        edit: Редактировать %{obj}
+        new: Новый %{obj}
+        update: Обновить %{obj}
+        view: Просмотр %{obj}
+        view_all: Просмотреть все %{obj}
+      remember_me: Запомнить
     common:
-      account: Account
-      actions: Actions
-      default_text: Default Text
-      default_url: Default URL
-      unknown: Unknown
+      account: Аккаунт
+      actions: Действия
+      default_text: Текст по умолчанию
+      default_url: URL по умолчанию
+      unknown: Неизвестный
       forset:
-        slogan: "ForSet - Data Communication: Innovative. Effective. Simple."
-      name: Politics in Numbers
-      slogan: Explore Party Finances
-      description: Politics in Numbers is a project funded by the US State Department and Internews Georgia which aims to increase the transparency of political party finances in Georgia and enhance use of data and visualization in political reporting. The authors of the project are Digital Communication Network program alumni Ketevan Bojgua and Nino Macharashvili. Currently, the project is implemented by ForSet in cooperation with The State Audit Service of Georgia.
-      language: Language Switch
-      twitter: Share on Twitter
-      facebook: Share on Facebook
-      phone: Phone
-      actual_phone: +995 598 476682
-      email: Email
+        slogan: 'ForSet - коммуникация данных: инновационнo. Эффективно. Просто.'
+      name: Политика в числах
+      slogan: Исследуйте партийные финансы
+      description: Политика в числах - это проект, финансируемый Госдепартаментом США и Интерньюс-Джорджией, целью которого является повышение прозрачности финансирования политических партий в Грузии и расширение использования данных и визуализации во время освешения политики. Авторы проекта - выпускники программы Digital Communication Network Кетеван Боджуа и Нино Мачарашвили. В настоящее время проект осуществляется ForSet в сотрудничестве с Службой государственного аудита Грузии.
+      language: Переключатель языков
+      twitter: Поделиться на Twitter
+      facebook: Поделиться на Facebook
+      phone: Телефон
+      actual_phone: "+995 598 476682"
+      email: Эл. адрес
       actual_email: info@forset.ge
-      address: Address
-      actual_address: "Impact Hub Tbilisi - Fabrika, 8 Egnate Ninoshvili Street, Tbilisi 0102"
+      address: Адрес
+      actual_address: Impact Hub Tbilisi - Фабрика, ул. Эгнате Ниношвили, 8, Тбилиси
+        0102
       summary: |
         Проект «Политика в цифрах» работает при поддержке Государственного Департамента США. Наша цель обеспечить прозрачность процесса финансирования политических партий в Грузии. Материалы нашего портала предназначены для активного использования в СМИ.
 
         Авторы проекта Digital Communication Network, выпускники проекта Кетеван Боджгуа и Нино Мачарашвили. Проект осуществляется совместно с “Jumpstart Georgia” при сотрудничестве со Службой государственного аудита Грузии.
-      back: Back
-      ns: Not Specified
-      or: or
-      parties: Parties
-      show_more: Show More
-      show_less: Show Less
-      and: and
-      all: All
-      numericSymbols: [ "k" , "M" , "G" , "T" , "P" , "E"]
-      no_result_found_for: "No Results Found for"
-      lari: Lari
-      na: "n/a"
-      highlight_chart: Highlight chart
-      update_or_remove_highlight: Update or remove highlight
+      back: Назад
+      ns: Не указано
+      or: или
+      parties: Партии
+      show_more: Показать больше
+      show_less: Показать меньше
+      and: и
+      all: Все
+      no_result_found_for: Результаты не найдены
+      lari: Лари
+      na: n/a
+      highlight_chart: Выделить график
+      update_or_remove_highlight: Обновить или удалить выделение
     locale:
       short:
         en: En
-        ka: "ქა"
-        ru: "Ру"
+        ka: ქა
+        ru: Ру
       long:
-        en: "English"
-        ka: "ქართული"
-        ru: "Русский"
+        en: English
+        ka: ქართული
+        ru: Русский
     msgs:
-      data_not_found: Your requested data could not be found
-      does_not_exist: You tried to access a page that does not exist.
-      not_authorized: You are not authorized to view that page.
-      missing_parameter: Data for some fields is missing. Fill in all required fields
-      success_created: "%{obj} was successfully created."
-      success_created_with_pending_job: "Request for creating %{obj} accepted, you will receive notification as soon as server will process request (Based on server load it can take some time)"
-      success_destroyed: "%{obj} was successfully destroyed."
-      success_updated: "%{obj} was successfully updated."
-      unexpected_error: "Error occur while processing request, please log your action and send request to app support team."
-      fail_destroyed_existed_relation: "%{obj} was not destroyed, remove all relation before continue."
+      data_not_found: Запрошенные данные не могут быть найдены.
+      does_not_exist: Вы пытались получить доступ к странице, которая не существует.
+      not_authorized: У вас нет прав на просмотр этой страницы.
+      missing_parameter: Данные для некоторых полей отсутствуют.Заполните все обязательные поля
+      success_created: "%{obj} был успешно создан"
+      success_created_with_pending_job: Запрос на создание %{obj} принят, вы получите уведомление, как только сервер обработает запрос (на основе загрузки сервера это может занять некоторое время)
+      success_destroyed: "%{obj} был успешно уничтожен."
+      success_updated: "%{obj} успешно обновлено."
+      unexpected_error: Ошибка при обработке запроса, войдите в свое действие и отправьте запрос в службу поддержки приложений.
+      fail_destroyed_existed_relation: "%{obj} не был уничтожен, удалите все отношения до продолжения."
     prompts:
-      confirm: Are you sure?
-      forgot_password: Forgot your password?
+      confirm: Вы уверены?
+      forgot_password: Забыли пароль?
     chart:
       title:
-        top_5_donors: Top %{n} %{obj} Donors for All Parties
-        top_5_parties: Top %{n} Parties/Candidates for All Donors
-        top_5_donors_for_party: Top %{n} Donors for %{obj}
-        last_5_donations_for_party: Last %{n} Donations for %{obj}
-        top_5_donors_for_parties: Top %{n} Donors for %{obj}
-        total_donations_for_parties: Total Donations for %{obj}
-        last_5_donations_for_donor: Last %{n} Donations by %{obj}
-        top_5_parties_donated_to: Top %{n} Parties Donated to by %{obj}
-        total_donations_for_each_donor: Total Donations for %{obj}
-        donors_donations_sorted_by_amount: Top Donations by %{obj} to %{objb}
-        parties_donations_sorted_by_amount: Top Donations to %{objb} by %{obj}
-        to_multiple: Have donated to multiple parties
-        monetary_donation: "%{s} donation"
-        monetary_true: Monetary
-        monetary_false: Non-Monetary
+        top_5_donors: Top %{n} %{obj} Доноры для всех партий
+        top_5_parties: Top %{n} партии / Кандидаты для всех доноров
+        top_5_donors_for_party: Top %{n} Доноры для %{obj}
+        last_5_donations_for_party: последние %{n} Пожертвования для %{obj}
+        top_5_donors_for_parties: Top %{n} Доноры для %{obj}
+        total_donations_for_parties: Все пожертвования для %{obj}
+        last_5_donations_for_donor: последние %{n} Пожертвования %{obj}
+        top_5_parties_donated_to: Top %{n} партии, пожертвованных %{obj}
+        total_donations_for_each_donor: Всего пожертвований для %{obj}
+        donors_donations_sorted_by_amount: Top пожертвования от %{obj} до %{objb}
+        parties_donations_sorted_by_amount: Top пожертвования %{objb} на %{obj}
+        to_multiple: 'Пожертвовали нескольким партиям '
+        monetary_donation: "%{s} пожертвование"
+        monetary_true: монетарный
+        monetary_false: Неденежный
         of_amount: of %{s} GEL
-        donation_of_amount: Donation of %{s} GEL
-        for_parties: "For: %{s}"
-        receiving_monetary_amount: Receiving %{m} donation%{a}
-        from_donors: from %{s} Donors
-        from_donors_who: from %{s} Donors who
-        nature_individual: Individual
-        nature_organization: Organization
+        donation_of_amount: Пожертвование %{s} GEL
+        for_parties: 'Для: %{s}'
+        receiving_monetary_amount: Получение %{m} пожертвований%{a}
+        from_donors: от %{s} Доноров
+        from_donors_who: от %{s} Доноров, которые
+        nature_individual: индивидуальный
+        nature_organization: организация
         no_data:
-          top_5_donors: No Donations for All Parties
-          top_5_parties: No Donations for All Parties
-          top_5_donors_for_party: No Donations for %{obj}
-          last_5_donations_for_party: No Donations for %{obj}
-          top_5_donors_for_parties: No Donations for %{obj}
-          total_donations_for_parties: No Donations for %{obj}
-          last_5_donations_for_donor: No Donations by %{obj}
-          top_5_parties_donated_to: No Parties Donated to by %{obj}
-          total_donations_for_each_donor: No donations for %{obj}
-          donors_donations_sorted_by_amount: No Donations by %{obj} to %{objb}
-          parties_donations_sorted_by_amount: No Donations to %{objb} by %{obj}
+          top_5_donors: Нет пожертвований для всех партий
+          top_5_parties: Нет пожертвований для всех партий
+          top_5_donors_for_party: Нет пожертвований для %{obj}
+          last_5_donations_for_party: Нет пожертвований для %{obj}
+          top_5_donors_for_parties: Нет пожертвований для %{obj}
+          total_donations_for_parties: Нет пожертвований для %{obj}
+          last_5_donations_for_donor: Нет пожертвований для %{obj}
+          top_5_parties_donated_to: нет пожертвований партиям от %{obj}
+          total_donations_for_each_donor: Нет пожертвований для %{obj}
+          donors_donations_sorted_by_amount: Никаких пожертвований от %{obj} для %{objb}
+          parties_donations_sorted_by_amount: Нет пожертвований для {objb}% от %{obj}
       finance:
         title:
-          party_donations_for: "Party - Donations for"
-          category: Category
-          category_grouped_by: "Category - Grouped by"
-          time_period_annual: "Annual"
-          time_period_campaign: "Campaign"
+          party_donations_for: Партия - Пожертвования для
+          category: Категория
+          category_grouped_by: Категория - сгруппированы по
+          time_period_annual: Годовой
+          time_period_campaign: Кампания
       label:
-        donors: Donors
-        parties: Parties
-        donations: Donations
+        donors: Доноры
+        parties: Партии
+        donations: Пожертвования
       filename:
-        finance: finances
-        donation: donations
-        missing: missing
+        finance: финансы
+        donation: пожертвования
+        missing: отсутствующий
     filters:
-      donations: DONATIONS
-      party_finances: PARTY <br/>FINANCES
-      income: Income
-      income_campaign: Income Campaign
-      expenses: Expenses
-      expenses_campaign: Expenses Campaign
-      reform_expenses: REFORMS FUND <br/>EXPENSES
-      property_assets: PROPERTY <br/>ASSETS
-      financial_assets: FINANCIAL <br/>ASSETS
-      debts: DEBTS
-      campaign: Campaign
+      donations: Пожертвования
+      party_finances: Партия <br /> Финансы
+      income: Доход
+      income_campaign: Доход кампании
+      expenses: Расходы
+      expenses_campaign: Расходы на кампанию
+      reform_expenses: " ФОНД РЕФОРМ <br/> РАСХОДЫ"
+      property_assets: СОБСТВЕННОСТЬ <br/> АКТИВЫ
+      financial_assets: ФИНАНСОВЫЕ <br/>АКТИВЫ
+      debts: ОБЯЗАТЕЛЬСТВА
+      campaign: Кампания
     dialog:
-      save: Save
-      close: Close
+      save: Сохранить
+      close: Закрыть
       embed:
-        caption: Embed
-        copy_code: "Copy and paste this embed code into your web page:"
-        copied: Copied
-        frame_size: "Frame size:"
-        custom_size: Custom size
-        embed_type: "Embed type:"
-        dynamic: Dynamic
-        static: Static
-        type_hint: "A dynamic embed will use the most up-to-date information<br/> while a static embed will be frozen to the data that is currently showing."
+        caption: Встраивать
+        copy_code: 'Скопируйте и вставьте этот код для вставки на свою веб-страницу:'
+        copied: Скопировано
+        frame_size: 'Размер рамки:'
+        custom_size: Нестандартный размер
+        embed_type: 'Тип Вставки:'
+        dynamic: динамичный
+        static: статический
+        type_hint: Динамическая вставка будет использовать самую последнюю информацию<br/>, в то время как статическая вставка будет заморожена для данных, которые в настоящее время отображаются.
       share:
-        caption: Share
-        share_chart: "Share chart:"
+        caption: 'Поделиться '
+        share_chart: 'Поделиться диаграммой:'
       highlight:
-        caption: Highlight
-        intro: Use the textbox below to give context to the chart (optional)
-        description: 'Enter description'
-        unhighlight: Unhighlight
-        show_on_home: Show on home page
+        caption: выделить
+        intro: Используйте текстовое поле ниже, чтобы дать контекст диаграмме (необязательно)
+        description: Введите описание
+        unhighlight: снятия выделения
+        show_on_home: Показать на главной странице
   notifier:
     job:
       donorset_file_process:
-        donorset_not_found: "Donorset to process was not found, probably you already delete it."
-        operator_not_found: "Operator not found, send to nowhere."
-        invalid_party_name: "Party '%{name}', name is invalid, check row %{row} in excel, and make sure it has party name"
-        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
-        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>.%{missing_parties}"
-        missing_parties: "New parties were added, and you need to specify correct types <a href='%{link}'>link</a>"
+        donorset_not_found: Донорсет для обработки не был найден, возможно, вы уже удалили его.
+        operator_not_found: Оператор не найден, отправьте в никуда.
+        invalid_party_name: партия '%{name}', имя недействительно, проверьте строку %{row} в excel, убедитесь, что у нее есть имя партии
+        unmatched_header: Заголовок в предоставленном файле отличается, по сравнению с ожидаемым %{заголовком}.
+        success: Файл%{filename} был успешно обработан. Чтобы просмотреть обработанные данные, следуйте ссылке <a href='%{link}'> </a>.%{Missing_parties}
+        missing_parties: Добавлены новые стороны, и вам нужно указать правильные типы <a href='%{link}'> link </a>
       dataset_file_process:
-        dataset_not_found: "Dataset to process was not found, probably you already delete it."
-        operator_not_found: "Operator not found, send to nowhere."
-        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
-        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>."
+        dataset_not_found: Набор данных для обработки не найден, возможно, вы уже удалили его.
+        operator_not_found: Оператор не найден, отправьте в никуда.
+        unmatched_header: Заголовок в предоставленном файле отличается, по сравнению с ожидаемым %{заголовком}.
+        success: Файл %{filename} был успешно обработан. Чтобы просмотреть обработанные данные, следуйте ссылке <a href='%{link}'> </a>.
