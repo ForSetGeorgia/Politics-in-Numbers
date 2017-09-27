@@ -23,11 +23,13 @@
             <div class="range"><%= item.get_range %></div>
           </div>
         </div>
-        <div class="description"><%= item.description %></div>
+        <% if false %>
+          <div class="description"><%= item.description %></div>
+        <% end %>
         <div class="stats">
           <div class="stat-box total-donation">
             <label><%= t('.donations') %>:</label>
-            <span><%= item.get_stats(:donation, [])[0] %></span>
+            <span><%= item.donation_total_amount %></span>
           </div>
           <div class="stat-box total-finances">
             <% stats = item.get_stats(:finance, @period_ids, [:income, :expenses]) %>

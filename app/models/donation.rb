@@ -6,19 +6,18 @@ class Donation
   belongs_to :donorset
   embedded_in :donor
 
+  after_create :trigger_party_calculate_donation_total_amount
+  before_destroy :trigger_party_calculate_donation_total_amount
+
   field :amount, type: Float
   field :party_id, type: BSON::ObjectId
   field :give_date, type: Date
   field :comment, type: String
   field :monetary, type: Boolean, default: true
-
-
   field :md5, type: String # md5 string from donor and donation info, for comparison ease
 
   # indexes
   index({ md5: 1 }, { unique: true })
-
-
 
   validates_presence_of :amount, :party_id, :give_date#, :donorset_id
 
@@ -28,6 +27,9 @@ class Donation
   # scope :to_amount, -> (v) { where("amount <= ?", v) if v.present? }
   # scope :by_type, -> { where(:comment => "არაფულადი") }
 
+  def trigger_party_calculate_donation_total_amount
+    Party.calculate_donation_total_amount(party_id)
+  end
 
   def self.sorted
     order_by([[:give_date, :desc]])

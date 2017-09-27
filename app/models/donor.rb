@@ -159,7 +159,7 @@ class Donor
     ]).first[:total]
   end
 
-  def self.total_donations_for_party(party_id, range)
+  def self.total_donations_for_party(party_id, range, numberFormat = false)
     matches = [{ 'donations.party_id': party_id }]
     if range.present?
       tmp = range[0]
@@ -183,11 +183,12 @@ class Donor
       }
     ])
 
-    r.to_a.size > 0 ?
+    (r.to_a.size > 0 ?
       [
-        ActionController::Base.helpers.number_with_precision(r.first[:sum].round),
-        ActionController::Base.helpers.number_with_precision(r.first[:cnt].round)
-      ] : [ 0, 0 ]
+        r.first[:sum].round,
+        r.first[:cnt].round
+      ] : [ 0, 0 ])
+    .map{|m| numberFormat ? m : ActionController::Base.helpers.number_with_precision(m) }
   end
 
 

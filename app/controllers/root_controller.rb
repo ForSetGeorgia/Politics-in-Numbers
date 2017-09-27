@@ -261,7 +261,7 @@ class RootController < ApplicationController
 
   def parties
     @show_page_title = false
-    @items = Party.only_parties.members.sorted.page(params[:page]).per(10)
+    @items = Party.only_parties.members.sorted_by_donation_total_amount.page(params[:page]).per(10)
     periods = Period.annual.sort{|x,y| x[:start_date] <=> y[:start_date] }
     @annuals = periods.map{|m| m.permalink }
     @period_ids = periods.map{|m| m[:_id] }
@@ -340,7 +340,7 @@ class RootController < ApplicationController
     categories.sort_by!{|x| Category::SYMS.index x[:sym]}
 
     gon.root_url = root_url
-    gon.path = party_path
+    gon.path = party_path({ id: "_id_"}).gsub('/_id_', '')
     gon.filter_path = party_filter_path
     gon.embed_path = embed_static_path(id: "_id_")
     gon.share_url = share_url({ id: "_id_", chart: "_chart_" })

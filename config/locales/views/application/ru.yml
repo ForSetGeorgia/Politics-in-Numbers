@@ -1,0 +1,15 @@
+---
+ru:
+  application:
+    navbar_header:
+      explore: Исследовать
+      highlights: Выделить
+      about: О нас
+      media: В СМИ
+      download: Скачать
+      api: Api
+      parties: Партии
+      settings: Настройки
+      account:
+        edit_profile: Изменить профиль
+        logout: Выход

@@ -86,7 +86,7 @@ class Category
   end
 
   def pointer(version)
-    version = [1,2].include?(version) ? version : 1
+    version = [1,2,3].include?(version) ? version : 1
     pnt = self.pointers.where(version: version).first
     while pnt.nil? && version > 0
       version -= 1

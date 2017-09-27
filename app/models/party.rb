@@ -17,6 +17,8 @@ class Party
   field :member, type: Boolean, default: false
   field :leader, type: String, localize: true
   field :on_default, type: Boolean, default: false
+  field :donation_total_amount, type: Float
+
 #slug
   slug :title, history: true, localize: true
 
@@ -42,6 +44,12 @@ class Party
     }
   end
 
+  def self.calculate_donation_total_amount(party_id)
+    p = Party.find(party_id)
+    p.donation_total_amount = Donor.total_donations_for_party(p.id, [], true)[0]
+    p.save
+  end
+
   def self.defaults
     where({on_default: true})
   end
@@ -59,6 +67,9 @@ class Party
 #scopes
   def self.sorted
     order_by([[:title, :asc]])#.limit(3)
+  end
+  def self.sorted_by_donation_total_amount
+    order_by([[:donation_total_amount, :desc], [:title, :asc]])
   end
   def self.members # only parties that was set to be visible on explore/party finance page
     where({member: true})
