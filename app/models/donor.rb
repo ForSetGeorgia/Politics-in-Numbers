@@ -227,7 +227,7 @@ class Donor
   end
 
   def self.filter(params)
-    Rails.logger.debug("****************************************#{params}")
+    # Rails.logger.debug("****************************************#{params}")
     lang = I18n.locale
     options = []
     matches = []
@@ -301,7 +301,7 @@ class Donor
 
     # unwind so each donation is separate row
     options.push({ "$unwind": "$donations" })
-
+    # options.push({ "$sort": { "donations.give_date": -1 } })
     # group donor so aggregation can be applied to donations
     options.push(
       {
@@ -309,6 +309,7 @@ class Donor
           "_id": { _id: '$_id', name: "$name", tin: "$tin", nature: "$nature" },
            donations: { "$push":  { _id: "$donations._id", monetary: "$donations.monetary", give_date: "$donations.give_date", amount: "$donations.amount", party_id: "$donations.party_id", comment: "$donations.comment", md5: "$donations.md5" } },
            donated_amount: { "$sum": "$donations.amount" },
+           max_give_date: { "$max": "$donations.give_date" },
            parties: { "$addToSet": "$donations.party_id" } # used only when multiple
         }
       }
@@ -322,6 +323,7 @@ class Donor
         tin: "$_id.tin",
         nature: "$_id.nature",
         donated_amount: 1,
+        max_give_date: 1,
         donations: 1,
         parties: { "$size": "$parties" } # used only when multiple
       }
@@ -335,13 +337,13 @@ class Donor
       })
     end
 
-    options.push({ "$sort": { donated_amount: -1, name: 1 } })
+    options.push({ "$sort": { donated_amount: -1, max_give_date: -1, name: 1,  } })
     # Rails.logger.debug("--------------------------------------------#{options.inspect}")
     collection.aggregate(options)
   end
 
   def self.explore(params, type = "a", inner_pars = false, global_data = {})
-    # Rails.logger.debug("--------------------------------------------#{params.inspect}")
+    Rails.logger.debug("--------------------------------------------#{params.inspect}")
     limiter = 5
     default_f = {
       donor: nil,
@@ -575,7 +577,8 @@ class Donor
         ca: {
           series: has_no_data ? [] : ca,
           title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
-          subtitle: chart_subtitle
+          subtitle: chart_subtitle,
+          footnote: ca_tmp[:footnote]
         }
       })
     end
@@ -584,7 +587,8 @@ class Donor
         cb: {
           series: has_no_data ? [] : cb,
           title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
-          subtitle: chart_subtitle
+          subtitle: chart_subtitle,
+          footnote: cb_tmp[:footnote]
         }
       })
     end
@@ -732,12 +736,14 @@ class Donor
       ca: {
         series: has_no_data ? [] : ca,
         title: Donor.generate_title(ca_title.merge(title_options), [1, 0], has_no_data),
-        subtitle: chart_subtitle
+        subtitle: chart_subtitle,
+        footnote: ca_tmp[:footnote]
       },
       cb: {
         series: has_no_data ? [] : cb,
         title: Donor.generate_title(cb_title.merge(title_options), [1, 1], has_no_data),
-        subtitle: chart_subtitle
+        subtitle: chart_subtitle,
+        footnote: cb_tmp[:footnote]
       },
       sid: sid,
       psid: psid,
@@ -1133,7 +1139,39 @@ class Donor
         }
       }
      })
-    options.push({ "$sort": { donated_amount: -1, name: 1 } })
+    # options.push({ "$sort": { donated_amount: -1, name: 1 } })
+
+
+    # unwind so each donation is separate row
+    options.push({ "$unwind": "$donations" })
+    # options.push({ "$sort": { "donations.give_date": -1 } })
+    # group donor so aggregation can be applied to donations
+    options.push(
+      {
+         "$group": {
+          "_id": { _id: '$_id', name: "$name", tin: "$tin", nature: "$nature" },
+           donations: { "$push":  { _id: "$donations._id", monetary: "$donations.monetary", give_date: "$donations.give_date", amount: "$donations.amount", party_id: "$donations.party_id", comment: "$donations.comment", md5: "$donations.md5" } },
+           donated_amount: { "$sum": "$donations.amount" },
+           max_give_date: { "$max": "$donations.give_date" }
+        }
+      }
+    )
+
+    # clean output and count unique party for each donor
+    options.push({
+      "$project": {
+        _id: "$_id._id",
+        name: "$_id.name",
+        tin: "$_id.tin",
+        nature: "$_id.nature",
+        donated_amount: 1,
+        max_give_date: 1,
+        donations: 1,
+      }
+    })
+
+    options.push({ "$sort": { donated_amount: -1, max_give_date: -1, name: 1,  } })
+
     collection.aggregate(options)
   end
   def self.party(params, inner_pars)
@@ -1336,7 +1374,8 @@ class Donor
         ca: {
           series: has_no_data ? [] : ca,
           title: Donor.generate_title(ca_title.merge(title_options), [chart_type, 0], has_no_data),
-          subtitle: chart_subtitle
+          subtitle: chart_subtitle,
+          footnote: ca_tmp[:footnote]
         }
       })
     end
@@ -1345,7 +1384,8 @@ class Donor
         cb: {
           series: has_no_data ? [] : cb,
           title: Donor.generate_title(cb_title.merge(title_options), [chart_type, 1], has_no_data),
-          subtitle: chart_subtitle
+          subtitle: chart_subtitle,
+          footnote: cb_tmp[:footnote]
         }
       })
     end
@@ -1383,23 +1423,46 @@ class Donor
     end
 
     def self.pull_n (data, n, key, str) # get n rows grouped by key from data, with counting distinct item count and if > 1 than output with str else just name
-      grp_n = {}
       d_i = 0
+      # Grouping logic
+      # grp_n = {}
+      # data.each_with_index{ |e, e_i|
+      #   puts e.inspect
+      #   break if d_i >= n
+      #   ek = e[key].round
+      #   if !grp_n.key?(ek)
+      #     grp_n[ek] = [e[:name]]
+      #     d_i += 1
+      #   else
+      #     grp_n[ek] << e[:name]
+      #   end
+      # }
+      # {
+      #   data: grp_n.map { |k,v| [v.length > 1 ? "#{v.length} #{str}" : v[0], k] },
+      #   title: grp_n.map { |k,v| v.join(", ") }.join(", ")
+      # }
+
+      footnote = false
+      items = []
       data.each_with_index{ |e, e_i|
-        break if d_i >= n
         ek = e[key].round
-        if !grp_n.key?(ek)
-          grp_n[ek] = [e[:name]]
-          d_i += 1
+
+        if d_i == n
+          footnote = true if ek == items.last[1]
+        elsif d_i > n
+          break
         else
-          grp_n[ek] << e[:name]
+          items << [e[:name], ek]
         end
+
+        d_i += 1
+      }
+      {
+        data: items,
+        footnote: footnote,
+        title: items.map{|m| m[0] }.join(", ")
       }
 
-      {
-        data: grp_n.map { |k,v| [v.length > 1 ? "#{v.length} #{str}" : v[0], k] },
-        title: grp_n.map { |k,v| v.join(", ") }.join(", ")
-      }
     end
     def self.generate_title(data, indexes, has_no_data)
 

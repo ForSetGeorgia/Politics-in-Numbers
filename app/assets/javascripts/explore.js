@@ -365,9 +365,9 @@ $(document).ready(function (){
               });
             }
             else if(tp === "period") {
-              console.log(v)
+              // console.log(v)
               v = v.map(function(m) { return m === -1 ? null : moment.utc(m).format(gon.mdate_format) })
-              console.log(v)
+              // console.log(v)
               el.from.datepicker('setDate', v[0]);
               el.to.datepicker('setDate', v[1]);
               tmp = formatRange(v);
@@ -1014,7 +1014,7 @@ $(document).ready(function (){
     }
   }
   function filter_callback(data, partial) {
-    console.log("filter_callback", data, partial);
+    // console.log("filter_callback", data, partial);
     view_not_found.addClass("hidden");
     var is_data_ok = typeof data !== "undefined";
     if(is_data_ok) {
@@ -1193,13 +1193,15 @@ $(document).ready(function (){
         }
       },
       subtitle: {
-        text: resource.subtitle,
+        text: resource.subtitle + (resource.footnote ? "<br /><span style='font-size: 10px;'>" + gon.same_amount_message + "</span>" : ""),
         style: {
           color: "#5d675b",
           fontSize:"12px",
           fontFamily: "firasans_book",
-          textShadow: 'none'
-        }
+          textShadow: 'none',
+          textAlign: 'center'
+        },
+        useHTML: true
       },
       xAxis: {
         type: "category",
@@ -1208,7 +1210,7 @@ $(document).ready(function (){
         labels: {
           style: {
             color: "#5d675b",
-            fontSize:"14px",
+            fontSize:"13px",
             fontFamily: "firasans_book",
             textShadow: 'none',
             textOverflow: "none"

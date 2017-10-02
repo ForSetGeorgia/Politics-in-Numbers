@@ -29,13 +29,15 @@
         useHTML: true
       },
       subtitle: {
-        text: resource.subtitle,
+        text: resource.subtitle + (resource.footnote ? "<br /><span style='font-size: 10px;'>" + gon.same_amount_message + "</span>" : ""),
         style: {
           color: "#5d675b",
           fontSize:"12px",
           fontFamily: "firasans_book",
-          textShadow: 'none'
-        }
+          textShadow: 'none',
+          textAlign: 'center'
+        },
+        useHTML: true
       },
       xAxis: {
         type: "category",

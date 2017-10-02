@@ -109,6 +109,7 @@ en:
       debts: Debts
       campaign: Campaign
       loader_missing_category: Please select a Party Finance type at the top.
+      same_amount_message: "* There are many donors with the same amount <br />so the list is sorted by the most recent donation date."
       export_type:
         print: Print
         pdf: Pdf document

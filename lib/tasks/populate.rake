@@ -4,7 +4,7 @@ def is_numeric?(obj)
    obj.to_s.match(/\A[+-]?\d+?(\.\d+)?\Z/) == nil ? false : true
 end
 
-
+### BEFORE RE-METHODS CHECK FILE VERSIONS
 
 namespace :populate do
   desc "Read and upload all annual files"

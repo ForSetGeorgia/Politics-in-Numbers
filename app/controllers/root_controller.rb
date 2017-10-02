@@ -89,6 +89,7 @@ class RootController < ApplicationController
       gon.gonned = true
       gon.chart_path = chart_path({id: ""})
       gon.na = t('shared.common.na')
+      gon.same_amount_message = t('.same_amount_message')
 
 
       @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true, m.type] }
@@ -358,6 +359,7 @@ class RootController < ApplicationController
     gon.chart_path = chart_path({id: ""})
     gon.na = t('shared.common.na')
     gon.party = @item.get_info.merge({ stats: @stats })
+    gon.same_amount_message = t('root.explore.same_amount_message')
   end
 
   def party_filter

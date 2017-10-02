@@ -109,6 +109,7 @@ ka:
       debts: ვალდებულებები
       campaign: კამპანია
       loader_missing_category: Please select a Party Finance type at the top.
+      same_amount_message: "* ბევრ დონორს ერთი და იგივე თანხა აქვს შეწირული,<br /> ამიტომ სიის სათავეში უახლესი შემოწირულობაა განთავსებული"
       export_type:
         print: ბეჭდვა
         pdf: Pdf
