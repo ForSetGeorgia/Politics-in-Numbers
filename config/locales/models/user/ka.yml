@@ -1,74 +1,74 @@
 ka:
   admin:
     index:
-      title: Admin Section
-      parties: Parties
-      datasets: Datasets
-      donorsets: Donors Lists
-      deffereds: Deffered activities
-      available_actions: List of actions
-      media: In Media
-      categories: List of Categories
-      page_contents: Page Contents
+      title: ადმინის სექცია
+      parties: პარტიები
+      datasets: მონაცემთა ბაზები
+      donorsets: დონორთა სიები
+      deffereds: გადადებული დავალებები
+      available_actions: მოქმედებების სია
+      media: მედიაში
+      categories: კატეგორიების სია
+      page_contents: გვერდის შინაარსი
     category:
-      title: List of Categories
+      title: კატეგორიების სია
     periods:
-      related_datasets: Datasets linked to current period
+      related_datasets: აღნიშნულ პერიოდთან დაკავშირებული მონაცემთა ბაზები
   mongoid:
     common:
       updated_at: &updated_at Update Date
     attributes:
       user:
-        email: Email
-        password: Password
-        role: Role
+        email: ელ.ფოსტა
+        password: პაროლი
+        role: როლი
       party:
-        title: Title
-        title_translations: Title
-        type: Type
-        description: Description
-        description_translations: Description
-        slug: Permalink
-        permalink: Permalink
-        color: Color for charts
-        name: Original name
-        member: Member of main Party list
-        leader: Current Leader
-        on_default: Default party for explore page
+        title: სათაური
+        title_translations: სათაური
+        type: ტიპი
+        description: აღწერა
+        description_translations: აღწერა
+        slug: პერმალინკი
+        permalink: პერმალინკი
+        color: გრაფიკის ფერები
+        name: ორიგინალური სახელი
+        member: ძირითადი სიის წევრი
+        leader: მოქმედი ლიდერი
+        on_default: ძირითადი პარტია ექსპლორ გვერდისთვის
       period:
-        title: Title
-        title_translations: Title
-        type: Type
-        description: Description
-        description_translations: Description
+        title: სათაური
+        title_translations: სათაური
+        type: ტიპი
+        description: აღწერა
+        description_translations: აღწერა
         start_date: &start_date Start Date
         end_date: &end_date End Date
         period_start: *start_date
         period_end: *end_date
       donor:
-        id: Donor Id
-        name: Donor
-        first_name: First name
-        last_name: Last name
+        id: დონორის პირადი ნომერი
+        name: დონორი
+        first_name: სახელი
+        last_name: გვარი
         tin: "Person I/N"
         donated_amount: "Overall amount"
-        nature: Donor Type
+        nature: დონორის ტიპი
         nature_values:
-          individual: Individual
-          organization: Organization
+          individual: ფიზიკური პირი
+          organization: ორგანიზაცია
       donation:
-        amount: Amount
-        party_id: Party
-        give_date: Date
-        comment: Comment
-        monetary: Donation Type
+        amount: თანხა
+        party_id: პარტია
+        give_date: თარიღი
+        comment: კომენტარი
+        monetary: შემოწირულობის ტიპი
         monetary_values:
-          t: Monetary
-          f: Non-Monetary
+          t: ფულადი
+          f: არაფულადი
         donorset_id: Donorset
       dataset:
-        party_id: &party Party
-        period_id: &period Period
+        party_id: &party პარტია
+        period_id: &period პერიოდი
         source: &source Source
         state: &state State
         updated_at: *updated_at
@@ -82,69 +82,69 @@ ka:
         updated_at: *updated_at
         current_state: *state
         source_file_name: *source
-        donors: Donors List
+        donors: დონორების სია
       medium:
-        name: Media Name
-        name_translations: Media Name
-        title: Title
-        title_translations: Title
-        description: Summary
-        description_translations: Summary
-        author: Author
-        author_translations: Author
-        embed: Embed Code
-        embed_translations: Embed Code
-        permalink: Permalink
+        name: მედიის სახელი
+        name_translations: მედიის სახელი
+        title: სათაური
+        title_translations: სათაური
+        description: შეჯამება
+        description_translations: შეჯამება
+        author: ავტორი
+        author_translations: ავტორი
+        embed: ემბედ კოდი
+        embed_translations: ემბედ კოდი
+        permalink: პერმალინკი
         public: &public Is Published?
         human_public: *public
         published_at: &published_at Publish Date
         human_published_at: *published_at
-        web: Link to Story
+        web: ამბის ბმული
         read_more: &read_more Has 'Read more'?
         human_read_more: *read_more
-        human_cover: Cover image
-        story_date: Date
+        human_cover: ქავერ ფოტო
+        story_date: თარიღი
     models:
       user:
-        one: User
-        other: Users
+        one: მომხმარებელი
+        other: მომხმარებლები
       party:
-        one: Party
-        other: Parties
+        one: პარტია
+        other: პარტიები
       period:
-        one: Period
-        other: Periods
+        one: პერიოდი
+        other: პერიოდები
       donor:
-        one: Donor
-        other: Donors
+        one: დონორი
+        other: დონორები
       dataset:
-        one: Dataset
-        other: Datasets
+        one: მონაცემთა ბაზა
+        other: მონაცემთა ბაზები
       donorset:
-        one: Donor data
-        other: Donor data
+        one: დონორის მონაცემი
+        other: დონორის მონაცემი
       medium:
-        one: In Media
-        other: In Media
+        one: მედიაში
+        other: მედიაში
       deffered:
-        one: Deffered activity
-        other: Deffered activities
+        one: გადადებული დავალებები
+        other: გადადებული დავალებები
       admin:
-        one: Admin Section
+        one: ადმინის სექცია
       highlight:
-        one: Highlight
-        other: Highlights
+        one: რჩეული ფაქტი
+        other: რჩეული ფაქტები
     options:
       party:
         type:
-          party: Party
-          initiative: Initiative
+          party: პარტია
+          initiative: ინიციატივა
         member:
-          _true: Member
-          _false: Not a member
+          _true: წევრი
+          _false: არაწევრი
         on_default:
-          _true: 'Yes'
-          _false: 'No'
+          _true: 'დიახ'
+          _false: 'არა'
       period:
         type:
           annual: წლიური
@@ -162,58 +162,58 @@ ka:
       users:
         deffered:
           type:
-            parties_type_correction: Correct party type, after adding new donorset
+            parties_type_correction: შეასწორეთ პარტის ტიპი, მას შემდეგ რაც დონორების ახალ ბაზას დაამატებთ
       media:
         public:
-          t: "Yes"
-          f: "No"
+          t: "დიახ"
+          f: "არა"
         read_more:
-          t: "Yes"
-          f: "No"
+          t: "დიახ"
+          f: "არა"
     messages:
       deffered:
-        not_found: "You don't have uncompleted deffered activies."
-        no_related_objects: "Current deffered activity has no related objects to communicate with. It was removed."
-        missing_parameter: "Your deffered activity is broken, or you are trying to brake this peace of code"
+        not_found: "თქვენ არ გაქვთ დაუსრულებელი გადადებული დავალებები."
+        no_related_objects: "აღნიშნულ გადადებულ დავალებასთან დაკავშირებული ობიექრი არ არსებობს. წაშლილია. "
+        missing_parameter: "თქვენი გადადებული დავალება გატეხილია ან თქვენ ცდილობთ კოდის გატეხვას"
   formtastic:
     hints:
       party:
-        title: Party Title
-        type: "Select: Party or Initiative"
-        description: Party description for party summary page
-        slug: Party Permalink
-        permalink: Party Permalink
-        color: Party color for charts
-        name: "Original party name, that is used while processing uploaded files"
-        leader: Party Leader
+        title: პარტიის სახელი
+        type: "აირჩიეთ: პარტია თუ საინიციატივო ჯგუფი"
+        description: პარტიის აღწერა პარტიის შეჯამების გვერდისთვის
+        slug: პარტიის პერმალინკი
+        permalink: პარტიის პერმალინკი
+        color: პარტიის ფერი გრაფიკისთვის
+        name: "პარტიის სახელი, რომელიც გამოიყენება მონაცემების ატვირთვისას"
+        leader: პარტიის ლიდერი
       period:
-        title: Period Title
-        type: "Select: Annual or Election period"
-        description: Period description for party summary page
-        start_date: Period start date
-        end_date: Period end date
+        title: პერიოდის სახელი
+        type: "აირჩიეთ: ყოველწლიური თუ საარჩევნო პერიოდი"
+        description: პერიოდის აღწერა პარტიის შეჯამების გვერდისთვის
+        start_date: პერიოდის დაწყების თარიღი
+        end_date: პერიოდის დამთავრების თარიღი
       dataset:
-        party_id: Choose party that is associated with uploading file
-        period_id: Choose period that is associated with uploading file
-        source: Select spreadsheet file
+        party_id: აირჩიეთ პარტია, რომელიც დაკავშირებულია ატვირთულ ფაილთან
+        period_id: აირჩიეთ პერიოდი, რომელიც დაკავშირებულია ატვირთულ ფაილთან
+        source: აირჩიეთ ფაილი
       donorset:
-        source: Select spreadsheet file
+        source: აირჩიეთ ფაილი
       page_content:
-        title: Title of the page content
-        content: Content
+        title: კონტენტის გვერდის სათაური
+        content: შინაარსი
       medium:
-        name: Name of Media Organization
-        name_translations: Name of Media Organization
-        title: Story Title
-        title_translations: Story Title
-        description: Summary of the Story
-        description_translations: Summary of the Story
-        author: Story Author
-        author_translations: Story Author
-        embed: Please use embed code and not url to video
-        embed_translations: Please use embed code and not url to video
-        permalink: Permalink
-        web: Link to Story
+        name: მედია ორგანიზაციის სახელი
+        name_translations: მედია ორგანიზაციის სახელი
+        title: ამბის სახელი
+        title_translations: ამბის სახელი
+        description: ამბის შეჯამება
+        description_translations: ამბის შეჯამება
+        author: ამბის ავტორი
+        author_translations: ამბის ავტორი
+        embed: გთხოვთ გამოიყენოთ ემბედ კოდი და არა ვიდეოს ბმული
+        embed_translations: გთხოვთ გამოიყენოთ ემბედ კოდი და არა ვიდეოს ბმული
+        permalink: პერმალინკი
+        web: ამბის ლინკი
 # en:
 #     formtastic:
 #       titles:
