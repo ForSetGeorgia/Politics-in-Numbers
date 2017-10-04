@@ -565,7 +565,7 @@ class Donor
         table: {
           header: ["", human_attribute_name(:name), human_attribute_name(:tin),
             human_attribute_name(:nature), Donation.human_attribute_name(:give_date),
-            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party),
+            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party_id),
             Donation.human_attribute_name(:monetary)],
           classes: ["no-padding", "", "center", "center", "center", "right", "", "center"]
         }
@@ -945,7 +945,7 @@ class Donor
             data: data,
             header: [human_attribute_name(:name), human_attribute_name(:tin),
               human_attribute_name(:nature), Donation.human_attribute_name(:give_date),
-              Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party),
+              Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party_id),
               Donation.human_attribute_name(:monetary)]
           }
         }
@@ -1051,7 +1051,7 @@ class Donor
         human_attribute_name(:last_name),
         human_attribute_name(:tin),
         Donation.human_attribute_name(:amount),
-        Donation.human_attribute_name(:party),
+        Donation.human_attribute_name(:party_id),
         Donation.human_attribute_name(:comment),
         human_attribute_name(:nature),
         Donation.human_attribute_name(:monetary)
@@ -1362,7 +1362,7 @@ class Donor
         table: {
           header: ["", human_attribute_name(:name), human_attribute_name(:tin),
             human_attribute_name(:nature), Donation.human_attribute_name(:give_date),
-            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party),
+            Donation.human_attribute_name(:amount), Donation.human_attribute_name(:party_id),
             Donation.human_attribute_name(:monetary)],
           classes: ["no-padding", "", "center", "center", "center", "right", "", "center"]
         }
