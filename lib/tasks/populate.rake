@@ -252,6 +252,7 @@ namespace :populate do
         tmp[:description] = "პარტია #{title_ka}"
         tmp[:name] = names
         tmp[:member] = cells[0].present?
+        tmp[:type] = 0
 
         if pp.nil?
           puts "#{row_i} created #{title_ka}"
