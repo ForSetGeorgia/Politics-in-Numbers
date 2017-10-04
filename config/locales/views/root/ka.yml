@@ -9,7 +9,7 @@ ka:
       view_all_highlights: ყველა რჩეული ფაქტები
     highlights:
       title: რჩეული ფაქტები
-      no_highlights: No highlights have been recorded yet.
+      no_highlights: ამ დროისთვის რჩეული ფაქტები არ არის
     about:
       title: ჩვენზე
       methodology: მეთოდოლოგია
@@ -58,13 +58,13 @@ ka:
       filter_close: ფილტრის დახურვა
       filter_item_close: ფილტრიდან ამოშლა
       filter_clear: ფილტრის გასუფთავება
-      filter_autocomplete_title: Please enter at least 3 characters to perform a search
+      filter_autocomplete_title: გთხოვთ შეიყვანოთ 3 სიმბოლო მაინც რომ შეძლოთ ძებნა
       donor: პ.ნ./სახელი
       time_period: პერიოდი
       amount: რაოდენობა
       party: პარტია
-      parties: Parties
-      candidates: Candidates
+      parties: პარტიები
+      candidates: კანდიდატები
       party_candidate: პარტია/კანდიდატი
       donation_type: შემოწირულობის ტიპი
       donated_multiple_parties: ერთზე მეტ პარტიას შეწირა?
@@ -108,7 +108,7 @@ ka:
       financial_assets: ფინანსური სახსრები
       debts: ვალდებულებები
       campaign: კამპანია
-      loader_missing_category: Please select a Party Finance type at the top.
+      loader_missing_category: გთხოვთ აირჩიოთ პარტიის ფინანსების ტიპი  ზემოთ.
       same_amount_message: "* ბევრ დონორს ერთი და იგივე თანხა აქვს შეწირული,<br /> ამიტომ სიის სათავეში უახლესი შემოწირულობაა განთავსებული"
       export_type:
         print: ბეჭდვა
@@ -129,15 +129,15 @@ ka:
         financial_assets: კატეგორიის არჩევა
         debts: კატეგორიის არჩევა
     party:
-      title: Explore Political Party
+      title: დაათვალიერეთ პოლიტიკური პარტია
       filters: ფილტრი
-      overall_summary: Overall Summary
-      income: Income
-      expenses: Expenses
-      reform_expenses: Reforms Fund Expenses
-      property_assets: Property Assets
-      financial_assets: Financial Assets
-      debts: Debts
+      overall_summary: სრულის შეჯამება
+      income: შემოსავალი
+      expenses: ხარჯები
+      reform_expenses: რეფორმების ფონდის ხარჯები
+      property_assets: უძრავი ქონება
+      financial_assets: ფინანსური სახსრები
+      debts: ვალდებულებები
       filter_toggle: ახალი ფილტრის დამატება
       filter_close: ფილტრის დახურვა
       time: პერიოდი
@@ -148,23 +148,23 @@ ka:
       from: -დან
       to: -მდე
       explore: დათვალიერება
-      loader_missing_category: Please select a Party Finance type at the top.
-      total_amount: Total Amount
-      total_donations: Total Donations
+      loader_missing_category: გთხოვთ აირჩიოთ პოლიტიკური პარტის ფინანსების ტიპი.
+      total_amount: სრული თანხა
+      total_donations: სრული შემოწირულობების
     parties:
-      title: Explore Political Parties
+      title: დაათვალიერე პოლიტიკური პარტიები
       income: შემოსავალი
       expenses: ხარჯები
       donations: შემოწირულებები
-      no_parties: No parties have been recorded yet.
+      no_parties: პარტიის შესახებ ჩანაწერი არ არსებობს.
     chart_actions:
-      share_chart: Share chart
-      embed_chart: Embed chart
-      download_chart: Download chart
+      share_chart: გააზიარე გრაფიკი
+      embed_chart: გრაფიკის ემბედ კოდი
+      download_chart: ჩამოტვირთე გრაფიკი
       export_type:
-        print: Print
-        pdf: Pdf document
-        svg: Svg image
-        jpeg: Jpeg image
-        png: Png image
-        csv: Csv document
+        print: ბეჭდვა
+        pdf: Pdf დოკუმენტი
+        svg: Svg ფაილი
+        jpeg: Jpeg ფაილი
+        png: Png ფაილი
+        csv: Csv დოკუმენტი

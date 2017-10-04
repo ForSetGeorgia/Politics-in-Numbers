@@ -241,26 +241,28 @@ namespace :populate do
         if pp.length > 1
           puts '#{title_ka} is duplicated'
           next
-
-
         end
         pp = pp.first
 
         # puts "#{title_ka} #{pp.inspect}"
+
+        tmp[:title_translations] = { ka: title_ka }
+        tmp[:title_translations][:en] = cells[3] if cells[3].present?
+        tmp[:title_translations][:ru] = cells[4] if cells[4].present?
+        tmp[:description] = "პარტია #{title_ka}"
+        tmp[:name] = names
+        tmp[:member] = cells[0].present?
+
         if pp.nil?
-          lg.info "created - #{title_ka}"
-          puts "created #{title_ka} #{cells[0]}"
-          tmp[:title_translations] = { ka: title_ka }
-          tmp[:title_translations][:en] = cells[3] if cells[3].present?
-          tmp[:title_translations][:ru] = cells[4] if cells[4].present?
-          tmp[:description] = "პარტია #{title_ka}"
-          tmp[:name] = names
-          tmp[:member] = cells[0].present?
+          puts "#{row_i} created #{title_ka}"
+          # lg.info "created - #{title_ka}"
+          # puts "created #{title_ka} #{cells[0]}"
 
           Party.create!(tmp)
-        elsif cells[0].present?
-          puts "#{cells[0]} tmp_id updated #{title_ka}"
-          pp.update_attributes({tmp_id: cells[0]})
+        else # cells[0].present?
+          puts "#{row_i} updated #{title_ka}"
+          # puts "#{cells[0]} tmp_id updated #{title_ka}"
+          pp.update_attributes(tmp)
           #puts cells[0]
         end
       end

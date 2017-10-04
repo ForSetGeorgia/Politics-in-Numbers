@@ -2,35 +2,35 @@
 ka:
   date:
     abbr_day_names:
-    - Sun
-    - Mon
-    - Tue
-    - Wed
-    - Thu
-    - Fri
-    - Sat
+    - კვ
+    - ორშ
+    - სამშ
+    - ოთხშ
+    - ხუთშ
+    - პარ
+    - შაბ
     abbr_month_names:
     -
-    - Jan
-    - Feb
-    - Mar
-    - Apr
-    - May
-    - Jun
-    - Jul
-    - Aug
-    - Sep
-    - Oct
-    - Nov
-    - Dec
+    - იანვ
+    - თებ
+    - მარ
+    - აპრ
+    - მაისი
+    - ივნ
+    - ივლ
+    - აგვ
+    - სექტ
+    - ოქტ
+    - ნოემ
+    - დეკ
     day_names:
-    - Sunday
-    - Monday
-    - Tuesday
-    - Wednesday
-    - Thursday
-    - Friday
-    - Saturday
+    - კვირა
+    - ორშაბათი
+    - სამშაბათი
+    - ოთხშაბათი
+    - ხუთშაბათი
+    - პარასკევი
+    - შაბათი
     formats:
       default: "%d/%m/%Y"
       long: "%B %d, %Y"
@@ -41,18 +41,18 @@ ka:
       filename: "%d-%m-%Y"
     month_names:
     -
-    - January
-    - February
-    - March
-    - April
-    - May
-    - June
-    - July
-    - August
-    - September
-    - October
-    - November
-    - December
+    - იანვარი
+    - თებერვალი
+    - მარტი
+    - აპრილი
+    - მაისი
+    - ივნისი
+    - ივლისი
+    - აგვისტო
+    - სექტემბერი
+    - ოქტომბერი
+    - ნოემბერი
+    - დეკემბერი
     order:
     - :month
     - :day
@@ -60,66 +60,66 @@ ka:
   datetime:
     distance_in_words:
       about_x_hours:
-        one: about 1 hour
-        other: about %{count} hours
+        one:   "დაახლოებით 1 საათი"
+        other: "დაახლოებით %{count} საათი"
       about_x_months:
-        one: about 1 month
-        other: about %{count} months
+        one:   "დაახლოებით 1 თვე"
+        other: "დაახლოებით %{count} თვე"
       about_x_years:
-        one: about 1 year
-        other: about %{count} years
+        one:   "დაახლოებით 1 წელი"
+        other: "დაახლოებით %{count} წელი"
       almost_x_years:
-        one: almost 1 year
-        other: almost %{count} years
-      half_a_minute: half a minute
+        one:   "თითქმის 1 წელი"
+        other: "თითქმის %{count} წელი"
+      half_a_minute: "წუთის ნახევარი"
       less_than_x_minutes:
-        one: less than a minute
-        other: less than %{count} minutes
+        one:   "წუთზე ნაკლები"
+        other: "%{count} წუთზე ნაკლები"
       less_than_x_seconds:
-        one: less than 1 second
-        other: less than %{count} seconds
+        one:   "წამზე ნაკლები"
+        other: "%{count} წუთზე ნაკლები"
       over_x_years:
-        one: over 1 year
-        other: over %{count} years
+        one:   "წელიწადზე მეტი "
+        other: "%{count} წელზე მეტი"
       x_days:
-        one: 1 day
-        other: "%{count} days"
+        one:   "1 დღე"
+        other: "%{count} დღე"
       x_minutes:
-        one: 1 minute
-        other: "%{count} minutes"
+        one:   "1 წუთი"
+        other: "%{count} წუთი"
       x_months:
-        one: 1 month
-        other: "%{count} months"
+        one:   "1 თვე"
+        other: "%{count} თვე"
       x_seconds:
-        one: 1 second
-        other: "%{count} seconds"
+        one:   "1 წამი"
+        other: "%{count} წამი"
     prompts:
-      day: Day
-      hour: Hour
-      minute: Minute
-      month: Month
-      second: Seconds
-      year: Year
+      day: დღე
+      hour: საათი
+      minute: წუთი
+      month: თვე
+      second: წამი
+      year: წელი
   errors:
     format: "%{attribute} %{message}"
     messages:
-      accepted: must be accepted
-      blank: can't be blank
+      accepted: "საჭიროებს თანხმობას"
+      blank: "არ უნდა იყოს ცარიელი"
       present: must be blank
-      confirmation: doesn't match %{attribute}
-      empty: can't be empty
-      equal_to: must be equal to %{count}
-      even: must be even
-      exclusion: is reserved
-      greater_than: must be greater than %{count}
-      greater_than_or_equal_to: must be greater than or equal to %{count}
-      inclusion: is not included in the list
-      invalid: is invalid
-      less_than: must be less than %{count}
-      less_than_or_equal_to: must be less than or equal to %{count}
-      not_a_number: is not a number
-      not_an_integer: must be an integer
-      odd: must be odd
+      confirmation: "ვერ დასტურდება"
+      empty: "არ უნდა იყოს ცარიელი"
+      equal_to: "უნდა იყოს %{count}-ის ტოლი"
+      even: "უნდა იყოს ლუწი"
+      exclusion: დაკავებულია
+      greater_than: "უნდა იყოს %{count}-ზე მეტი"
+      greater_than_or_equal_to: "უნდა იყოს %{count}-ზე მეტი ან ტოლი"
+      inclusion: "არ არის სიაში"
+      invalid: არასწორია
+      less_than: "უნდა იყოს %{count}-ზე ნაკლები"
+      less_than_or_equal_to: "უნდა იყოს %{count}-ზე ნაკლები ან ტოლი"
+      not_a_number: "არ არის რიცხვი"
+      not_an_integer: "უნდა იყოს მთელი რიცხვი"
+      odd: "უნდა იყოს კენტი"
       record_invalid: 'Validation failed: %{errors}'
       restrict_dependent_destroy:
         one: Cannot delete record because a dependent %{record} exists
@@ -127,13 +127,13 @@ ka:
       taken: has already been taken
       too_long:
         one: is too long (maximum is 1 character)
-        other: is too long (maximum is %{count} characters)
+        other: "ძალიან გრძელია (სიმბოლოების მაქსიმალური რაოდენობა %{count})"
       too_short:
         one: is too short (minimum is 1 character)
-        other: is too short (minimum is %{count} characters)
+        other: "ძალიან მოკლეა (სიმბოლოების მინიმალური რაოდენობა %{count})"
       wrong_length:
         one: is the wrong length (should be 1 character)
-        other: is the wrong length (should be %{count} characters)
+        other: "არასწორი სიგრძე (უნდა იყოს %{count} სიმბოლო)"
       other_than: must be other than %{count}
     template:
       body: 'There were problems with the following fields:'
@@ -142,11 +142,11 @@ ka:
         other: "%{count} errors prohibited this %{model} from being saved"
   helpers:
     select:
-      prompt: Please select
+      prompt: გთხოვთ, აირჩიოთ
     submit:
-      create: Create %{model}
-      submit: Save %{model}
-      update: Update %{model}
+      create: '%{model} შექმნა'
+      submit: '%{model} შენახვა'
+      update: '%{model} განახლება'
     default_language: Default Language
   number:
     currency:
@@ -168,11 +168,11 @@ ka:
       decimal_units:
         format: "%n %u"
         units:
-          billion: Billion
-          million: Million
-          quadrillion: Quadrillion
-          thousand: Thousand
-          trillion: Trillion
+          billion: ბილიარდი
+          million: მილიონი
+          quadrillion: კვადრილიონი
+          thousand: ათასი
+          trillion: ტრილიონი
           unit: ''
       format:
         delimiter: ''
@@ -201,8 +201,8 @@ ka:
         strip_insignificant_zeros: true
   support:
     array:
-      last_word_connector: ", and "
-      two_words_connector: " and "
+      last_word_connector: ", და "
+      two_words_connector: " და "
       words_connector: ", "
   time:
     am: am

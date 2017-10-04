@@ -55,11 +55,11 @@ ka:
       and: და
       all: ყველა
       numericSymbols: [ null , "მლნ" , "მლრდ" , "ტრილ" , "კვადრ" , "E"]
-      no_result_found_for: "No Results Found for"
+      no_result_found_for: "შედეგი არ არის ნაპოვნი"
       lari: ლარი
       na: "n/a"
-      highlight_chart: Highlight chart
-      update_or_remove_highlight: Update or remove highlight
+      highlight_chart: გახადე რჩეული
+      update_or_remove_highlight: განაახლეთ ან წაშალეთ რჩეული ფაქტები
     locale:
       short:
         en: En
@@ -85,41 +85,41 @@ ka:
       forgot_password: დაგავიწყდათ პაროლი?
     chart:
       title:
-        top_5_donors: Top %{n} %{obj} Donors for All Parties
-        top_5_parties: Top %{n} Parties/Candidates for All Donors
-        top_5_donors_for_party: Top %{n} Donors for %{obj}
-        last_5_donations_for_party: Last %{n} Donations for %{obj}
-        top_5_donors_for_parties: Top %{n} Donors for %{obj}
-        total_donations_for_parties: Total Donations for %{obj}
-        last_5_donations_for_donor: Last %{n} Donations by %{obj}
-        top_5_parties_donated_to: Top %{n} Parties Donated to by %{obj}
-        total_donations_for_each_donor: Total Donations for %{obj}
-        donors_donations_sorted_by_amount: Top Donations by %{obj} to %{objb}
-        parties_donations_sorted_by_amount: Top Donations to %{objb} by %{obj}
-        to_multiple: Have donated to multiple parties
-        monetary_donation: "%{s} donation"
-        monetary_true: Monetary
-        monetary_false: Non-Monetary
-        of_amount: of %{s} GEL
-        donation_of_amount: Donation of %{s} GEL
-        for_parties: "For: %{s}"
-        receiving_monetary_amount: Receiving %{m} donation%{a}
-        from_donors: from %{s} Donors
-        from_donors_who: from %{s} Donors who
-        nature_individual: Individual
-        nature_organization: Organization
+        top_5_donors: ტოპ %{n} %{obj} დონორები ყველა პარტიისათვის
+        top_5_parties: ტოპ %{n} პარტია/კანდიდატი ყველა დონორისთვის
+        top_5_donors_for_party: ტოპ %{n} დონორები %{obj}
+        last_5_donations_for_party: ბოლო %{n} შემოწირულობები %{obj}
+        top_5_donors_for_parties: ტოპ %{n} დონორები %{obj}
+        total_donations_for_parties: სრული შემოწირულობები %{obj}
+        last_5_donations_for_donor: ბოლო %{n} შემოწირულობები %{obj}
+        top_5_parties_donated_to: ტოპ %{n} პარტიები, რომლებმაც მიიღეს შემოწირულობა მიერ  %{obj}
+        total_donations_for_each_donor: სრული შემოწირულობები %{obj}
+        donors_donations_sorted_by_amount: ტოპ შემოწირულობები მიერ %{obj} სთვის %{objb}
+        parties_donations_sorted_by_amount: ტოპ შემოწირულობები თვის {objb} მიერ %{obj}
+        to_multiple: შემოწირეს რამდენიმე პარტიას
+        monetary_donation: "%{s} შემოწირულობა"
+        monetary_true: ფულადი
+        monetary_false: არა ფულადი
+        of_amount: ის %{s} GEL
+        donation_of_amount: შემოწირულობა %{s} GEL
+        for_parties: "სთვის: %{s}"
+        receiving_monetary_amount: მიღებული %{m} შემოწირულობა %{a}
+        from_donors: მიერ %{s} დონორები
+        from_donors_who: მიერ %{s} დონორები რომლებიც
+        nature_individual: ფიზიკური პირი
+        nature_organization: ორგანიზაცია
         no_data:
-          top_5_donors: No Donations for All Parties
-          top_5_parties: No Donations for All Parties
-          top_5_donors_for_party: No Donations for %{obj}
-          last_5_donations_for_party: No Donations for %{obj}
-          top_5_donors_for_parties: No Donations for %{obj}
-          total_donations_for_parties: No Donations for %{obj}
-          last_5_donations_for_donor: No Donations by %{obj}
-          top_5_parties_donated_to: No Parties Donated to by %{obj}
-          total_donations_for_each_donor: No donations for %{obj}
-          donors_donations_sorted_by_amount: No Donations by %{obj} to %{objb}
-          parties_donations_sorted_by_amount: No Donations to %{objb} by %{obj}
+          top_5_donors: არცერთ პარტიას შემოწირულობა არ აქვს
+          top_5_parties: არცერთ პარტიას შემოწირულობა არ აქვს
+          top_5_donors_for_party: არცერთი დონორი %{obj}
+          last_5_donations_for_party: შემოწირულობები არ არის %{obj}
+          top_5_donors_for_parties: შემოწირულობები არ არის %{obj}
+          total_donations_for_parties: შემოწირულობები არ არის  %{obj}
+          last_5_donations_for_donor: შემოწირულობები არ არის მიერ %{obj}
+          top_5_parties_donated_to: პარტიებს არ აქვთ შემოწირულობები მიერ {obj}
+          total_donations_for_each_donor: შემოწირულობები არ არის სთვის %{obj}
+          donors_donations_sorted_by_amount: შემოწირულობები არ არის მიერ %{obj} to %{objb}
+          parties_donations_sorted_by_amount: შემოწირულობები არ არის %{objb} მიერ %{obj}
       finance:
         title:
           party_donations_for: "პარტია - შემოწირულობები"
@@ -132,9 +132,9 @@ ka:
         parties: პარტია
         donations: შემოწირულობა
       filename:
-        finance: finances
-        donation: donations
-        missing: missing
+        finance: ფინანსები
+        donation: შემოწირულობები
+        missing: აკლია
     filters:
       donations: შემოწირულებები
       party_finances: პარტიის <br />ფინანსები
@@ -148,40 +148,40 @@ ka:
       debts: ვალდებულებები
       campaign: კამპანია
     dialog:
-      close: Close
+      close: დახურვა
       embed:
-        caption: Embed
-        copy_code: "Copy and paste this embed code into your web page:"
-        copied: Copied
-        frame_size: "Frame size:"
-        custom_size: Custom size
-        embed_type: "Embed type:"
-        dynamic: Dynamic
-        static: Static
-        type_hint: "A dynamic embed will use the most up-to-date information<br/> while a static embed will be frozen to the data that is currently showing."
+        caption: ემბედ კოდი
+        copy_code: "დააკოპირეთ და ჩასვით ეს ემბბედ კოდი თქვენს ვებ გვერდზე:"
+        copied: დაკოპირებულია
+        frame_size: "ჩარჩოს ზომა:"
+        custom_size: სპეციალური ზომა
+        embed_type: "ემბედ ტიპი:"
+        dynamic: დინამიკა
+        static: სტატიკური
+        type_hint: "დინამიკური ემბედი გამოიყენებს ყველაზე ახალ ინფორმაციას<br/> სტატიკური ებედი კი გამოიყენებს იმ მონაცემებს, რომლებსაც ახლა აჩვენებს."
       share:
-        caption: Share
-        share_chart: "Share chart:"
+        caption: გაზიარება
+        share_chart: "გააზიარე გრაფიკი:"
       highlight:
-        caption: Highlight
-        intro: Use the textbox below to give context to the chart (optional)
-        description: 'Enter description'
-        unhighlight: Unhighlight
+        caption: რჩეული ფაქტი
+        intro: გამოიყენეთ ტექსტის ადგილი იმისათვის, რომ გარფიკს კონტექსტი მისცეთ (სურვილისამებრ)
+        description: 'შეიყვანეთ აღწერა'
+        unhighlight: რჩეული ფაქტის წაშლა
   notifier:
     job:
       donorset_file_process:
-        donorset_not_found: "Donorset to process was not found, probably you already delete it."
-        operator_not_found: "Operator not found, send to nowhere."
-        invalid_party_name: "Party '%{name}', name is invalid, check row %{row} in excel, and make sure it has party name"
+        donorset_not_found: "დონორების ბაზა ვერ მოიძებნა, სავარაუდოდ, თქვენ უკვე წაშალეთ ის."
+        operator_not_found: "ოპერატორი ვერ მოიძებნა."
+        invalid_party_name: "პარტიის '%{name}', სახელი არის არასწორი, შეამოწმეთ მწკრივი %{row} ექსელში, და დარწმუნდით რომ აქვს პარტიის სახელი"
         unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
-        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>.%{missing_parties}"
-        missing_parties: "New parties were added, and you need to specify correct types <a href='%{link}'>link</a>"
+        success: "ფაილი %{filename} წარმატებით დამუშავდა. დამუშავებული მონაცემების სანახავად გაყევით ბმულს <a href='%{link}'>link</a>.%{გამოკლებული პარტიები}"
+        missing_parties: "ახალი პარტიები დაემატა და თქვენ უნდა მიანიჭოთ სწორი ტიპები <a href='%{link}'>link</a>"
       dataset_file_process:
-        dataset_not_found: "Dataset to process was not found, probably you already delete it."
-        operator_not_found: "Operator not found, send to nowhere."
-        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
-        success: "File %{filename} was successfully processed. To view processed data follow the <a href='%{link}'>link</a>."
+        dataset_not_found: "მონაცემთა ბაზა ვერ მოიძებნა, სავარაუდოდ, თქვენ უკვე წაშალეთ ის."
+        operator_not_found: "ოპერატორი ვერ მოიძებნა, გაგზავნეთ არასდ."
+        unmatched_header: "ჰედერი აღნიშნულ ფაილში არის განსხვავებული, შეადარეთ მოსალოდნელს %{header}."
+        success: "ფაილი %{filename} წარმატებით დამუშავდა. იმისათვის, რომ ნახოთ დამუშავებული მონაცემები გაყევით ბმულს <a href='%{link}'>link</a>."
       donation_uploader:
-        unmatched_header: "Header in provided file is distinct, compare to expected one %{header}."
-        success: "%{length} rows for period %{from} - %{to} was successfully processed. %{missing_parties}"
-        missing_parties: "New parties were added, and you need to specify correct types <a href='%{link}'>link</a>"
+        unmatched_header: "ჰედერი აღნიშნულ ფაილში არის განსხვავებული, შეადარეთ მოსალოდნელს %{header}."
+        success: "%{length} მწკრივები პერიოდისთვის %{from} - %{to} წარმატებით დამუშავდა. %{missing_parties}"
+        missing_parties: "ახალი პარტიები დაემატა ანდ თქვენ მათ სწორი ტიპები უნდა მიანიჭოთ.  <a href='%{link}'>link</a>"

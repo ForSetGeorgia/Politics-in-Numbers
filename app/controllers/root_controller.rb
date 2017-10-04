@@ -92,7 +92,7 @@ class RootController < ApplicationController
       gon.same_amount_message = t('.same_amount_message')
 
 
-      @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true, m.type] }
+      @party_list = Party.sorted.map { |m| [m.id, m.title, m.permalink, m.member, m.type] }
       gon.party_list = Party.list_from(@party_list)
 
       gon.donor_list = Donor.list(donation_pars[:donor]) if donation_pars.key?(:donor)

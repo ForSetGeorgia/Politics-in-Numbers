@@ -4,7 +4,7 @@
   <%= f.inputs class: "row" do %>
     <%= f.input :party_id, :as => :select, :collection => Party.for_collection, :wrapper_html => { :class =>"col-md-2" } %>
     <%= f.input :period_id, :as => :select, :collection => Period.for_collection, :wrapper_html => { :class =>"col-md-2 col-md-offset-1" } %>
-    <%= f.input :version, :as => :select, :collection => [1,2], selected: 1, :wrapper_html => { :class =>"col-md-2 col-md-offset-1" } %>
+    <%= f.input :version, :as => :select, :collection => [1,2,3], selected: 1, :wrapper_html => { :class =>"col-md-2 col-md-offset-1" } %>
     <%= f.input :source, :as => :file, hint: true, input_html: { accept: ".xlsx" }, :wrapper_html => { :class =>"col-md-3 col-md-offset-1" } %>
   <% end %>
 
