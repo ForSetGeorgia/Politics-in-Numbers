@@ -123,6 +123,7 @@
           </div>
         </div>
         <div class="finance filter-inputs" data-type="finance">
+          <%# party_ids_with_dataset = Dataset.distinct(:party_id) && party_ids_with_dataset.include?(s[0])  %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "party", on: true, list: generate_li_list(@party_list.select{|s| s[3] == true }, { titles: { 0 => t('.parties'), 1 => t('.candidates') }, index: 4, order: [0, 1] }), category_label: 0, label: "party_candidate" } %>
             <%# Party.member_party_list), category_label: 0 } %>
           <% lists = Category.by_sym(@categories) %>
