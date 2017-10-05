@@ -85,11 +85,11 @@ ka:
       forgot_password: დაგავიწყდათ პაროლი?
     chart:
       title:
-        top_5_donors: ტოპ %{n} %{obj} დონორები ყველა პარტიისათვის
-        top_5_parties: ტოპ %{n} პარტია/კანდიდატი ყველა დონორისთვის
-        top_5_donors_for_party: ტოპ %{n} დონორები %{obj}
+        top_5_donors: ტოპ %{n} %{obj} დონორი ყველა პარტიისათვის
+        top_5_parties: ტოპ %{n} პარტია/კანდიდატი შემოწირულობის მიხედვით
+        top_5_donors_for_party: ტოპ %{n} დონორი შემოწირულობის მიხედვით %{obj}
         last_5_donations_for_party: ბოლო %{n} შემოწირულობები %{obj}
-        top_5_donors_for_parties: ტოპ %{n} დონორები %{obj}
+        top_5_donors_for_parties: ტოპ %{n} დონორი %{obj}
         total_donations_for_parties: სრული შემოწირულობები %{obj}
         last_5_donations_for_donor: ბოლო %{n} შემოწირულობები %{obj}
         top_5_parties_donated_to: ტოპ %{n} პარტიები, რომლებმაც მიიღეს შემოწირულობა მიერ  %{obj}
