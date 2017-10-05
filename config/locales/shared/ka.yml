@@ -54,7 +54,7 @@ ka:
       show_less: მეტის ჩვენება
       and: და
       all: ყველა
-      numericSymbols: [ null , "მლნ" , "მლრდ" , "ტრილ" , "კვადრ" , "E"]
+      numericSymbols: [ "ათასი" , "მლნ" , "მლრდ" , "ტრილ" , "კვადრ" , "E"]
       no_result_found_for: "შედეგი არ არის ნაპოვნი"
       lari: ლარი
       na: "n/a"
