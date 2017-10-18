@@ -31,6 +31,7 @@ class ShortUri
     return nil unless tp.present?
     shr = ShortUri.by_type(tp).limit(1).find_by({ sid: sid })
     shr.set(activated: true) if tp == 1 && !shr.activated
+    shr[:pars][:party] = [shr[:pars][:party]] if tp == 0 && shr[:pars].present? && shr[:pars].key?(:party) && shr[:pars][:party].kind_of?(String)
     shr.present? ? shr : nil
   end
 

@@ -728,7 +728,7 @@ class Donor
         end
       end
     }
-    sid = ShortUri.explore_uri(f.merge({filter: "donation"}))
+    sid = ShortUri.explore_uri(f.merge({filter: "donation", party: [f[:party]] }))
     psid = ShortUri.party_uri(f.merge({filter: "donation"}))
     # f[:party]
 
