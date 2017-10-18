@@ -49,9 +49,12 @@ class Admin::PartiesController < AdminController
   # POST /parties
   # POST /parties.json
   def create
+    params[:party].permit!
     @item = @model.new(params[:party])
+    Rails.logger.debug("--------------------------------------------#{@item.errors.inspect}")
 
     respond_to do |format|
+      @item.valid?
       if @item.save
         format.html do
           redirect_to admin_parties_path, flash: {
