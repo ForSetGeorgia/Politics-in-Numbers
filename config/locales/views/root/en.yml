@@ -103,6 +103,8 @@ en:
       income_campaign: Income Campaign
       expenses: Expenses
       expenses_campaign: Expenses Campaign
+      ad_expenses: Ad Expenses
+      ad_expenses_campaign: Ad Expenses Campaign
       reform_expenses: Reforms Fund Expenses
       property_assets: Property Assets
       financial_assets: Financial Assets
@@ -124,6 +126,8 @@ en:
         income_campaign: Select category
         expenses: Select category
         expenses_campaign: Select category
+        ad_expenses: Select category
+        ad_expenses_campaign: Select category
         reform_expenses: Select category
         property_assets: Select category
         financial_assets: Select category
@@ -134,6 +138,7 @@ en:
       overall_summary: Overall Summary
       income: Income
       expenses: Expenses
+      ad_expenses: Ad Expenses
       reform_expenses: Reforms Fund Expenses
       property_assets: Property Assets
       financial_assets: Financial Assets

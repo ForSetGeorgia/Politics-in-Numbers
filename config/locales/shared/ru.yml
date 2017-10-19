@@ -142,6 +142,8 @@ ru:
       income_campaign: Доход кампании
       expenses: Расходы
       expenses_campaign: Расходы на кампанию
+      ad_expenses: Расходы на рекламу
+      ad_expenses_campaign: Расходы на рекламу кампании
       reform_expenses: " ФОНД РЕФОРМ <br/> РАСХОДЫ"
       property_assets: СОБСТВЕННОСТЬ <br/> АКТИВЫ
       financial_assets: ФИНАНСОВЫЕ <br/>АКТИВЫ

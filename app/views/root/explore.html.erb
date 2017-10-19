@@ -29,6 +29,13 @@
             </div>
           </li>
           <li>
+            <div class="finance-category-toggle" data-state="" data-cat="ad_expenses">
+              <a href="#ad_expense" class="label" tabindex="4"><span class="f"><%= t('shared.common.all') %></span><span class="s"><%= t('shared.filters.campaign') %></span><%= t('shared.filters.ad_expenses').upcase %></a>
+              <a href="#ad_expense-all" class="sub" tabindex="4" data-sub="all" data-cat="ad_expenses"><%= t('shared.common.all') %></a>
+              <a href="#ad_expense-campaign" class="sub" tabindex="4" data-sub="campaign" data-cat="ad_expenses_campaign"><%= t('shared.filters.campaign') %></a>
+            </div>
+          </li>
+          <li>
             <div class="finance-category-toggle" data-state="simple" data-cat="financial_assets">
               <a href="#financial_assets" class="label long" tabindex="4"><%= t('shared.filters.financial_assets').html_safe %></a>
             </div>
@@ -133,6 +140,8 @@
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "expenses", on: false, list: lists[:expenses].html_safe } %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "expenses_campaign", on: false, list: lists[:expenses_campaign].html_safe } %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "reform_expenses", on: false, list: lists[:reform_expenses].html_safe } %>
+          <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "ad_expenses", on: false, list: lists[:ad_expenses].html_safe } %>
+          <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "ad_expenses_campaign", on: false, list: lists[:ad_expenses_campaign].html_safe } %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "property_assets", on: false, list: lists[:property_assets].html_safe } %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "financial_assets", on: false, list: lists[:financial_assets].html_safe } %>
           <%= render partial: 'autocomplete_input', :locals => { input_for: "finance", input_field: "debts", on: false, list: lists[:debts].html_safe } %>

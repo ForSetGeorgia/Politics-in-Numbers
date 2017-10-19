@@ -103,6 +103,8 @@ ru:
       income_campaign: Доход кампании
       expenses: Расходы
       expenses_campaign: Расходы на кампанию
+      ad_expenses: Расходы на рекламу
+      ad_expenses_campaign: Расходы на рекламу кампании
       reform_expenses: Затраты фонда реформ
       property_assets: Недвижимость
       financial_assets: Финансовые активы
@@ -124,6 +126,8 @@ ru:
         income_campaign: Выберите категорию
         expenses: Выберите категорию
         expenses_campaign: Выберите категорию
+        ad_expenses: Выберите категорию
+        ad_expenses_campaign: Выберите категорию
         reform_expenses: Выберите категорию
         property_assets: Выберите категорию
         financial_assets: Выберите категорию
@@ -134,6 +138,7 @@ ru:
       overall_summary: Общее резюме
       income: Доход
       expenses: Расходы
+      ad_expenses: Расходы на рекламу
       reform_expenses: Затраты фонда реформ
       property_assets: Недвижимость
       financial_assets: Финансовые активы

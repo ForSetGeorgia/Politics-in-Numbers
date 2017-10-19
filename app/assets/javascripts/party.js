@@ -200,7 +200,7 @@ $(document).ready(function (){
           period: "period"
         }
       },
-      categories: ["income", "expenses", "reform_expenses", "property_assets", "financial_assets", "debts" ],
+      categories: ["income", "expenses", "ad_expenses", "reform_expenses", "property_assets", "financial_assets", "debts" ],
       elem: {
         finance: {
           party: $("#filter_party"),
@@ -698,6 +698,7 @@ $(document).ready(function (){
     stats_box = $('#finance .stats-box')
     stats_box.find('[data-category="income"] span').text(party.stats.finance['income'])
     stats_box.find('[data-category="expenses"] span').text(party.stats.finance['expenses'])
+    stats_box.find('[data-category="ad_expenses"] span').text(party.stats.finance['ad_expenses'])
     stats_box.find('[data-category="reform_expenses"] span').text(party.stats.finance['reform_expenses'])
     stats_box.find('[data-category="financial_assets"] span').text(party.stats.finance['financial_assets'])
     stats_box.find('[data-category="property_assets"] span').text(party.stats.finance['property_assets'])

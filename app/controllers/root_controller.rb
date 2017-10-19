@@ -337,7 +337,7 @@ class RootController < ApplicationController
 
     categories = Category.non_virtual.only_sym
     @main_categories = {}
-    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign }
+    categories.each{|m| @main_categories[m[:sym]] = m[:id].to_s if m[:sym] != :income_campaign && m[:sym] != :expenses_campaign && m[:sym] != :ad_income_campaign }
     categories.sort_by!{|x| Category::SYMS.index x[:sym]}
 
     gon.root_url = root_url
@@ -556,12 +556,12 @@ class RootController < ApplicationController
   private
 
     def explore_params
-      params.permit([:id, :filter, :monetary, :multiple, :nature, :locale, :format, { donor: [], period: [], amount: [], party: [], income: [], income_campaign: [], expenses: [], expenses_campaign: [], reform_expenses: [], property_assets: [], financial_assets: [], debts: [] }])
+      params.permit([:id, :filter, :monetary, :multiple, :nature, :locale, :format, { donor: [], period: [], amount: [], party: [], income: [], income_campaign: [], expenses: [], expenses_campaign: [], ad_expenses: [], ad_expenses_campaign: [], reform_expenses: [], property_assets: [], financial_assets: [], debts: [] }])
     end
 
     def explore_filter_params
       params.permit(:locale, :donation => [:all, :monetary, :multiple, :nature, { donor: [], period: [], amount: [], party: []}],
-        :finance => [:all, { party: [], period:[], income: [], income_campaign: [], expenses: [], expenses_campaign: [], reform_expenses: [], property_assets: [], financial_assets: [], debts: []  }])
+        :finance => [:all, { party: [], period:[], income: [], income_campaign: [], expenses: [], expenses_campaign: [], ad_expenses: [], ad_expenses_campaign: [], reform_expenses: [], property_assets: [], financial_assets: [], debts: []  }])
     end
 
     def download_params

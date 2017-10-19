@@ -26,6 +26,9 @@
           <%= link_to t('shared.filters.expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', expenses: [@main_categories[:expenses]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
+          <%= link_to t('shared.filters.ad_expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', ad_expenses: [@main_categories[:ad_expenses]], party: @default_parties, period: @default_periods})) %>
+        </li>
+        <li>
           <%= link_to t('shared.filters.reform_expenses').strip_html_tags, explore_path(id: ShortUri.explore_uri({filter: 'finance', reform_expenses: [@main_categories[:reform_expenses]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>

@@ -142,7 +142,9 @@ ka:
       income_campaign: კამპანიის შემოსავალი
       expenses: ხარჯები
       expenses_campaign: კამპანიის ხარჯები
-      reform_expenses: რეფორმების ფონდი <br/>ხარჯები
+      ad_expenses: სარეკლამო ხარჯები
+      ad_expenses_campaign: კამპანიის სარეკლამო ხარჯები
+      reform_expenses: რეფორმების ფონდის <br/>ხარჯები
       property_assets: უძრავი ქონება
       financial_assets: ფინანსური <br/>სახსრები
       debts: ვალდებულებები

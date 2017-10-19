@@ -8,8 +8,8 @@ class Dataset
   after_create  :prune_share_images
 
   STATES = [:pending, :processed, :discontinued]  # 0 pending 1 processed 2 discontinued
-  SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
-  SHORT_SYMS = [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :ad_expenses, :ad_expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SHORT_SYMS = [ :income, :expenses, :ad_expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
 
   embeds_many :category_datas
   embeds_many :detail_datas

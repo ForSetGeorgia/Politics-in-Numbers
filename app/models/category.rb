@@ -38,7 +38,7 @@ class Category
   scope :virtual, ->{ where(virtual: true) }
   scope :non_virtual, ->{ where(virtual: false) }
   scope :only_sym, ->{ where(:sym.ne => nil) }
-  scope :only_short_sym, ->{ where(:sym.nin => [nil, :income_campaign, :expenses_campaign], virtual: false ) }
+  scope :only_short_sym, ->{ where(:sym.nin => [nil, :income_campaign, :expenses_campaign, :ad_expenses_campaign], virtual: false ) }
 
   #############################
   # indexes
@@ -48,8 +48,8 @@ class Category
   index sym: 1
   index({_slugs: 1}, { unique: true, sparse: false })
   #index simple: 1
-  SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
-  SYMS_SHORT = [ :income, :expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SYMS = [ :income, :income_campaign, :expenses, :expenses_campaign, :ad_expenses, :ad_expenses_campaign, :reform_expenses, :property_assets, :financial_assets, :debts ]
+  SYMS_SHORT = [ :income, :expenses, :ad_expenses, :reform_expenses, :property_assets, :financial_assets, :debts ]
 
 
   def self.get_ids_by_slugs(id_or_slugs)

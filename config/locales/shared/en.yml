@@ -142,6 +142,8 @@ en:
       income_campaign: Income Campaign
       expenses: Expenses
       expenses_campaign: Expenses Campaign
+      ad_expenses: Ad Expenses
+      ad_expenses_campaign: Ad Expenses Campaign
       reform_expenses: REFORMS FUND <br/>EXPENSES
       property_assets: PROPERTY <br/>ASSETS
       financial_assets: FINANCIAL <br/>ASSETS

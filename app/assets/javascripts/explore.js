@@ -452,6 +452,8 @@ $(document).ready(function (){
         income_campaign: "autocomplete",
         expenses: "autocomplete",
         expenses_campaign: "autocomplete",
+        ad_expenses: "autocomplete",
+        ad_expenses_campaign: "autocomplete",
         reform_expenses: "autocomplete",
         property_assets: "autocomplete",
         financial_assets: "autocomplete",
@@ -464,18 +466,22 @@ $(document).ready(function (){
         income_campaign: false,
         expenses: false,
         expenses_campaign: false,
+        ad_expenses: false,
+        ad_expenses_campaign: false,
         reform_expenses: false,
         property_assets: false,
         financial_assets: false,
         debts: false
       },
-      categories: ["income", "income_campaign", "expenses", "expenses_campaign", "reform_expenses", "property_assets", "financial_assets", "debts" ],
+      categories: ["income", "income_campaign", "expenses", "expenses_campaign", "ad_expenses", "ad_expenses_campaign", "reform_expenses", "property_assets", "financial_assets", "debts" ],
       elem: {
         party: $("#finance_party"),
         income: $("#finance_income"),
         income_campaign:$("#finance_income_campaign"),
         expenses:$("#finance_expenses"),
         expenses_campaign:$("#finance_expenses_campaign"),
+        ad_expenses:$("#finance_ad_expenses"),
+        ad_expenses_campaign:$("#finance_ad_expenses_campaign"),
         reform_expenses:$("#finance_reform_expenses"),
         property_assets:$("#finance_property_assets"),
         financial_assets:$("#finance_financial_assets"),
@@ -714,7 +720,7 @@ $(document).ready(function (){
     var t, tmp, subcat = "all";
 
     // finance_toggle.trigger("click");
-    if(["income_campaign", "expenses_campaign"].indexOf(cat) !== -1) {
+    if(["income_campaign", "expenses_campaign", "ad_expenses_campaign"].indexOf(cat) !== -1) {
       var tmp = cat.split("_");
       cat = tmp[0];
       subcat = tmp[1];
