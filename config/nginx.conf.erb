@@ -115,4 +115,11 @@ server {
   location ~ \.(php|html)$ {
     return 405;
   }
+
+  ##############################################################
+  # the following is to allow certbots/letsencrypt access to certs
+  ##############################################################
+  location ~ /.well-known {
+    allow all;
+  }
 }
