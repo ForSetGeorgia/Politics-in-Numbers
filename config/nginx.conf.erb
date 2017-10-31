@@ -4,6 +4,7 @@ upstream puma_<%= application %> {
 
 server {
   listen 80;
+  listen [::]:80;
 
   server_name <%= web_url %> www.<%= web_url %> live.<%= web_url %> www.live.<%= web_url %>;
   root <%= full_current_path %>/public;
