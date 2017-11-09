@@ -65,6 +65,6 @@ class Admin::DatasetsController < AdminController
 
   private
     def _params
-      params.require(:dataset).permit(:id, :party_id, :period_id, :source)
+      params.require(:dataset).permit(:id, :party_id, :period_id, :source, :version)
     end
 end
