@@ -12,33 +12,33 @@
       </div>
       <div class="launcher-group">
         <div class="launcher-buttons">
-          <%= link_to t('shared.filters.donations'), explore_path(id: ShortUri.explore_uri({filter: 'donation'})), tabindex: 4, class: 'donation' %>
+          <%= link_to upcase(t('shared.filters.donations')), explore_path(id: ShortUri.explore_uri({filter: 'donation'})), tabindex: 4, class: 'donation' %>
           <div class="separator"></div>
-          <%= link_to t('shared.filters.party_finances').strip_html_tags, income_path, tabindex: 4, class: 'finance' %>
+          <%= link_to upcase(t('shared.filters.party_finances').strip_html_tags), income_path, tabindex: 4, class: 'finance' %>
         </div>
-        <%= link_to t('.go_explore'), income_path, class: 'explore' %>
+        <%= link_to upcase(t('.go_explore')), income_path, class: 'explore' %>
       </div>
       <ul class="launcher-list">
         <li>
-          <%= link_to t('shared.filters.income').upcase, income_path %>
+          <%= link_to upcase(t('shared.filters.income')), income_path %>
         </li>
         <li>
-          <%= link_to t('shared.filters.expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', expenses: [@main_categories[:expenses]], party: @default_parties, period: @default_periods})) %>
+          <%= link_to upcase(t('shared.filters.expenses')), explore_path(id: ShortUri.explore_uri({filter: 'finance', expenses: [@main_categories[:expenses]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
-          <%= link_to t('shared.filters.reform_expenses').strip_html_tags, explore_path(id: ShortUri.explore_uri({filter: 'finance', reform_expenses: [@main_categories[:reform_expenses]], party: @default_parties, period: @default_periods})) %>
+          <%= link_to upcase(t('shared.filters.reform_expenses').strip_html_tags), explore_path(id: ShortUri.explore_uri({filter: 'finance', reform_expenses: [@main_categories[:reform_expenses]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
-          <%= link_to t('shared.filters.ad_expenses').upcase, explore_path(id: ShortUri.explore_uri({filter: 'finance', ad_expenses: [@main_categories[:ad_expenses]], party: @default_parties, period: @default_periods})) %>
+          <%= link_to upcase(t('shared.filters.ad_expenses')), explore_path(id: ShortUri.explore_uri({filter: 'finance', ad_expenses: [@main_categories[:ad_expenses]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
-            <%= link_to t('shared.filters.property_assets').strip_html_tags, explore_path(id: ShortUri.explore_uri({filter: 'finance', property_assets: [@main_categories[:property_assets]], party: @default_parties, period: @default_periods})) %>
+            <%= link_to upcase(t('shared.filters.property_assets').strip_html_tags), explore_path(id: ShortUri.explore_uri({filter: 'finance', property_assets: [@main_categories[:property_assets]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
-          <%= link_to t('shared.filters.financial_assets').strip_html_tags, explore_path(id: ShortUri.explore_uri({filter: 'finance', financial_assets: [@main_categories[:financial_assets]], party: @default_parties, period: @default_periods})) %>
+          <%= link_to upcase(t('shared.filters.financial_assets').strip_html_tags), explore_path(id: ShortUri.explore_uri({filter: 'finance', financial_assets: [@main_categories[:financial_assets]], party: @default_parties, period: @default_periods})) %>
         </li>
         <li>
-            <%= link_to t('shared.filters.debts').html_safe, explore_path(id: ShortUri.explore_uri({filter: 'finance', debts: [@main_categories[:debts]], party: @default_parties, period: @default_periods})) %>
+            <%= link_to upcase(t('shared.filters.debts').html_safe), explore_path(id: ShortUri.explore_uri({filter: 'finance', debts: [@main_categories[:debts]], party: @default_parties, period: @default_periods})) %>
         </li>
       </ul>
     </div>
