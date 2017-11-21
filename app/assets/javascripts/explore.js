@@ -1103,10 +1103,13 @@ $(document).ready(function (){
   }
   function render_donation_table(table) {
     // console.log(table, donation.download);
-    var prev = undefined, alt_color = true,
+    var prev = undefined,
+      alt_color = true,
+      timer = null,
       dt = donation_table.DataTable({
         processing: true,
         serverSide: true,
+        // searchDelay: 2000,
         responsive: true,
         destroy: true,
         // bAutoWidth: false,
@@ -1135,6 +1138,22 @@ $(document).ready(function (){
             $(row).addClass('alt');
           }
           prev = data[2];
+        },
+        initComplete: function() {
+          donation_table.parent().find('.dataTables_filter input').off('.DT')
+          .on('keyup.DT', function(e)
+          {
+            var value = this.value;
+            clearTimeout(timer);
+            timer = setTimeout(function() {
+              if(value !== "") {
+                dt.search(value).draw();
+              }
+            }, 1000);
+          }).on('search.DT', function(e) {
+            var value = this.value;
+            if(value === "") { dt.search(value).draw(); }
+          })
         }
       });
       donation_table.parent().find("#DataTables_Table_0_download")
