@@ -137,7 +137,9 @@ class RootController < ApplicationController
     else
       if is_finance
         dt = Dataset.explore(finance_pars, "t", inner_pars)
-        csv_file = CSV.generate do |csv|
+
+        head = 'EF BB BF'.split(' ').map{|a|a.hex.chr}.join()
+        csv_file = CSV.generate(csv = head) do |csv|
           dt[:table][:header].each{|e|
             tmp = []
             tmp_prev = ""
@@ -153,7 +155,7 @@ class RootController < ApplicationController
     end
     respond_to do |format|
       format.html
-      format.csv { csv_file.present? ? send_data(csv_file, filename: I18n.t(".shared.chart.filename.finance")+ "_#{sid}_#{Date.today}.csv") : redirect_to(explore_path, :notice => t('shared.msgs.data_not_found')) }
+      format.csv { csv_file.present? ? send_data(csv_file, filename: I18n.t(".shared.chart.filename.finance")+ "_#{sid}_#{Date.today}.csv", type: "text/csv") : redirect_to(explore_path, :notice => t('shared.msgs.data_not_found')) }
     end
   end
 
@@ -497,14 +499,17 @@ class RootController < ApplicationController
   def donations_datatable_filter
     dt = Donor.explore_table(params, request.format)
     if request.format.csv? && dt.present?
-      csv_file = CSV.generate do |csv|
+      head = 'EF BB BF'.split(' ').map{|a|a.hex.chr}.join()
+
+      csv_file = CSV.generate(csv = head) do |csv|
         csv << dt[:table][:header]
         dt[:table][:data].each { |r| csv << r }
       end
     end
+
     respond_to do |format|
       format.json { render :json => dt }
-      format.csv { csv_file.present? ? send_data(csv_file, filename: I18n.t(".shared.chart.filename.donation")+ "_#{params[:sid]}_#{Date.today}.csv") : redirect_to(explore_path, :notice => t('shared.msgs.data_not_found')) }
+      format.csv { csv_file.present? ? send_data(csv_file, filename: I18n.t(".shared.chart.filename.donation")+ "_#{params[:sid]}_#{Date.today}.csv", type: "text/csv") : redirect_to(explore_path, :notice => t('shared.msgs.data_not_found')) }
     end
   end
 
