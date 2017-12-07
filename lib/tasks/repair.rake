@@ -110,4 +110,88 @@ namespace :repair do
       puts 'done'
     }
   end
+
+  desc "Merge duplicated donors - where tin is same, and name has mistake"
+  task :merge_duplicated_donors => :environment do |t, args|
+    up_path = Rails.public_path.join("upload")
+    row_i = 1
+    merges = []
+    CSV.foreach("#{up_path}/repair_data/merge_duplicated_donors.csv", { headers: true }) do |row|
+      columnN = row[0]
+      tin = row[1]
+      name = row[2]
+      # puts columnN
+      # puts tin
+      data = []
+      data << { id: row[3], name: row[4] } if !row[3].nil?
+      data << { id: row[5], name: row[6] } if !row[5].nil?
+      data << { id: row[7], name: row[8] } if !row[7].nil?
+      # if row_i <= 2
+        if !columnN.nil?
+          columnN = columnN.to_i
+          # puts columnN
+          # puts data.length
+          if columnN > 0 && columnN <= data.length
+            to = data.delete_at(columnN-1)
+            # puts to[:id].inspect
+            merge_donors(to, data, merges)
+            # raise "one done"
+            # puts "#{tin} found" #
+          elsif columnN == 0
+            to = data.delete_at(0)
+            update_donor_name(to, name)
+            merge_donors(to, data, merges)
+            # puts "#{tin} #{name} needs to be updated"
+          else
+            # puts "#{tin} #{data[0]} not found"
+          end
+        else
+          raise "#{row_i} has missing column number."
+        end
+      # end
+
+      row_i += 1
+    end
+
+    require 'json'
+    File.open("#{up_path}/repair_data/merge_duplicated_donors.json","w") do |f|
+      f.write(merges.to_json)
+    end
+  end
+
+  def merge_donors(target, sources, merges)
+
+    m = { target: nil, sources: [] }
+
+    puts target[:id]
+    donor = Donor.find(target[:id])
+    raise "#{target[:name]} (#{target[:id]}) not found." unless donor.present?
+    m[:target] = donor.as_json
+
+    sources.each_with_index {|source|
+      source_donor = Donor.find(source[:id])
+      if source_donor.present?
+        src = { source: nil }
+        src[:source] = source_donor.as_json
+        puts "Current amount is #{donor.donations.length}, #{source_donor.donations.length}"
+        donor.donations.concat(source_donor.donations)
+        # src[:source_donations] << source_donor.donations
+        m[:sources] << src
+        source_donor.destroy
+      else
+        puts "Current amount is #{donor.donations.length}"
+        puts "#{source[:name]} (#{source[:id]}) not found."
+      end
+      puts "merge_donors"
+    }
+    merges << m
+  end
+  def update_donor_name(target, name)
+    donor = Donor.find(target[:id])
+    puts "update_donor_name from #{donor.first_name} #{donor.last_name} to #{name}"
+    nm = name.split(' ')
+    donor.first_name = nm[0]
+    donor.last_name = nm[1]
+    donor.save
+  end
 end
