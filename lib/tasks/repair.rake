@@ -1,5 +1,4 @@
 require 'fileutils'
-
 ### BEFORE RE-METHODS CHECK FILE VERSIONS
 
 namespace :repair do
@@ -159,6 +158,71 @@ namespace :repair do
     end
   end
 
+  desc "Transliterate geo party and donor names to russian"
+  task :transliterate_russian_names => :environment do |t, args|
+
+    # processing party title
+    # only two words or that have specific strings, excluding this lines
+    # ქალაქი ადამიანთა ერთობა
+    # კასპის მომავლის ფონდი
+    # საარჩევნო ბლოკი ჩვენები-სახალხო პარტია
+    # ქობულეთის მომავლის ფონდი
+    # პროგრესულ-დემოკრატიულიმოძრაობა
+    r = 1
+    Party.where(type: 1).each{|p|
+      t = p.title
+      s = nil
+      ln = t.split.length
+      if ln > 2
+        if t.include? 'დამოუკიდებელი მაჯორიტარობის კანდიდატი'
+          s = t.gsub('დამოუკიდებელი მაჯორიტარობის კანდიდატი ', '')
+        elsif t.include? ' ამომრჩეველთა'
+          s = t.gsub(' ამომრჩეველთა', '')
+        elsif t.include? ' დამოუკიდებელი კანდიდატი'
+          s = t.gsub(' დამოუკიდებელი კანდიდატი', '')
+        end
+      elsif ln == 2
+        s = p.title
+      end
+
+      if !s.nil?
+        pp = p.title_translations
+        pp['ru'] = s.russianize.soft_titleize
+        p.update_attributes(title_translations: pp)
+      end
+
+      s = s.nil? ? t : s.russianize.soft_titleize
+      r += 1
+    }
+    puts "#{r} - party names processed"
+
+    # processing donor title
+    r = 1
+    Donor.where(nature: 0).each{|d|
+      # f = d.first_name
+      # l = d.last_name
+
+      # if !s.nil?
+        f = d.first_name_translations
+        l = d.last_name_translations
+        fn = d.full_name_translations
+
+        # puts "#{d.first_name}#{d.last_name}#{d.full_name}"
+        f['ru'] = d.first_name.russianize.soft_titleize
+        if !l.nil? && d.last_name.present?
+          l['ru'] = d.last_name.russianize.soft_titleize
+        end
+        fn['ru'] = d.full_name.russianize.soft_titleize
+
+        d.update_attributes(first_name_translations: f, last_name_translations: l, full_name_translations: fn)
+
+        # puts "#{f} - #{l}"
+        r += 1
+    }
+    puts "#{r} - donor names processed"
+
+  end
+
   def merge_donors(target, sources, merges)
 
     m = { target: nil, sources: [] }
@@ -194,4 +258,7 @@ namespace :repair do
     donor.last_name = nm[1]
     donor.save
   end
+
+
+
 end

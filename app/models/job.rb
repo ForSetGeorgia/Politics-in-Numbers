@@ -286,7 +286,7 @@ class Job
 
               p = Party.by_name(obj[:party], false)
               if p.class != Party
-                p = Party.create!(name: [obj[:party]], title_translations: { ka: obj[:party], en: obj[:party].latinize.soft_titleize, ru: obj[:party].latinize.soft_titleize }, description: "საინიციატივო ჯგუფი #{obj[:party]}", tmp_id: -99, type: Party.type_is(:initiative))
+                p = Party.create!(name: [obj[:party]], title_translations: { ka: obj[:party], en: obj[:party].latinize.soft_titleize, ru: obj[:party].russianize.soft_titleize }, description: "საინიციატივო ჯგუფი #{obj[:party]}", tmp_id: -99, type: Party.type_is(:initiative))
                 missing_parties << p._id
               end
 
@@ -294,7 +294,7 @@ class Job
 
               donor = Donor.find_by( first_name: obj[:fname], last_name: obj[:lname], tin: obj[:tin])
               if !donor.present?
-                donor = Donor.create!( first_name_translations: { ka: obj[:fname], en: obj[:fname].latinize.soft_titleize }, last_name_translations: { ka: obj[:lname] }.merge(obj[:lname].present? ? { en: obj[:lname].latinize.soft_titleize } : {}), tin: obj[:tin], nature: obj[:nature] ) # individual or organization
+                donor = Donor.create!( first_name_translations: { ka: obj[:fname], en: obj[:fname].latinize.soft_titleize, ru: obj[:fname].russianize.soft_titleize  }, last_name_translations: { ka: obj[:lname] }.merge(obj[:lname].present? ? { en: obj[:lname].latinize.soft_titleize, ru: obj[:lname].russianize.soft_titleize } : {}), tin: obj[:tin], nature: obj[:nature] ) # individual or organization
               end
               donor.donations.create!(give_date: obj[:date], amount: obj[:amount], party_id: p._id, comment: obj[:comment], monetary: !obj[:comment].include?("არაფულადი"), donorset_id: @donorset.id )
               # donor.save
