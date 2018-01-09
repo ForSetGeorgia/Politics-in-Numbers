@@ -29,7 +29,7 @@
         <div class="stats">
           <div class="stat-box total-donation">
             <label><%= t('.donations') %>:</label>
-            <span><%= item.donation_total_amount %></span>
+            <span><%= ActionController::Base.helpers.number_with_precision(item.donation_total_amount.round) %></span>
           </div>
           <div class="stat-box total-finances">
             <% stats = item.get_stats(:finance, @period_ids, [:income, :expenses]) %>
