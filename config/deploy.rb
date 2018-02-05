@@ -15,6 +15,7 @@ require 'mina/whenever'
 require_relative 'deploy_modules/maintenance'
 require_relative 'deploy_modules/puma'
 require_relative 'deploy_modules/nginx'
+
 require_relative 'deploy_modules/delayed_job'
 require_relative 'deploy_modules/phantomjs_highchart'
 
@@ -87,6 +88,7 @@ set :shared_env_path, -> { "#{full_shared_path}/.env" }
 set :fetch_head, -> { "#{deploy_to}/scm/FETCH_HEAD" }
 
 # Delayed job settings
+
 set :delayed_job, -> { 'bin/delayed_job' }
 set :delayed_job_pid_dir, 'pids'
 set :delayed_job_processes, 1
@@ -323,7 +325,9 @@ task deploy: :environment do
       set :bundle_options, "#{bundle_options} --quiet"
     end
     # invoke :'phantomjs_highcharts:stop'
-    invoke :'delayed_job:stop'
+    if !first_deploy
+      invoke :'delayed_job:stop'
+    end
     invoke :'deploy:check_revision'
     invoke :'deploy:assets:decide_whether_to_precompile'
     invoke :'deploy:assets:local_precompile' if precompile_assets
