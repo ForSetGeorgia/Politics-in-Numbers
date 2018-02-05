@@ -5,7 +5,7 @@ upstream puma_<%= application %> {
 server {
   listen 80;
   listen [::]:80;
-  server_name <%= web_url %> www.<%= web_url %> live.<%= web_url %> www.live.<%= web_url %>;
+  server_name <%= web_url %> www.<%= web_url %> dev.<%= web_url %> www.dev.<%= web_url %>;
   return 301 https://$server_name$request_uri;
 }
 
