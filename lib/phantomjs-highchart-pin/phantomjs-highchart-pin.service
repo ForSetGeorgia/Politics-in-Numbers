@@ -1,0 +1,12 @@
+[Unit]
+Description=phantomjs server to generate chart images for pin
+
+[Service]
+Environment=SERVER=/usr/local/share/phantomjs-highchart-pin/highcharts-convert.js
+Environment=HOST=127.0.0.1
+Environment=PORT=3003
+ExecStart=/usr/local/bin/phantomjs $SERVER -host $HOST -port $PORT | systemd-cat -t "phantomjs-pin"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

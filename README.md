@@ -139,7 +139,12 @@ Replace
 
 ##### Prepare highchart server conversion [script](https://github.com/highcharts/highcharts-export-server/blob/master/phantomjs/highcharts-convert.js)
 All scripts related to current project are in lib/phantomjs-highchart-pin folder. It has converstion script, phantomjs-highchart-pin.conf that is used as upstart configuration file for phantomjs and assets folder with all scripts to generate images. So you need to copy that folder to remote server.<br/>
-  ```bash
+
+```systemd version bash
+    sudo ln -s /home/user/app/current/lib/phantomjs-highchart-pin/phantomjs-highchart-pin.service /etc/systemd/system/phantomjs-highchart-pin.service
+    systemd-analyze verify phantomjs-highchart-pin.service
+  ```
+  ```upstart version bash
     cp lib/phantomjs-highchart-pin to remote server
     sudo mv remote/phantomjs-highchart-pin/phantomjs-highchart-pin.conf /etc/init/
     sudo mv remote/phantomjs-highchart-pin /usr/local/share/phantomjs-highchart-pin/
