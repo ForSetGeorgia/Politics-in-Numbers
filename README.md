@@ -143,6 +143,8 @@ All scripts related to current project are in lib/phantomjs-highchart-pin folder
 ```systemd version bash
     sudo ln -s /home/user/app/current/lib/phantomjs-highchart-pin/phantomjs-highchart-pin.service /etc/systemd/system/phantomjs-highchart-pin.service
     systemd-analyze verify phantomjs-highchart-pin.service
+
+    systemctl daemon-reload # if file was updated
   ```
   ```upstart version bash
     cp lib/phantomjs-highchart-pin to remote server
