@@ -1,9 +1,9 @@
-set :domain, 'pins.ge'
+set :domain, '178.62.74.79'
 set :user, 'deploy'
 set :application, 'Politics-In-Numbers'
 set :repository, 'https://github.com/ForSetGeorgia/Politics-in-Numbers.git'
 set :branch, 'master'
 set :web_url, "pins.ge"
-set :use_ssl, true
+set :use_ssl, false
 set :puma_thread_count_min, '1'
 set :puma_thread_count_max, '4'
