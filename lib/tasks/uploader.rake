@@ -145,13 +145,20 @@ namespace :uploader do
 
             tmp_md5 = Digest::MD5.hexdigest([obj[:fname], obj[:lname], obj[:tin], obj[:date], obj[:amount], p._id, obj[:comment], !obj[:comment].include?("არაფულადი")].join("&"))
 
+            # donations md5 can be found multiple times, which is ok
+            # same amount date and all other fields for donation can be repeated and that is not duplicate
 
-            if donations.any?{|s| s[:md5] == tmp_md5 }
-              donations.delete_if{|s| s[:md5] == tmp_md5 }
+            # if donations.any?{|s| s[:md5] == tmp_md5 }
+              # donations.delete_if{|s| s[:md5] == tmp_md5 }
+
+            # get first match so it can be deleted
+            ind = donations.index{|s| s[:md5] == tmp_md5 }
+            if ind
+              donations.delete(ind)
             else
               donor = Donor.find_by( first_name: obj[:fname], last_name: obj[:lname], tin: obj[:tin])
               if !donor.present?
-                lg.info "missing donor #{obj[:fname]} #{obj[:lname]} #{obj[:tin]}"
+                #lg.info "missing donor #{obj[:fname]} #{obj[:lname]} #{obj[:tin]}"
                 donor = Donor.create!( first_name_translations: { ka: obj[:fname], en: obj[:fname].latinize.soft_titleize, ru: obj[:fname].russianize.soft_titleize }, last_name_translations: { ka: obj[:lname] }.merge(obj[:lname].present? ? { en: obj[:lname].latinize.soft_titleize, ru: obj[:lname].russianize.soft_titleize } : {}), tin: obj[:tin], nature: obj[:nature] ) # individual or organization
               end
               donor.donations.create!(give_date: obj[:date], amount: obj[:amount], party_id: p._id, comment: obj[:comment], monetary: !obj[:comment].include?("არაფულადი"), md5: tmp_md5 )
@@ -189,7 +196,7 @@ namespace :uploader do
       end
 
     rescue => e
-      log(lg, wrapper.call(e.inspect, 'exception'))
+      log(lg, wrapper.call("#{e.inspect}#{e.backtrace}", 'exception'))
     ensure
       lg.close
     end

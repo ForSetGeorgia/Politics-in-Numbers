@@ -274,7 +274,7 @@ namespace :populate do
   end
 
 
-
+#populate:reelections['part_value']
 desc "Read and upload new election files from folder"
   task :reelections, [:part] => :environment do |t, args|
     part = args[:part]
