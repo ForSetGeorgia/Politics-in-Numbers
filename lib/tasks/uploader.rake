@@ -153,8 +153,8 @@ namespace :uploader do
 
             # get first match so it can be deleted
             ind = donations.index{|s| s[:md5] == tmp_md5 }
-            if ind
-              donations.delete(ind)
+            if ind.present?
+              donations.delete_at(ind)
             else
               donor = Donor.find_by( first_name: obj[:fname], last_name: obj[:lname], tin: obj[:tin])
               if !donor.present?
