@@ -1004,12 +1004,17 @@ $(document).ready(function (){
           dataType: 'json',
           data: filters,
           success: function(data) {
-            // console.log("explore_filter", data);
-            js.cache[_id] = data[obj.name];
-            js.cache[js.cache[_id].sid] = _id
-            obj.url(js.cache[_id].sid);
-            if(data.hasOwnProperty("donation")) { filter_callback(data.donation, "donation"); }
-            if(data.hasOwnProperty("finance")) { filter_callback(data.finance, "finance"); }
+            if(data.hasOwnProperty(obj.name)) {
+              js.cache[_id] = data[obj.name];
+              js.cache[js.cache[_id].sid] = _id
+              obj.url(js.cache[_id].sid);
+              if(data.hasOwnProperty("donation")) { filter_callback(data.donation, "donation"); }
+              if(data.hasOwnProperty("finance")) { filter_callback(data.finance, "finance"); }
+            }
+            else {
+              view_not_found.removeClass("hidden");
+              loader.stop();
+            }
           }
         });
       }

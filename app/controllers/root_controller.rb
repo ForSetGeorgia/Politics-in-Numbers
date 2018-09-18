@@ -103,11 +103,15 @@ class RootController < ApplicationController
       gon.is_donation = is_donation
 
       tmp = Donor.explore(donation_pars, "a", inner_pars, { parties: @party_list })
+      return redirect_to explore_path, :status => :moved_permanently, :alert => t('shared.msgs.data_not_found') if tmp.nil?
+
       gon.donation_params = tmp.delete(:pars)
       gon.donation_data = tmp
       dsid = gon.donation_data[:sid]
 
       tmp = Dataset.explore(finance_pars, "a", inner_pars, { parties: @party_list, periods: @period_list })
+      return redirect_to explore_path, :status => :moved_permanently, :alert => t('shared.msgs.data_not_found') if tmp.nil?
+
       gon.finance_params = tmp.delete(:pars)
       gon.finance_data = tmp
 
@@ -137,6 +141,7 @@ class RootController < ApplicationController
     else
       if is_finance
         dt = Dataset.explore(finance_pars, "t", inner_pars)
+        return redirect_to explore_path, :status => :moved_permanently, :alert => t('shared.msgs.data_not_found') if tmp.nil?
 
         head = 'EF BB BF'.split(' ').map{|a|a.hex.chr}.join()
         csv_file = CSV.generate(csv = head) do |csv|
@@ -165,17 +170,21 @@ class RootController < ApplicationController
     p = pars[:donation]
     if p.present?
       tmp = Donor.explore(p)
-      if can? :create, Highlight
-        tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a")
-        tmp[:cb][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}b")
+      if tmp.present?
+        if can? :create, Highlight
+          tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a")
+          tmp[:cb][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}b")
+        end
+        tmp.delete(:pars)
+        res[:donation] = tmp
       end
-      tmp.delete(:pars)
-      res[:donation] = tmp
     elsif pars[:finance].present?
       tmp = Dataset.explore(pars[:finance])
-      tmp.delete(:pars)
-      tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a") if can? :create, Highlight
-      res[:finance] = tmp
+      if tmp.present?
+        tmp.delete(:pars)
+        tmp[:ca][:highlight] = Highlight.sid_highlighted?("#{tmp[:sid]}a") if can? :create, Highlight
+        res[:finance] = tmp
+      end
     end
     render :json => res
   end

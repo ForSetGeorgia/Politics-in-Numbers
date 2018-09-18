@@ -236,6 +236,7 @@ class Dataset
 
     f[:party].each { |p_id|
       if !parties_list.key?(BSON::ObjectId(p_id))
+        return nil if !parties.key?(BSON::ObjectId(p_id))
         parties_list[p_id] = { name: parties[BSON::ObjectId(p_id)][:name], data: [] }
       end
     }

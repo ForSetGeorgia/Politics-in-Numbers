@@ -431,7 +431,6 @@ class Donor
     parties_list = {}
     parties = {}
     (global_data.key?(:parties) ? global_data[:parties] : Party.sorted.map { |m| [m.id, m.title, m.permalink, m.type == 0 && m.member == true] }).each{ |e| parties[e[0]] = { value: 0, name: e[1] } }
-
     if ps > 0 # filling parties_list with initial data
       f[:party].each{ |e|
         es = BSON::ObjectId(e)
@@ -440,6 +439,8 @@ class Donor
     # else
     #   parties.each{|k,v| parties_list[k] = { value: 0, name: v[:name] } }
     end
+    return nil if ps != parties_list.size
+
     all_donors = Donor.donors_by_ids(f[:donor])
     partial = all_donors.length > 0
     n = 0
