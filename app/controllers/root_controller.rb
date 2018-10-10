@@ -290,6 +290,9 @@ class RootController < ApplicationController
     @item = nil
     if sid.present?
       shr = ShortUri.by_sid(sid, :party)
+      if !shr.present?
+        redirect_to parties_path, status: 301 and return
+      end
       pars = Hash.transform_keys_to_symbols(shr.pars) if shr.present?
       party_id = pars[:party]
       type = pars[:filter]
